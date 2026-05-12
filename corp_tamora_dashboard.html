@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Cost DK — CORP TMR</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c23;
+    --border: #1e2330;
+    --accent: #00e5a0;
+    --accent2: #0090ff;
+    --warn: #ffaa00;
+    --danger: #ff4444;
+    --text: #e8eaf0;
+    --text2: #7a8099;
+    --text3: #4a5068;
+    --green: #00e5a0;
+    --amber: #ffaa00;
+    --red: #ff4444;
+    --font-mono: 'Space Mono', monospace;
+    --font-sans: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 14px; min-height: 100vh; }
+
+  /* LOADING */
+  #loading-screen {
+    position: fixed; inset: 0; background: var(--bg); z-index: 999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+  }
+  .spinner {
+    width: 40px; height: 40px; border: 2px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading-url { font-family: var(--font-mono); font-size: 11px; color: var(--text3); max-width: 400px; text-align: center; }
+
+  /* ERROR */
+  #error-screen {
+    position: fixed; inset: 0; background: var(--bg); z-index: 998;
+    display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 32px;
+  }
+  #error-screen h2 { color: var(--danger); font-family: var(--font-mono); }
+  #error-screen p { color: var(--text2); text-align: center; max-width: 500px; line-height: 1.6; }
+  .btn { padding: 10px 24px; background: var(--accent); color: #000; border: none; border-radius: 6px; font-family: var(--font-mono); font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+  .btn:hover { opacity: 0.8; }
+
+  /* LAYOUT */
+  #dashboard { display: none; flex-direction: column; min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .site-badge {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    background: var(--accent); color: #000; padding: 3px 10px; border-radius: 4px; letter-spacing: 0.05em;
+  }
+  .header-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .timestamp { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+  .btn-refresh {
+    padding: 6px 14px; background: transparent; border: 1px solid var(--border);
+    color: var(--text2); border-radius: 5px; font-size: 12px; cursor: pointer; transition: all 0.2s;
+    font-family: var(--font-mono);
+  }
+  .btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* NAV SITE */
+  .site-nav {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 24px; display: flex; gap: 4px; overflow-x: auto;
+  }
+  .site-nav a {
+    padding: 10px 16px; font-size: 12px; font-family: var(--font-mono);
+    color: var(--text3); text-decoration: none; border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: all 0.2s;
+  }
+  .site-nav a:hover { color: var(--text2); }
+  .site-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* FILTER BAR */
+  .filter-bar {
+    background: var(--surface2); border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+  select, input[type="date"] {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 10px; border-radius: 5px; font-size: 12px; font-family: var(--font-sans);
+    outline: none; cursor: pointer; transition: border-color 0.2s;
+  }
+  select:hover, input[type="date"]:hover { border-color: var(--text3); }
+  select:focus, input[type="date"]:focus { border-color: var(--accent); }
+  .filter-date { display: flex; gap: 6px; align-items: center; }
+  .filter-date span { color: var(--text3); font-size: 12px; }
+
+  /* MAIN */
+  main { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* KPI CARDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+  @media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px; display: flex; flex-direction: column; gap: 6px;
+    transition: border-color 0.2s;
+  }
+  .kpi-card:hover { border-color: var(--text3); }
+  .kpi-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+  .kpi-value { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+  .kpi-value.accent { color: var(--accent); }
+  .kpi-sub { font-size: 11px; color: var(--text3); }
+  .olf-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+  /* CHARTS */
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .charts-grid { grid-template-columns: 1fr; } }
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px;
+  }
+  .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .chart-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .chart-toggle { display: flex; gap: 4px; }
+  .toggle-btn {
+    padding: 4px 10px; background: transparent; border: 1px solid var(--border);
+    color: var(--text3); border-radius: 4px; font-size: 11px; cursor: pointer;
+    font-family: var(--font-mono); transition: all 0.2s;
+  }
+  .toggle-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .chart-wrap { position: relative; height: 280px; }
+
+  /* TABLE */
+  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .table-tabs { display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .tab-btn {
+    padding: 10px 16px; background: transparent; border: none; color: var(--text3);
+    font-size: 12px; cursor: pointer; white-space: nowrap; font-family: var(--font-mono);
+    border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text2); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead { position: sticky; top: 0; z-index: 10; }
+  th {
+    background: var(--surface2); color: var(--text3); font-family: var(--font-mono);
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 10px 12px; text-align: right; white-space: nowrap; cursor: pointer;
+    border-bottom: 1px solid var(--border); user-select: none;
+  }
+  th:first-child { text-align: left; }
+  th:hover { color: var(--text); }
+  th.sorted { color: var(--accent); }
+  td {
+    padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+  }
+  td:first-child { text-align: left; font-family: var(--font-sans); font-size: 13px; font-weight: 500; }
+  tr:hover td { background: var(--surface2); }
+  tfoot td { background: var(--surface2); font-weight: 700; color: var(--accent); border-top: 1px solid var(--border); }
+  tfoot td:first-child { color: var(--text2); }
+  .olf-cell { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+
+  /* EMPTY STATE */
+  .empty { padding: 48px; text-align: center; color: var(--text3); font-family: var(--font-mono); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <div style="font-family:var(--font-mono);font-size:13px;color:var(--text2);">Memuat data...</div>
+  <div id="loading-url"></div>
+</div>
+
+<!-- ERROR -->
+<div id="error-screen">
+  <h2>⚠ Gagal memuat data</h2>
+  <p id="error-msg">Tidak dapat mengambil data dari sumber. Pastikan URL CSV benar dan dapat diakses.</p>
+  <button class="btn" onclick="loadData()">↺ Coba Lagi</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <header>
+    <div class="header-left">
+      <span class="site-badge" id="site-badge">HCI JBK</span>
+      <span class="header-title">Cost Delivery Internal — Dalam Kota</span>
+    </div>
+    <div class="header-right">
+      <span class="timestamp" id="timestamp">—</span>
+      <button class="btn-refresh" onclick="loadData()">↺ Refresh</button>
+    </div>
+  </header>
+
+  <nav class="site-nav">
+    <a href="hci_jababeka_dashboard.html" class="active">HCI Jababeka</a>
+    <a href="ahi_jababeka_dashboard.html">AHI Jababeka</a>
+    <a href="kls_jababeka_dashboard.html">KLS Jababeka</a>
+    <a href="hci_cikupa_dashboard.html">HCI Cikupa</a>
+    <a href="corp_sidoarjo_dashboard.html">Corp Sidoarjo</a>
+    <a href="corp_tallo_dashboard.html">Corp Tallo</a>
+    <a href="corp_tamora_dashboard.html">Corp Tamora</a>
+  </nav>
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <div class="filter-label">Periode</div>
+      <div class="filter-date">
+        <input type="date" id="f-date-from">
+        <span>—</span>
+        <input type="date" id="f-date-to">
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Shipment Area</div>
+      <select id="f-shipment"><option value="">Semua</option><option value="DALAM KOTA">Dalam Kota</option><option value="LUAR KOTA">Luar Kota</option></select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Type Delivery</div>
+      <select id="f-delivery"><option value="">Semua</option><option value="Store">Store</option><option value="Customer">Customer</option><option value="HUB">HUB</option><option value="Other Delivery">Other Delivery</option><option value="Satelite">Satelite</option></select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Kategori</div>
+      <select id="f-kategori"><option value="">Semua</option><option value="REGULAR">Regular</option><option value="NON REGULAR">Non Regular</option></select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Type Armada</div>
+      <select id="f-armada"><option value="">Semua</option></select>
+    </div>
+  </div>
+
+  <main>
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="kpi-cost">—</div><div class="kpi-sub">IDR</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Trip</div><div class="kpi-value accent" id="kpi-trip">—</div><div class="kpi-sub">LC</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total DO</div><div class="kpi-value" id="kpi-do">—</div><div class="kpi-sub">Delivery Order</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total DP</div><div class="kpi-value" id="kpi-dp">—</div><div class="kpi-sub">Drop Point</div></div>
+      <div class="kpi-card"><div class="kpi-label">OLF</div><div class="kpi-value" id="kpi-olf">—</div><div class="kpi-sub" id="kpi-olf-sub">CBM/Kapasitas</div></div>
+      <div class="kpi-card"><div class="kpi-label">Cost / DO</div><div class="kpi-value" id="kpi-costdo">—</div><div class="kpi-sub">IDR per DO</div></div>
+      <div class="kpi-card"><div class="kpi-label">Cost / CBM</div><div class="kpi-value" id="kpi-costcbm">—</div><div class="kpi-sub">IDR per CBM</div></div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Trend per Jalur</div>
+          <div class="chart-toggle">
+            <button class="toggle-btn active" onclick="setTrendMetric('cost',this)">Cost</button>
+            <button class="toggle-btn" onclick="setTrendMetric('costdo',this)">Cost/DO</button>
+            <button class="toggle-btn" onclick="setTrendMetric('costcbm',this)">Cost/CBM</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">OLF per Jalur (%)</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-olf"></canvas></div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-tabs">
+        <button class="tab-btn active" onclick="setTab('',this)">Semua</button>
+        <button class="tab-btn" onclick="setTab('Customer',this)">Customer</button>
+        <button class="tab-btn" onclick="setTab('Store',this)">Store</button>
+        <button class="tab-btn" onclick="setTab('HUB',this)">HUB</button>
+        <button class="tab-btn" onclick="setTab('Other Delivery',this)">Other Delivery</button>
+        <button class="tab-btn" onclick="setTab('Satelite',this)">Satelite</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortTable('jalur')">Jalur</th>
+              <th onclick="sortTable('trip')">Trip</th>
+              <th onclick="sortTable('do')">DO</th>
+              <th onclick="sortTable('dp')">DP</th>
+              <th onclick="sortTable('cbm')">CBM</th>
+              <th onclick="sortTable('olf')">OLF%</th>
+              <th onclick="sortTable('cost')">Total Cost</th>
+              <th onclick="sortTable('costtrip')">Cost/Trip</th>
+              <th onclick="sortTable('costdo')">Cost/DO</th>
+              <th onclick="sortTable('costdp')">Cost/DP</th>
+              <th onclick="sortTable('costcbm')">Cost/CBM</th>
+              <th onclick="sortTable('ujptrip')">UJP/Trip</th>
+              <th onclick="sortTable('vrtrip')">VR/Trip</th>
+              <th onclick="sortTable('mpptrip')">MPP/Trip</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+          <tfoot id="table-foot"></tfoot>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const CONFIG = {
+  CSV_URL: 'https://raw.githubusercontent.com/heylilyloops/Dashboard-Cost-Delivery-Internal-/main/data/CORP_TAMORA.csv',
+  SITE_LABEL: 'CORP TMR',
+  OWNER_FILTER: '',  // kosongkan '' jika tidak perlu filter owner
+};
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let rawData = [];
+let trendMetric = 'cost';
+let tableTab = '';
+let sortKey = 'cost';
+let sortAsc = false;
+let chartTrend = null;
+let chartOlf = null;
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+const fmt = n => Number.isFinite(n) ? Math.round(n).toLocaleString('id-ID') : '—';
+const fmtK = n => Number.isFinite(n) ? (n >= 1e9 ? (n/1e9).toFixed(1)+'B' : n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : Math.round(n).toString()) : '—';
+const pct = n => Number.isFinite(n) ? (n*100).toFixed(1)+'%' : '—';
+const olfColor = v => v >= 0.75 ? '#00e5a0' : v >= 0.5 ? '#ffaa00' : '#ff4444';
+const parseNum = v => { const n = parseFloat(String(v).replace(/,/g,'').replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; };
+const parseDate = s => { if(!s)return null; const p=s.split('/'); return p.length===3?new Date(p[2],p[1]-1,p[0]):new Date(s); };
+
+// Parse CSV
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,''));
+  return lines.slice(1).map(line => {
+    const vals = line.match(/(".*?"|[^,]+|(?<=,)(?=,)|(?<=,)$|^(?=,))/g) || line.split(',');
+    const obj = {};
+    headers.forEach((h,i) => { obj[h] = (vals[i]||'').replace(/"/g,'').trim(); });
+    return obj;
+  });
+}
+
+// ─── LOAD DATA ────────────────────────────────────────────────────────────────
+async function loadData() {
+  document.getElementById('loading-screen').style.display = 'flex';
+  document.getElementById('error-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loading-url').textContent = CONFIG.CSV_URL;
+
+  try {
+    const url = CONFIG.CSV_URL + (CONFIG.CACHE_BUST ? '?t='+Date.now() : '');
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    rawData = parseCSV(text);
+
+    // Populate armada filter
+    const armadas = [...new Set(rawData.map(r => r['Type Armada']).filter(Boolean))].sort();
+    const sel = document.getElementById('f-armada');
+    sel.innerHTML = '<option value="">Semua</option>' + armadas.map(a => `<option value="${a}">${a}</option>`).join('');
+
+    document.getElementById('site-badge').textContent = CONFIG.SITE_LABEL;
+    document.getElementById('timestamp').textContent = 'Diperbarui ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'flex';
+    render();
+  } catch(e) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('error-screen').style.display = 'flex';
+    document.getElementById('error-msg').textContent = 'Error: ' + e.message + '. Pastikan file CSV ada di GitHub dan URL benar.';
+  }
+}
+
+// ─── FILTER ───────────────────────────────────────────────────────────────────
+function getFiltered() {
+  const from = document.getElementById('f-date-from').value;
+  const to = document.getElementById('f-date-to').value;
+  const ship = document.getElementById('f-shipment').value;
+  const del = document.getElementById('f-delivery').value;
+  const kat = document.getElementById('f-kategori').value;
+  const arm = document.getElementById('f-armada').value;
+
+  return rawData.filter(r => {
+    if (CONFIG.OWNER_FILTER && r['OWNER'] !== CONFIG.OWNER_FILTER) return false;
+    if (ship && r['Shipment Area'] !== ship) return false;
+    if (del && r['Type Delivery'] !== del) return false;
+    if (kat && r['Kategori'] !== kat) return false;
+    if (arm && r['Type Armada'] !== arm) return false;
+    if (from || to) {
+      const d = parseDate(r['Delivery Date']);
+      if (!d) return false;
+      if (from && d < new Date(from)) return false;
+      if (to && d > new Date(to)) return false;
+    }
+    return true;
+  });
+}
+
+// ─── AGGREGATE ────────────────────────────────────────────────────────────────
+function aggregate(data) {
+  const byJalur = {};
+  data.forEach(r => {
+    const j = r['Jalur'] || 'Lainnya';
+    if (!byJalur[j]) byJalur[j] = {trip:0,do:0,dp:0,cbm:0,cap:0,cost:0,ujp:0,vr:0,mpp:0};
+    const b = byJalur[j];
+    b.trip++;
+    b.do += parseNum(r['DO']);
+    b.dp += parseNum(r['DP']);
+    b.cbm += parseNum(r['CBM']);
+    b.cap += parseNum(r['Capacity Armada']);
+    b.cost += parseNum(r['Total Cost']);
+    b.ujp += parseNum(r['UJP']);
+    b.vr += parseNum(r['Sewa Armada']);
+    b.mpp += parseNum(r['Prof Fee']);
+  });
+  return Object.entries(byJalur).map(([jalur, b]) => ({
+    jalur,
+    trip: b.trip, do: b.do, dp: b.dp, cbm: b.cbm,
+    olf: b.cap > 0 ? b.cbm / b.cap : 0,
+    cost: b.cost,
+    costtrip: b.trip > 0 ? b.cost / b.trip : 0,
+    costdo: b.do > 0 ? b.cost / b.do : 0,
+    costdp: b.dp > 0 ? b.cost / b.dp : 0,
+    costcbm: b.cbm > 0 ? b.cost / b.cbm : 0,
+    ujptrip: b.trip > 0 ? b.ujp / b.trip : 0,
+    vrtrip: b.trip > 0 ? b.vr / b.trip : 0,
+    mpptrip: b.trip > 0 ? b.mpp / b.trip : 0,
+  }));
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  const filtered = getFiltered();
+  const tabFiltered = tableTab ? filtered.filter(r => r['Type Delivery'] === tableTab) : filtered;
+  const rows = aggregate(tabFiltered);
+
+  // KPI
+  const tot = rows.reduce((a,r) => ({
+    trip: a.trip+r.trip, do: a.do+r.do, dp: a.dp+r.dp, cbm: a.cbm+r.cbm,
+    cap: a.cap+(r.olf>0?r.cbm/r.olf:0), cost: a.cost+r.cost
+  }), {trip:0,do:0,dp:0,cbm:0,cap:0,cost:0});
+
+  const olf = tot.cap > 0 ? tot.cbm / tot.cap : 0;
+  document.getElementById('kpi-cost').textContent = fmtK(tot.cost);
+  document.getElementById('kpi-trip').textContent = fmt(tot.trip);
+  document.getElementById('kpi-do').textContent = fmt(tot.do);
+  document.getElementById('kpi-dp').textContent = fmt(tot.dp);
+  document.getElementById('kpi-olf').textContent = pct(olf);
+  document.getElementById('kpi-olf').style.color = olfColor(olf);
+  document.getElementById('kpi-costdo').textContent = fmtK(tot.do > 0 ? tot.cost/tot.do : 0);
+  document.getElementById('kpi-costcbm').textContent = fmtK(tot.cbm > 0 ? tot.cost/tot.cbm : 0);
+
+  renderTrend(filtered);
+  renderOlf(rows);
+  renderTable(rows);
+}
+
+// ─── CHART TREND ──────────────────────────────────────────────────────────────
+function renderTrend(filtered) {
+  const byJalurMonth = {};
+  filtered.forEach(r => {
+    const j = r['Jalur'] || 'Lainnya';
+    const m = r['Month'] || '';
+    const key = j;
+    if (!byJalurMonth[key]) byJalurMonth[key] = {};
+    if (!byJalurMonth[key][m]) byJalurMonth[key][m] = {cost:0,do:0,cbm:0};
+    const b = byJalurMonth[key][m];
+    b.cost += parseNum(r['Total Cost']);
+    b.do += parseNum(r['DO']);
+    b.cbm += parseNum(r['CBM']);
+  });
+
+  const months = [...new Set(filtered.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>Number(a)-Number(b));
+  const monthLabels = months.map(m => {
+    const names = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+    return names[Number(m)] || m;
+  });
+
+  const jalurs = Object.keys(byJalurMonth).slice(0, 8);
+  const colors = ['#00e5a0','#0090ff','#ffaa00','#ff4444','#a855f7','#f97316','#06b6d4','#84cc16'];
+
+  const datasets = jalurs.map((j,i) => ({
+    label: j,
+    data: months.map(m => {
+      const b = byJalurMonth[j][m];
+      if (!b) return 0;
+      if (trendMetric === 'cost') return b.cost;
+      if (trendMetric === 'costdo') return b.do > 0 ? b.cost/b.do : 0;
+      if (trendMetric === 'costcbm') return b.cbm > 0 ? b.cost/b.cbm : 0;
+    }),
+    borderColor: colors[i % colors.length],
+    backgroundColor: colors[i % colors.length] + '22',
+    tension: 0.3, pointRadius: 4, borderWidth: 2, fill: false,
+  }));
+
+  if (chartTrend) chartTrend.destroy();
+  chartTrend = new Chart(document.getElementById('chart-trend'), {
+    type: 'line',
+    data: { labels: monthLabels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#7a8099', font: { size: 11 }, boxWidth: 12 } } },
+      scales: {
+        x: { grid: { color: '#1e2330' }, ticks: { color: '#7a8099', font: { size: 10 } } },
+        y: { grid: { color: '#1e2330' }, ticks: { color: '#7a8099', font: { size: 10 }, callback: v => fmtK(v) } },
+      }
+    }
+  });
+}
+
+// ─── CHART OLF ────────────────────────────────────────────────────────────────
+function renderOlf(rows) {
+  const sorted = [...rows].sort((a,b) => b.olf - a.olf);
+  const labels = sorted.map(r => r.jalur);
+  const values = sorted.map(r => parseFloat((r.olf * 100).toFixed(1)));
+  const colors = values.map(v => v >= 75 ? '#00e5a0' : v >= 50 ? '#ffaa00' : '#ff4444');
+
+  if (chartOlf) chartOlf.destroy();
+  chartOlf = new Chart(document.getElementById('chart-olf'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.raw + '%' } }
+      },
+      scales: {
+        x: { grid: { color: '#1e2330' }, ticks: { color: '#7a8099', font: { size: 10 }, callback: v => v+'%' }, max: 100 },
+        y: { grid: { display: false }, ticks: { color: '#7a8099', font: { size: 10 } } },
+      }
+    }
+  });
+}
+
+// ─── TABLE ────────────────────────────────────────────────────────────────────
+function renderTable(rows) {
+  let sorted = [...rows].sort((a,b) => sortAsc ? a[sortKey]-b[sortKey] : b[sortKey]-a[sortKey]);
+  if (sortKey === 'jalur') sorted = [...rows].sort((a,b) => sortAsc ? a.jalur.localeCompare(b.jalur) : b.jalur.localeCompare(a.jalur));
+
+  const tbody = document.getElementById('table-body');
+  if (sorted.length === 0) { tbody.innerHTML = `<tr><td colspan="14" class="empty">Tidak ada data</td></tr>`; return; }
+
+  tbody.innerHTML = sorted.map(r => `
+    <tr>
+      <td>${r.jalur}</td>
+      <td>${fmt(r.trip)}</td>
+      <td>${fmt(r.do)}</td>
+      <td>${fmt(r.dp)}</td>
+      <td>${r.cbm.toFixed(1)}</td>
+      <td><div class="olf-cell"><span class="olf-dot" style="background:${olfColor(r.olf)}"></span>${pct(r.olf)}</div></td>
+      <td>${fmt(r.cost)}</td>
+      <td>${fmt(r.costtrip)}</td>
+      <td>${fmt(r.costdo)}</td>
+      <td>${fmt(r.costdp)}</td>
+      <td>${fmt(r.costcbm)}</td>
+      <td>${fmt(r.ujptrip)}</td>
+      <td>${fmt(r.vrtrip)}</td>
+      <td>${fmt(r.mpptrip)}</td>
+    </tr>`).join('');
+
+  // Footer total
+  const t = sorted.reduce((a,r) => ({
+    trip:a.trip+r.trip, do:a.do+r.do, dp:a.dp+r.dp, cbm:a.cbm+r.cbm,
+    capest:a.capest+(r.olf>0?r.cbm/r.olf:0), cost:a.cost+r.cost,
+    ujp:a.ujp+(r.ujptrip*r.trip), vr:a.vr+(r.vrtrip*r.trip), mpp:a.mpp+(r.mpptrip*r.trip)
+  }), {trip:0,do:0,dp:0,cbm:0,capest:0,cost:0,ujp:0,vr:0,mpp:0});
+  const tolf = t.capest > 0 ? t.cbm/t.capest : 0;
+
+  document.getElementById('table-foot').innerHTML = `
+    <tr>
+      <td>TOTAL</td>
+      <td>${fmt(t.trip)}</td>
+      <td>${fmt(t.do)}</td>
+      <td>${fmt(t.dp)}</td>
+      <td>${t.cbm.toFixed(1)}</td>
+      <td><div class="olf-cell"><span class="olf-dot" style="background:${olfColor(tolf)}"></span>${pct(tolf)}</div></td>
+      <td>${fmt(t.cost)}</td>
+      <td>${fmt(t.trip>0?t.cost/t.trip:0)}</td>
+      <td>${fmt(t.do>0?t.cost/t.do:0)}</td>
+      <td>${fmt(t.dp>0?t.cost/t.dp:0)}</td>
+      <td>${fmt(t.cbm>0?t.cost/t.cbm:0)}</td>
+      <td>${fmt(t.trip>0?t.ujp/t.trip:0)}</td>
+      <td>${fmt(t.trip>0?t.vr/t.trip:0)}</td>
+      <td>${fmt(t.trip>0?t.mpp/t.trip:0)}</td>
+    </tr>`;
+}
+
+// ─── INTERACTIONS ─────────────────────────────────────────────────────────────
+function setTrendMetric(m, btn) {
+  trendMetric = m;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTrend(getFiltered());
+}
+
+function setTab(tab, btn) {
+  tableTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function sortTable(key) {
+  if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = false; }
+  document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
+  render();
+}
+
+// Filter change
+['f-date-from','f-date-to','f-shipment','f-delivery','f-kategori','f-armada'].forEach(id => {
+  document.getElementById(id).addEventListener('change', render);
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
