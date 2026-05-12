@@ -4,23 +4,23 @@ import json
 import os
 from google.oauth2.service_account import Credentials
 
-# Load credentials dari GitHub Secret
 creds_json = os.environ['GOOGLE_CREDENTIALS']
 creds_dict = json.loads(creds_json)
 
-# Auth
 scopes = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
 client = gspread.authorize(creds)
 
-# MASTER Spreadsheet ID
 SPREADSHEET_ID = '1wumoDA8SrXmaEXRkI_2lNlvof9JVtsXceeE2qhLtb7A'
 
-# Config per site
 SITES = [
-    {'gid': 1129886851, 'owner': 'HCI', 'output': 'HCI_JABABEKA.csv'},
-    {'gid': 1129886851, 'owner': 'AHI', 'output': 'AHI_JABABEKA.csv'},
-    {'gid': 1129886851, 'owner': 'KLS', 'output': 'KLS_JABABEKA.csv'},
+    {'gid': 1129886851, 'output': 'HCI_JABABEKA.csv'},
+    {'gid': 111957912,  'output': 'AHI_JABABEKA.csv'},
+    {'gid': 197682446,  'output': 'KLS_JABABEKA.csv'},
+    {'gid': 1019046386, 'output': 'HCI_CIKUPA.csv'},
+    {'gid': 1111207228, 'output': 'CORP_SIDOARJO.csv'},
+    {'gid': 1950770306, 'output': 'CORP_TALLO.csv'},
+    {'gid': 1447314605, 'output': 'CORP_TAMORA.csv'},
 ]
 
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
@@ -34,8 +34,6 @@ for site in SITES:
         sheet_cache[gid] = pd.DataFrame(data)
     
     df = sheet_cache[gid].copy()
-    df = df[df['OWNER'] == site['owner']]
-    df = df[df['Shipment Area'] == 'DALAM KOTA']
     
     output_path = f"data/{site['output']}"
     df.to_csv(output_path, index=False)
