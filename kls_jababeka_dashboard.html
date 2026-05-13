@@ -44,8 +44,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .sb-badge{margin-left:auto;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;font-family:var(--mono);}
 .sb-sub{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 30px;color:var(--sidebar-dim);text-decoration:none;font-size:11px;cursor:pointer;transition:all .15s;border:none;background:transparent;width:100%;}
 .sb-sub:hover{color:var(--sidebar-text);background:var(--sidebar-hover);}
-.sb-sub.active{color:#fff;}
+.sb-sub.active{color:#fff;background:var(--sidebar-hover);}
 .sb-sub-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
+.sb-arrow{margin-left:auto;font-size:10px;color:var(--sidebar-dim);transition:transform .2s;}
+.sb-arrow.open{transform:rotate(180deg);}
 
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
@@ -147,18 +149,36 @@ tfoot td:first-child{color:var(--text2);}
     <div class="sb-section">MENU</div>
     <button class="sb-item active"><span class="sb-dot" style="background:#60a5fa"></span>Overview</button>
     <div class="sb-section">SITE</div>
-    <button class="sb-item" onclick="toggleGrp('jababeka')"><span class="sb-dot" style="background:#34d399"></span>Jababeka<span class="sb-badge">3</span></button>
+
+    <!-- Jababeka — expanded by default -->
+    <button class="sb-item" onclick="toggleGrp('jababeka',this)">
+      <span class="sb-dot" style="background:#34d399"></span>Jababeka
+      <span class="sb-badge">3</span>
+      <span class="sb-arrow open" id="arr-jababeka">▾</span>
+    </button>
     <div id="grp-jababeka">
-      <a class="sb-sub active" href="hci_jababeka_dashboard.html"><span class="sb-sub-dot"></span>HCI Jababeka</a>
+      <a class="sb-sub" href="hci_jababeka_dashboard.html"><span class="sb-sub-dot"></span>HCI Jababeka</a>
       <a class="sb-sub" href="ahi_jababeka_dashboard.html"><span class="sb-sub-dot"></span>AHI Jababeka</a>
-      <a class="sb-sub" href="kls_jababeka_dashboard.html"><span class="sb-sub-dot"></span>KLS Jababeka</a>
+      <a class="sb-sub active" href="kls_jababeka_dashboard.html"><span class="sb-sub-dot"></span>KLS Jababeka</a>
     </div>
-    <button class="sb-item" onclick="toggleGrp('cikupa')"><span class="sb-dot" style="background:#fbbf24"></span>Cikupa<span class="sb-badge">1</span></button>
-    <div id="grp-cikupa" style="display:none">
+
+    <!-- Cikupa — expanded by default -->
+    <button class="sb-item" onclick="toggleGrp('cikupa',this)">
+      <span class="sb-dot" style="background:#fbbf24"></span>Cikupa
+      <span class="sb-badge">1</span>
+      <span class="sb-arrow open" id="arr-cikupa">▾</span>
+    </button>
+    <div id="grp-cikupa">
       <a class="sb-sub" href="hci_cikupa_dashboard.html"><span class="sb-sub-dot"></span>HCI Cikupa</a>
     </div>
-    <button class="sb-item" onclick="toggleGrp('corp')"><span class="sb-dot" style="background:#a78bfa"></span>Corp<span class="sb-badge">3</span></button>
-    <div id="grp-corp" style="display:none">
+
+    <!-- Corp — expanded by default -->
+    <button class="sb-item" onclick="toggleGrp('corp',this)">
+      <span class="sb-dot" style="background:#a78bfa"></span>Corp
+      <span class="sb-badge">3</span>
+      <span class="sb-arrow open" id="arr-corp">▾</span>
+    </button>
+    <div id="grp-corp">
       <a class="sb-sub" href="corp_sidoarjo_dashboard.html"><span class="sb-sub-dot"></span>Sidoarjo</a>
       <a class="sb-sub" href="corp_tallo_dashboard.html"><span class="sb-sub-dot"></span>Tallo</a>
       <a class="sb-sub" href="corp_tamora_dashboard.html"><span class="sb-sub-dot"></span>Tamora</a>
@@ -168,7 +188,7 @@ tfoot td:first-child{color:var(--text2);}
   <div class="main">
     <div class="topbar">
       <div class="topbar-left">
-        <div class="page-title" id="page-title">HCI Jababeka</div>
+        <div class="page-title" id="page-title">KLS Jababeka</div>
         <div class="toggle-group">
           <button class="tgl-btn active" onclick="setMode('full',this)">Full Period</button>
           <button class="tgl-btn" onclick="setMode('mtd',this)">MTD</button>
@@ -210,7 +230,6 @@ tfoot td:first-child{color:var(--text2);}
         </div>
       </div>
 
-      <!-- KPI — 8 cards -->
       <div class="kpi-grid">
         <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value blue" id="kpi-cost">—</div><div class="kpi-sub">IDR</div></div>
         <div class="kpi-card"><div class="kpi-label">Total Trip</div><div class="kpi-value" id="kpi-trip">—</div><div class="kpi-sub">LC</div></div>
@@ -289,7 +308,6 @@ const fmt=n=>Number.isFinite(n)?Math.round(n).toLocaleString('id-ID'):'—';
 const fmt2=n=>Number.isFinite(n)?n.toFixed(2):'—';
 const fmtK=n=>{if(!Number.isFinite(n))return'—';if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(0)+'K';return Math.round(n).toString();};
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
-// FIX: titik sebagai desimal, koma sebagai separator ribuan
 const pn=v=>{const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;};
 const pd=s=>{if(!s)return null;const p=s.split('/');return p.length===3?new Date(p[2],p[1]-1,p[0]):new Date(s);};
 const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
@@ -383,9 +401,8 @@ function agg(data){
 function render(){
   const fil=getFil();
   const rows=agg(ttab?fil.filter(r=>r['Type Delivery']===ttab):fil);
-  const tot=rows.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,cap:a.cap+r.olf>0?r.cbm/r.olf:0,cost:a.cost+r.cost}),{trip:0,do:0,dp:0,cbm:0,cap:0,cost:0});
-  // OLF: sum CBM / sum Capacity
   const totCap=rows.reduce((a,r)=>a+(r.olf>0?r.cbm/r.olf:0),0);
+  const tot=rows.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,cost:a.cost+r.cost}),{trip:0,do:0,dp:0,cbm:0,cost:0});
   const olf=totCap>0?tot.cbm/totCap:0;
 
   document.getElementById('kpi-cost').textContent=fmtK(tot.cost);
@@ -473,7 +490,13 @@ function setMode(m,btn){vmode=m;document.querySelectorAll('.tgl-btn').forEach(b=
 function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctoggle').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTrend(getFil());}
 function setTab(t,btn){ttab=t;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
 function srt(k){if(skey===k)sasc=!sasc;else{skey=k;sasc=false;}render();}
-function toggleGrp(id){const el=document.getElementById('grp-'+id);el.style.display=el.style.display==='none'?'block':'none';}
+function toggleGrp(id){
+  const el=document.getElementById('grp-'+id);
+  const arr=document.getElementById('arr-'+id);
+  const open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  arr.classList.toggle('open',!open);
+}
 
 loadData();
 </script>
