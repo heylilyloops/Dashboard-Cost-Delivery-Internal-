@@ -3,627 +3,478 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Cost DK — CORP TLO</title>
+<title>Dashboard Cost DK — Corp Tallo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0c10;
-    --surface: #111318;
-    --surface2: #181c23;
-    --border: #1e2330;
-    --accent: #00e5a0;
-    --accent2: #0090ff;
-    --warn: #ffaa00;
-    --danger: #ff4444;
-    --text: #e8eaf0;
-    --text2: #7a8099;
-    --text3: #4a5068;
-    --green: #00e5a0;
-    --amber: #ffaa00;
-    --red: #ff4444;
-    --font-mono: 'Space Mono', monospace;
-    --font-sans: 'DM Sans', sans-serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 14px; min-height: 100vh; }
+:root {
+  --sidebar-bg:#1a2e6b;--sidebar-active:#2d4a9e;--sidebar-hover:#243580;
+  --sidebar-text:#c8d4f5;--sidebar-dim:#7a92cc;--sidebar-section:#5a76c0;
+  --accent:#2563eb;--accent-light:#eff4ff;--bg:#f4f6fb;--surface:#ffffff;
+  --border:#e2e8f0;--border-light:#f1f5f9;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;
+  --green:#16a34a;--green-bg:#f0fdf4;--amber:#d97706;--amber-bg:#fffbeb;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:13px;}
 
-  /* LOADING */
-  #loading-screen {
-    position: fixed; inset: 0; background: var(--bg); z-index: 999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-  }
-  .spinner {
-    width: 40px; height: 40px; border: 2px solid var(--border);
-    border-top-color: var(--accent); border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #loading-url { font-family: var(--font-mono); font-size: 11px; color: var(--text3); max-width: 400px; text-align: center; }
+#loading-screen{position:fixed;inset:0;background:#fff;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#loading-url{font-family:var(--mono);font-size:10px;color:var(--text3);max-width:380px;text-align:center;}
+#error-screen{position:fixed;inset:0;background:#fff;z-index:998;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;}
+#error-screen h2{color:var(--red);font-weight:700;}
+#error-screen p{color:var(--text2);text-align:center;max-width:460px;line-height:1.6;}
+.btn-primary{padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);}
 
-  /* ERROR */
-  #error-screen {
-    position: fixed; inset: 0; background: var(--bg); z-index: 998;
-    display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 32px;
-  }
-  #error-screen h2 { color: var(--danger); font-family: var(--font-mono); }
-  #error-screen p { color: var(--text2); text-align: center; max-width: 500px; line-height: 1.6; }
-  .btn { padding: 10px 24px; background: var(--accent); color: #000; border: none; border-radius: 6px; font-family: var(--font-mono); font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-  .btn:hover { opacity: 0.8; }
+/* SIDEBAR */
+.sidebar{width:215px;min-width:215px;background:var(--sidebar-bg);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:#2d4a9e;border-radius:4px;}
+.sidebar-brand{padding:16px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);}
+.brand-icon{width:32px;height:32px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;font-family:var(--mono);flex-shrink:0;}
+.brand-name{font-size:13px;font-weight:700;color:#fff;}
+.brand-sub{font-size:9px;color:var(--sidebar-dim);margin-top:1px;letter-spacing:.04em;}
+.sb-section{padding:14px 14px 5px;font-size:9px;font-weight:700;color:var(--sidebar-section);letter-spacing:.12em;text-transform:uppercase;}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 14px;color:var(--sidebar-text);text-decoration:none;font-size:12px;font-weight:500;cursor:pointer;transition:background .15s;border:none;background:transparent;width:100%;text-align:left;}
+.sb-item:hover{background:var(--sidebar-hover);}
+.sb-item.active{background:var(--sidebar-active);color:#fff;}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;font-family:var(--mono);}
+.sb-sub{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 30px;color:var(--sidebar-dim);text-decoration:none;font-size:11px;cursor:pointer;transition:all .15s;border:none;background:transparent;width:100%;}
+.sb-sub:hover{color:var(--sidebar-text);background:var(--sidebar-hover);}
+.sb-sub.active{color:#fff;}
+.sb-sub-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
 
-  /* LAYOUT */
-  #dashboard { display: none; flex-direction: column; min-height: 100vh; }
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
-  /* HEADER */
-  header {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .site-badge {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-    background: var(--accent); color: #000; padding: 3px 10px; border-radius: 4px; letter-spacing: 0.05em;
-  }
-  .header-title { font-size: 15px; font-weight: 600; color: var(--text); }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .timestamp { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
-  .btn-refresh {
-    padding: 6px 14px; background: transparent; border: 1px solid var(--border);
-    color: var(--text2); border-radius: 5px; font-size: 12px; cursor: pointer; transition: all 0.2s;
-    font-family: var(--font-mono);
-  }
-  .btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;height:50px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.page-title{font-size:15px;font-weight:700;color:var(--text);}
+.toggle-group{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px;}
+.tgl-btn{padding:3px 12px;border-radius:4px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;font-family:var(--font);}
+.tgl-btn.active{background:var(--accent);color:#fff;}
+.top-select{border:1px solid var(--border);background:var(--surface);color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;font-family:var(--font);outline:none;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.update-badge{background:var(--accent-light);color:var(--accent);padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;font-family:var(--mono);}
+.btn-refresh{display:flex;align-items:center;gap:4px;padding:5px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:6px;font-size:12px;cursor:pointer;transition:all .15s;font-family:var(--font);}
+.btn-refresh:hover{border-color:var(--accent);color:var(--accent);}
 
-  /* NAV SITE */
-  .site-nav {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 0 24px; display: flex; gap: 4px; overflow-x: auto;
-  }
-  .site-nav a {
-    padding: 10px 16px; font-size: 12px; font-family: var(--font-mono);
-    color: var(--text3); text-decoration: none; border-bottom: 2px solid transparent;
-    white-space: nowrap; transition: all 0.2s;
-  }
-  .site-nav a:hover { color: var(--text2); }
-  .site-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+.content{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
 
-  /* FILTER BAR */
-  .filter-bar {
-    background: var(--surface2); border-bottom: 1px solid var(--border);
-    padding: 12px 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
-  }
-  .filter-group { display: flex; flex-direction: column; gap: 4px; }
-  .filter-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
-  select, input[type="date"] {
-    background: var(--surface); border: 1px solid var(--border); color: var(--text);
-    padding: 6px 10px; border-radius: 5px; font-size: 12px; font-family: var(--font-sans);
-    outline: none; cursor: pointer; transition: border-color 0.2s;
-  }
-  select:hover, input[type="date"]:hover { border-color: var(--text3); }
-  select:focus, input[type="date"]:focus { border-color: var(--accent); }
-  .filter-date { display: flex; gap: 6px; align-items: center; }
-  .filter-date span { color: var(--text3); font-size: 12px; }
+/* FILTER */
+.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;}
+.fg{display:flex;flex-direction:column;gap:3px;}
+.fl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;}
+.fg select,.fg input{border:1px solid var(--border);background:var(--bg);color:var(--text);padding:5px 9px;border-radius:6px;font-size:12px;font-family:var(--font);outline:none;transition:border-color .15s;min-width:110px;}
+.fg select:focus,.fg input:focus{border-color:var(--accent);}
+.date-row{display:flex;gap:5px;align-items:center;}
+.date-row span{color:var(--text3);font-size:11px;}
 
-  /* MAIN */
-  main { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
+@media(max-width:1500px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;transition:box-shadow .15s;}
+.kpi-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.kpi-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
+.kpi-value{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--text);line-height:1;}
+.kpi-value.blue{color:var(--accent);}
+.kpi-sub{font-size:10px;color:var(--text3);margin-top:4px;}
+.olf-pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+.olf-pill.green{background:var(--green-bg);color:var(--green);}
+.olf-pill.amber{background:var(--amber-bg);color:var(--amber);}
+.olf-pill.red{background:var(--red-bg);color:var(--red);}
 
-  /* KPI CARDS */
-  .kpi-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
-  @media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
-  @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-  .kpi-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-    padding: 16px; display: flex; flex-direction: column; gap: 6px;
-    transition: border-color 0.2s;
-  }
-  .kpi-card:hover { border-color: var(--text3); }
-  .kpi-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
-  .kpi-value { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
-  .kpi-value.accent { color: var(--accent); }
-  .kpi-sub { font-size: 11px; color: var(--text3); }
-  .olf-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;}
+@media(max-width:1100px){.charts-grid{grid-template-columns:1fr;}}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.chart-title{font-size:13px;font-weight:700;color:var(--text);}
+.ctoggle-group{display:flex;gap:3px;}
+.ctoggle{padding:3px 9px;border:1px solid var(--border);background:transparent;color:var(--text2);border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--font);}
+.ctoggle.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+.chart-wrap{position:relative;height:230px;}
 
-  /* CHARTS */
-  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 1100px) { .charts-grid { grid-template-columns: 1fr; } }
-  .chart-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px;
-  }
-  .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .chart-title { font-size: 13px; font-weight: 600; color: var(--text); }
-  .chart-toggle { display: flex; gap: 4px; }
-  .toggle-btn {
-    padding: 4px 10px; background: transparent; border: 1px solid var(--border);
-    color: var(--text3); border-radius: 4px; font-size: 11px; cursor: pointer;
-    font-family: var(--font-mono); transition: all 0.2s;
-  }
-  .toggle-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
-  .chart-wrap { position: relative; height: 280px; }
-
-  /* TABLE */
-  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .table-tabs { display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; }
-  .tab-btn {
-    padding: 10px 16px; background: transparent; border: none; color: var(--text3);
-    font-size: 12px; cursor: pointer; white-space: nowrap; font-family: var(--font-mono);
-    border-bottom: 2px solid transparent; transition: all 0.2s;
-  }
-  .tab-btn:hover { color: var(--text2); }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  thead { position: sticky; top: 0; z-index: 10; }
-  th {
-    background: var(--surface2); color: var(--text3); font-family: var(--font-mono);
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
-    padding: 10px 12px; text-align: right; white-space: nowrap; cursor: pointer;
-    border-bottom: 1px solid var(--border); user-select: none;
-  }
-  th:first-child { text-align: left; }
-  th:hover { color: var(--text); }
-  th.sorted { color: var(--accent); }
-  td {
-    padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--border);
-    color: var(--text); font-family: var(--font-mono); font-size: 12px;
-  }
-  td:first-child { text-align: left; font-family: var(--font-sans); font-size: 13px; font-weight: 500; }
-  tr:hover td { background: var(--surface2); }
-  tfoot td { background: var(--surface2); font-weight: 700; color: var(--accent); border-top: 1px solid var(--border); }
-  tfoot td:first-child { color: var(--text2); }
-  .olf-cell { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
-
-  /* EMPTY STATE */
-  .empty { padding: 48px; text-align: center; color: var(--text3); font-family: var(--font-mono); font-size: 13px; }
+/* TABLE */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.table-top{padding:14px 16px 0;}
+.table-title{font-size:13px;font-weight:700;color:var(--text);}
+.table-tabs{display:flex;padding:0 16px;margin-top:8px;border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab-btn{padding:7px 13px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--font);margin-bottom:-1px;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+.table-wrap{overflow-x:auto;max-height:400px;overflow-y:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead{position:sticky;top:0;z-index:5;}
+th{background:var(--bg);color:var(--text2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:right;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);transition:color .15s;}
+th:first-child{text-align:left;}
+th:hover{color:var(--accent);}
+td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-light);color:var(--text);font-family:var(--mono);font-size:12px;}
+td:first-child{text-align:left;font-family:var(--font);font-weight:500;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--accent-light);}
+tfoot td{background:var(--bg);font-weight:700;border-top:2px solid var(--border);}
+tfoot td:first-child{color:var(--text2);}
+.olf-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--font);}
+.olf-badge.green{background:var(--green-bg);color:var(--green);}
+.olf-badge.amber{background:var(--amber-bg);color:var(--amber);}
+.olf-badge.red{background:var(--red-bg);color:var(--red);}
+.empty{padding:40px;text-align:center;color:var(--text3);font-size:13px;}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading-screen">
   <div class="spinner"></div>
-  <div style="font-family:var(--font-mono);font-size:13px;color:var(--text2);">Memuat data...</div>
+  <div style="font-size:13px;color:var(--text2);font-weight:500;">Memuat data...</div>
   <div id="loading-url"></div>
 </div>
-
-<!-- ERROR -->
 <div id="error-screen">
-  <h2>⚠ Gagal memuat data</h2>
-  <p id="error-msg">Tidak dapat mengambil data dari sumber. Pastikan URL CSV benar dan dapat diakses.</p>
-  <button class="btn" onclick="loadData()">↺ Coba Lagi</button>
+  <h2>Gagal memuat data</h2>
+  <p id="error-msg">Tidak dapat mengambil data CSV.</p>
+  <button class="btn-primary" onclick="loadData()">↺ Coba Lagi</button>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <header>
-    <div class="header-left">
-      <span class="site-badge" id="site-badge">HCI JBK</span>
-      <span class="header-title">Cost Delivery Internal — Dalam Kota</span>
+<div id="app" style="display:none;width:100%;height:100vh;overflow:hidden;">
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">DK</div>
+      <div><div class="brand-name">Cost DK</div><div class="brand-sub">DASHBOARD PENGIRIMAN</div></div>
     </div>
-    <div class="header-right">
-      <span class="timestamp" id="timestamp">—</span>
-      <button class="btn-refresh" onclick="loadData()">↺ Refresh</button>
+    <div class="sb-section">MENU</div>
+    <button class="sb-item active"><span class="sb-dot" style="background:#60a5fa"></span>Overview</button>
+    <div class="sb-section">SITE</div>
+    <button class="sb-item" onclick="toggleGrp('jababeka')"><span class="sb-dot" style="background:#34d399"></span>Jababeka<span class="sb-badge">3</span></button>
+    <div id="grp-jababeka">
+      <a class="sb-sub active" href="hci_jababeka_dashboard.html"><span class="sb-sub-dot"></span>HCI Jababeka</a>
+      <a class="sb-sub" href="ahi_jababeka_dashboard.html"><span class="sb-sub-dot"></span>AHI Jababeka</a>
+      <a class="sb-sub" href="kls_jababeka_dashboard.html"><span class="sb-sub-dot"></span>KLS Jababeka</a>
     </div>
-  </header>
-
-  <nav class="site-nav">
-    <a href="hci_jababeka_dashboard.html" class="active">HCI Jababeka</a>
-    <a href="ahi_jababeka_dashboard.html">AHI Jababeka</a>
-    <a href="kls_jababeka_dashboard.html">KLS Jababeka</a>
-    <a href="hci_cikupa_dashboard.html">HCI Cikupa</a>
-    <a href="corp_sidoarjo_dashboard.html">Corp Sidoarjo</a>
-    <a href="corp_tallo_dashboard.html">Corp Tallo</a>
-    <a href="corp_tamora_dashboard.html">Corp Tamora</a>
-  </nav>
-
-  <div class="filter-bar">
-    <div class="filter-group">
-      <div class="filter-label">Periode</div>
-      <div class="filter-date">
-        <input type="date" id="f-date-from">
-        <span>—</span>
-        <input type="date" id="f-date-to">
-      </div>
+    <button class="sb-item" onclick="toggleGrp('cikupa')"><span class="sb-dot" style="background:#fbbf24"></span>Cikupa<span class="sb-badge">1</span></button>
+    <div id="grp-cikupa" style="display:none">
+      <a class="sb-sub" href="hci_cikupa_dashboard.html"><span class="sb-sub-dot"></span>HCI Cikupa</a>
     </div>
-    <div class="filter-group">
-      <div class="filter-label">Shipment Area</div>
-      <select id="f-shipment"><option value="">Semua</option><option value="DALAM KOTA">Dalam Kota</option><option value="LUAR KOTA">Luar Kota</option></select>
-    </div>
-    <div class="filter-group">
-      <div class="filter-label">Type Delivery</div>
-      <select id="f-delivery"><option value="">Semua</option><option value="Store">Store</option><option value="Customer">Customer</option><option value="HUB">HUB</option><option value="Other Delivery">Other Delivery</option><option value="Satelite">Satelite</option></select>
-    </div>
-    <div class="filter-group">
-      <div class="filter-label">Kategori</div>
-      <select id="f-kategori"><option value="">Semua</option><option value="REGULAR">Regular</option><option value="NON REGULAR">Non Regular</option></select>
-    </div>
-    <div class="filter-group">
-      <div class="filter-label">Type Armada</div>
-      <select id="f-armada"><option value="">Semua</option></select>
+    <button class="sb-item" onclick="toggleGrp('corp')"><span class="sb-dot" style="background:#a78bfa"></span>Corp<span class="sb-badge">3</span></button>
+    <div id="grp-corp" style="display:none">
+      <a class="sb-sub" href="corp_sidoarjo_dashboard.html"><span class="sb-sub-dot"></span>Sidoarjo</a>
+      <a class="sb-sub" href="corp_tallo_dashboard.html"><span class="sb-sub-dot"></span>Tallo</a>
+      <a class="sb-sub" href="corp_tamora_dashboard.html"><span class="sb-sub-dot"></span>Tamora</a>
     </div>
   </div>
 
-  <main>
-    <!-- KPI -->
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="kpi-cost">—</div><div class="kpi-sub">IDR</div></div>
-      <div class="kpi-card"><div class="kpi-label">Total Trip</div><div class="kpi-value accent" id="kpi-trip">—</div><div class="kpi-sub">LC</div></div>
-      <div class="kpi-card"><div class="kpi-label">Total DO</div><div class="kpi-value" id="kpi-do">—</div><div class="kpi-sub">Delivery Order</div></div>
-      <div class="kpi-card"><div class="kpi-label">Total DP</div><div class="kpi-value" id="kpi-dp">—</div><div class="kpi-sub">Drop Point</div></div>
-      <div class="kpi-card"><div class="kpi-label">OLF</div><div class="kpi-value" id="kpi-olf">—</div><div class="kpi-sub" id="kpi-olf-sub">CBM/Kapasitas</div></div>
-      <div class="kpi-card"><div class="kpi-label">Cost / DO</div><div class="kpi-value" id="kpi-costdo">—</div><div class="kpi-sub">IDR per DO</div></div>
-      <div class="kpi-card"><div class="kpi-label">Cost / CBM</div><div class="kpi-value" id="kpi-costcbm">—</div><div class="kpi-sub">IDR per CBM</div></div>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="page-title" id="page-title">HCI Jababeka</div>
+        <div class="toggle-group">
+          <button class="tgl-btn active" onclick="setMode('full',this)">Full Period</button>
+          <button class="tgl-btn" onclick="setMode('mtd',this)">MTD</button>
+        </div>
+        <select class="top-select" id="f-month" onchange="render()">
+          <option value="">Semua Bulan</option>
+          <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+          <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+          <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+          <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+        </select>
+      </div>
+      <div class="topbar-right">
+        <span class="update-badge" id="timestamp">—</span>
+        <button class="btn-refresh" onclick="loadData()">↺ Refresh</button>
+      </div>
     </div>
 
-    <!-- CHARTS -->
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">Trend per Jalur</div>
-          <div class="chart-toggle">
-            <button class="toggle-btn active" onclick="setTrendMetric('cost',this)">Cost</button>
-            <button class="toggle-btn" onclick="setTrendMetric('costdo',this)">Cost/DO</button>
-            <button class="toggle-btn" onclick="setTrendMetric('costcbm',this)">Cost/CBM</button>
+    <div class="content">
+      <div class="filter-bar">
+        <div class="fg"><div class="fl">Periode</div>
+          <div class="date-row">
+            <input type="date" id="f-from" onchange="render()">
+            <span>—</span>
+            <input type="date" id="f-to" onchange="render()">
           </div>
         </div>
-        <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">OLF per Jalur (%)</div>
+        <div class="fg"><div class="fl">Shipment Area</div>
+          <select id="f-ship" onchange="render()"><option value="">Semua</option><option value="DALAM KOTA">Dalam Kota</option><option value="LUAR KOTA">Luar Kota</option></select>
         </div>
-        <div class="chart-wrap"><canvas id="chart-olf"></canvas></div>
+        <div class="fg"><div class="fl">Type Delivery</div>
+          <select id="f-del" onchange="render()"><option value="">Semua</option><option>Store</option><option>Customer</option><option>HUB</option><option>Other Delivery</option><option>Satelite</option></select>
+        </div>
+        <div class="fg"><div class="fl">Kategori</div>
+          <select id="f-kat" onchange="render()"><option value="">Semua</option><option value="REGULAR">Regular</option><option value="NON REGULAR">Non Regular</option></select>
+        </div>
+        <div class="fg"><div class="fl">Type Armada</div>
+          <select id="f-arm" onchange="render()"></select>
+        </div>
       </div>
-    </div>
 
-    <!-- TABLE -->
-    <div class="table-card">
-      <div class="table-tabs">
-        <button class="tab-btn active" onclick="setTab('',this)">Semua</button>
-        <button class="tab-btn" onclick="setTab('Customer',this)">Customer</button>
-        <button class="tab-btn" onclick="setTab('Store',this)">Store</button>
-        <button class="tab-btn" onclick="setTab('HUB',this)">HUB</button>
-        <button class="tab-btn" onclick="setTab('Other Delivery',this)">Other Delivery</button>
-        <button class="tab-btn" onclick="setTab('Satelite',this)">Satelite</button>
+      <!-- KPI — 8 cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value blue" id="kpi-cost">—</div><div class="kpi-sub">IDR</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total Trip</div><div class="kpi-value" id="kpi-trip">—</div><div class="kpi-sub">LC</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total DO</div><div class="kpi-value" id="kpi-do">—</div><div class="kpi-sub">Delivery Order</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total DP</div><div class="kpi-value" id="kpi-dp">—</div><div class="kpi-sub">Drop Point</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total CBM</div><div class="kpi-value" id="kpi-cbm">—</div><div class="kpi-sub">m³</div></div>
+        <div class="kpi-card"><div class="kpi-label">OLF</div><div class="kpi-value" id="kpi-olf">—</div><div id="kpi-olf-pill" class="olf-pill green">● Optimal</div></div>
+        <div class="kpi-card"><div class="kpi-label">Cost / DO</div><div class="kpi-value" id="kpi-cdo">—</div><div class="kpi-sub">IDR per DO</div></div>
+        <div class="kpi-card"><div class="kpi-label">Cost / CBM</div><div class="kpi-value" id="kpi-ccbm">—</div><div class="kpi-sub">IDR per CBM</div></div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th onclick="sortTable('jalur')">Jalur</th>
-              <th onclick="sortTable('trip')">Trip</th>
-              <th onclick="sortTable('do')">DO</th>
-              <th onclick="sortTable('dp')">DP</th>
-              <th onclick="sortTable('cbm')">CBM</th>
-              <th onclick="sortTable('olf')">OLF%</th>
-              <th onclick="sortTable('cost')">Total Cost</th>
-              <th onclick="sortTable('costtrip')">Cost/Trip</th>
-              <th onclick="sortTable('costdo')">Cost/DO</th>
-              <th onclick="sortTable('costdp')">Cost/DP</th>
-              <th onclick="sortTable('costcbm')">Cost/CBM</th>
-              <th onclick="sortTable('ujptrip')">UJP/Trip</th>
-              <th onclick="sortTable('vrtrip')">VR/Trip</th>
-              <th onclick="sortTable('mpptrip')">MPP/Trip</th>
-            </tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-          <tfoot id="table-foot"></tfoot>
-        </table>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">Trend Cost per Jalur</div>
+            <div class="ctoggle-group">
+              <button class="ctoggle active" onclick="setTrend('cost',this)">Cost</button>
+              <button class="ctoggle" onclick="setTrend('cdo',this)">Cost/DO</button>
+              <button class="ctoggle" onclick="setTrend('ccbm',this)">Cost/CBM</button>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="c-trend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><div class="chart-title">OLF per Jalur (%)</div></div>
+          <div class="chart-wrap"><canvas id="c-olf"></canvas></div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-top"><div class="table-title">Detail per Jalur</div></div>
+        <div class="table-tabs">
+          <button class="tab-btn active" onclick="setTab('',this)">Semua</button>
+          <button class="tab-btn" onclick="setTab('Customer',this)">Customer</button>
+          <button class="tab-btn" onclick="setTab('Store',this)">Store</button>
+          <button class="tab-btn" onclick="setTab('HUB',this)">HUB</button>
+          <button class="tab-btn" onclick="setTab('Other Delivery',this)">Other Delivery</button>
+          <button class="tab-btn" onclick="setTab('Satelite',this)">Satelite</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th onclick="srt('jalur')">Jalur</th>
+              <th onclick="srt('trip')">Trip</th>
+              <th onclick="srt('do')">DO</th>
+              <th onclick="srt('dp')">DP</th>
+              <th onclick="srt('cbm')">CBM</th>
+              <th onclick="srt('olf')">OLF%</th>
+              <th onclick="srt('cost')">Total Cost</th>
+              <th onclick="srt('ctrip')">Cost/Trip</th>
+              <th onclick="srt('cdo')">Cost/DO</th>
+              <th onclick="srt('cdp')">Cost/DP</th>
+              <th onclick="srt('ccbm')">Cost/CBM</th>
+              <th onclick="srt('dodp')">DO/DP</th>
+              <th onclick="srt('dotrip')">DO/Trip</th>
+              <th onclick="srt('cbmdo')">CBM/DO</th>
+              <th onclick="srt('cbmdp')">CBM/DP</th>
+              <th onclick="srt('ujp')">UJP/Trip</th>
+              <th onclick="srt('vr')">VR/Trip</th>
+              <th onclick="srt('mpp')">MPP/Trip</th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+            <tfoot id="tfoot"></tfoot>
+          </table>
+        </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
-const CONFIG = {
-  CSV_URL: 'https://raw.githubusercontent.com/heylilyloops/Dashboard-Cost-Delivery-Internal-/main/data/CORP_TALLO.csv',
-  SITE_LABEL: 'CORP TLO',
-  OWNER_FILTER: '',  // kosongkan '' jika tidak perlu filter owner
-};
+const CONFIG={CSV_URL:'https://raw.githubusercontent.com/heylilyloops/Dashboard-Cost-Delivery-Internal-/main/data/CORP_TALLO.csv',SITE_LABEL:'Corp Tallo',OWNER_FILTER:''};
+let raw=[],tmet='cost',ttab='',skey='cost',sasc=false,vmode='full',cTrend=null,cOlf=null;
+const MN=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+const fmt=n=>Number.isFinite(n)?Math.round(n).toLocaleString('id-ID'):'—';
+const fmt2=n=>Number.isFinite(n)?n.toFixed(2):'—';
+const fmtK=n=>{if(!Number.isFinite(n))return'—';if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(0)+'K';return Math.round(n).toString();};
+const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
+// FIX: titik sebagai desimal, koma sebagai separator ribuan
+const pn=v=>{const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;};
+const pd=s=>{if(!s)return null;const p=s.split('/');return p.length===3?new Date(p[2],p[1]-1,p[0]):new Date(s);};
+const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let rawData = [];
-let trendMetric = 'cost';
-let tableTab = '';
-let sortKey = 'cost';
-let sortAsc = false;
-let chartTrend = null;
-let chartOlf = null;
-
-// ─── UTILS ────────────────────────────────────────────────────────────────────
-const fmt = n => Number.isFinite(n) ? Math.round(n).toLocaleString('id-ID') : '—';
-const fmtK = n => Number.isFinite(n) ? (n >= 1e9 ? (n/1e9).toFixed(1)+'B' : n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : Math.round(n).toString()) : '—';
-const pct = n => Number.isFinite(n) ? (n*100).toFixed(1)+'%' : '—';
-const olfColor = v => v >= 0.75 ? '#00e5a0' : v >= 0.5 ? '#ffaa00' : '#ff4444';
-const parseNum = v => { const n = parseFloat(String(v).replace(/,/g,'').replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; };
-const parseDate = s => { if(!s)return null; const p=s.split('/'); return p.length===3?new Date(p[2],p[1]-1,p[0]):new Date(s); };
-
-// Parse CSV
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,''));
-  return lines.slice(1).map(line => {
-    const vals = line.match(/(".*?"|[^,]+|(?<=,)(?=,)|(?<=,)$|^(?=,))/g) || line.split(',');
-    const obj = {};
-    headers.forEach((h,i) => { obj[h] = (vals[i]||'').replace(/"/g,'').trim(); });
-    return obj;
+function parseCSV(t){
+  const lines=t.trim().split('\n');
+  const hdr=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+  return lines.slice(1).filter(l=>l.trim()).map(line=>{
+    const vals=[];let cur='',inQ=false;
+    for(const c of line){if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){vals.push(cur.trim());cur='';}else cur+=c;}
+    vals.push(cur.trim());
+    const o={};hdr.forEach((h,i)=>{o[h]=(vals[i]||'').replace(/"/g,'').trim();});return o;
   });
 }
 
-// ─── LOAD DATA ────────────────────────────────────────────────────────────────
-async function loadData() {
-  document.getElementById('loading-screen').style.display = 'flex';
-  document.getElementById('error-screen').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('loading-url').textContent = CONFIG.CSV_URL;
-
-  try {
-    const url = CONFIG.CSV_URL + (CONFIG.CACHE_BUST ? '?t='+Date.now() : '');
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    rawData = parseCSV(text);
-
-    // Populate armada filter
-    const armadas = [...new Set(rawData.map(r => r['Type Armada']).filter(Boolean))].sort();
-    const sel = document.getElementById('f-armada');
-    sel.innerHTML = '<option value="">Semua</option>' + armadas.map(a => `<option value="${a}">${a}</option>`).join('');
-
-    document.getElementById('site-badge').textContent = CONFIG.SITE_LABEL;
-    document.getElementById('timestamp').textContent = 'Diperbarui ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('loading-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'flex';
+async function loadData(){
+  document.getElementById('loading-screen').style.display='flex';
+  document.getElementById('error-screen').style.display='none';
+  document.getElementById('app').style.display='none';
+  document.getElementById('loading-url').textContent=CONFIG.CSV_URL;
+  try{
+    const res=await fetch(CONFIG.CSV_URL+'?t='+Date.now());
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    raw=parseCSV(await res.text());
+    const arms=[...new Set(raw.map(r=>r['Type Armada']).filter(Boolean))].sort();
+    const sel=document.getElementById('f-arm');
+    sel.innerHTML='<option value="">Semua</option>'+arms.map(a=>`<option value="${a}">${a}</option>`).join('');
+    document.getElementById('page-title').textContent=CONFIG.SITE_LABEL;
+    document.getElementById('timestamp').textContent='Update: '+new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+    document.getElementById('loading-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
     render();
-  } catch(e) {
-    document.getElementById('loading-screen').style.display = 'none';
-    document.getElementById('error-screen').style.display = 'flex';
-    document.getElementById('error-msg').textContent = 'Error: ' + e.message + '. Pastikan file CSV ada di GitHub dan URL benar.';
+  }catch(e){
+    document.getElementById('loading-screen').style.display='none';
+    document.getElementById('error-screen').style.display='flex';
+    document.getElementById('error-msg').textContent='Error: '+e.message;
   }
 }
 
-// ─── FILTER ───────────────────────────────────────────────────────────────────
-function getFiltered() {
-  const from = document.getElementById('f-date-from').value;
-  const to = document.getElementById('f-date-to').value;
-  const ship = document.getElementById('f-shipment').value;
-  const del = document.getElementById('f-delivery').value;
-  const kat = document.getElementById('f-kategori').value;
-  const arm = document.getElementById('f-armada').value;
-
-  return rawData.filter(r => {
-    if (CONFIG.OWNER_FILTER && r['OWNER'] !== CONFIG.OWNER_FILTER) return false;
-    if (ship && r['Shipment Area'] !== ship) return false;
-    if (del && r['Type Delivery'] !== del) return false;
-    if (kat && r['Kategori'] !== kat) return false;
-    if (arm && r['Type Armada'] !== arm) return false;
-    if (from || to) {
-      const d = parseDate(r['Delivery Date']);
-      if (!d) return false;
-      if (from && d < new Date(from)) return false;
-      if (to && d > new Date(to)) return false;
-    }
+function getFil(){
+  const from=document.getElementById('f-from').value;
+  const to=document.getElementById('f-to').value;
+  const ship=document.getElementById('f-ship').value;
+  const del=document.getElementById('f-del').value;
+  const kat=document.getElementById('f-kat').value;
+  const arm=document.getElementById('f-arm').value;
+  const mon=document.getElementById('f-month').value;
+  const today=new Date();
+  return raw.filter(r=>{
+    if(CONFIG.OWNER_FILTER&&r['OWNER']!==CONFIG.OWNER_FILTER)return false;
+    if(ship&&r['Shipment Area']!==ship)return false;
+    if(del&&r['Type Delivery']!==del)return false;
+    if(kat&&r['Kategori']!==kat)return false;
+    if(arm&&r['Type Armada']!==arm)return false;
+    if(mon&&r['Month']!==mon)return false;
+    const d=pd(r['Delivery Date']);
+    if(vmode==='mtd'&&d){if(d.getMonth()!==today.getMonth()||d.getFullYear()!==today.getFullYear())return false;}
+    if(vmode==='full'){if(from&&d&&d<new Date(from))return false;if(to&&d&&d>new Date(to))return false;}
     return true;
   });
 }
 
-// ─── AGGREGATE ────────────────────────────────────────────────────────────────
-function aggregate(data) {
-  const byJalur = {};
-  data.forEach(r => {
-    const j = r['Jalur'] || 'Lainnya';
-    if (!byJalur[j]) byJalur[j] = {trip:0,do:0,dp:0,cbm:0,cap:0,cost:0,ujp:0,vr:0,mpp:0};
-    const b = byJalur[j];
-    b.trip++;
-    b.do += parseNum(r['DO']);
-    b.dp += parseNum(r['DP']);
-    b.cbm += parseNum(r['CBM']);
-    b.cap += parseNum(r['Capacity Armada']);
-    b.cost += parseNum(r['Total Cost']);
-    b.ujp += parseNum(r['UJP']);
-    b.vr += parseNum(r['Sewa Armada']);
-    b.mpp += parseNum(r['Prof Fee']);
+function agg(data){
+  const m={};
+  data.forEach(r=>{
+    const j=r['Jalur']||'Lainnya';
+    if(!m[j])m[j]={trip:0,do:0,dp:0,cbm:0,cap:0,cost:0,ujp:0,vr:0,mpp:0};
+    const b=m[j];b.trip++;
+    b.do+=pn(r['DO']);b.dp+=pn(r['DP']);b.cbm+=pn(r['CBM']);
+    b.cap+=pn(r['Capacity Armada']);b.cost+=pn(r['Total Cost']);
+    b.ujp+=pn(r['UJP']);b.vr+=pn(r['Sewa Armada']);b.mpp+=pn(r['Prof Fee']);
   });
-  return Object.entries(byJalur).map(([jalur, b]) => ({
-    jalur,
-    trip: b.trip, do: b.do, dp: b.dp, cbm: b.cbm,
-    olf: b.cap > 0 ? b.cbm / b.cap : 0,
-    cost: b.cost,
-    costtrip: b.trip > 0 ? b.cost / b.trip : 0,
-    costdo: b.do > 0 ? b.cost / b.do : 0,
-    costdp: b.dp > 0 ? b.cost / b.dp : 0,
-    costcbm: b.cbm > 0 ? b.cost / b.cbm : 0,
-    ujptrip: b.trip > 0 ? b.ujp / b.trip : 0,
-    vrtrip: b.trip > 0 ? b.vr / b.trip : 0,
-    mpptrip: b.trip > 0 ? b.mpp / b.trip : 0,
+  return Object.entries(m).map(([j,b])=>({
+    jalur:j,trip:b.trip,do:b.do,dp:b.dp,cbm:b.cbm,
+    olf:b.cap>0?b.cbm/b.cap:0,
+    cost:b.cost,
+    ctrip:b.trip>0?b.cost/b.trip:0,
+    cdo:b.do>0?b.cost/b.do:0,
+    cdp:b.dp>0?b.cost/b.dp:0,
+    ccbm:b.cbm>0?b.cost/b.cbm:0,
+    dodp:b.dp>0?b.do/b.dp:0,
+    dotrip:b.trip>0?b.do/b.trip:0,
+    cbmdo:b.do>0?b.cbm/b.do:0,
+    cbmdp:b.dp>0?b.cbm/b.dp:0,
+    ujp:b.trip>0?b.ujp/b.trip:0,
+    vr:b.trip>0?b.vr/b.trip:0,
+    mpp:b.trip>0?b.mpp/b.trip:0,
   }));
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-function render() {
-  const filtered = getFiltered();
-  const tabFiltered = tableTab ? filtered.filter(r => r['Type Delivery'] === tableTab) : filtered;
-  const rows = aggregate(tabFiltered);
+function render(){
+  const fil=getFil();
+  const rows=agg(ttab?fil.filter(r=>r['Type Delivery']===ttab):fil);
+  const tot=rows.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,cap:a.cap+r.olf>0?r.cbm/r.olf:0,cost:a.cost+r.cost}),{trip:0,do:0,dp:0,cbm:0,cap:0,cost:0});
+  // OLF: sum CBM / sum Capacity
+  const totCap=rows.reduce((a,r)=>a+(r.olf>0?r.cbm/r.olf:0),0);
+  const olf=totCap>0?tot.cbm/totCap:0;
 
-  // KPI
-  const tot = rows.reduce((a,r) => ({
-    trip: a.trip+r.trip, do: a.do+r.do, dp: a.dp+r.dp, cbm: a.cbm+r.cbm,
-    cap: a.cap+(r.olf>0?r.cbm/r.olf:0), cost: a.cost+r.cost
-  }), {trip:0,do:0,dp:0,cbm:0,cap:0,cost:0});
+  document.getElementById('kpi-cost').textContent=fmtK(tot.cost);
+  document.getElementById('kpi-trip').textContent=fmt(tot.trip);
+  document.getElementById('kpi-do').textContent=fmt(tot.do);
+  document.getElementById('kpi-dp').textContent=fmt(tot.dp);
+  document.getElementById('kpi-cbm').textContent=tot.cbm.toFixed(1);
+  document.getElementById('kpi-olf').textContent=pct(olf);
+  document.getElementById('kpi-cdo').textContent=fmtK(tot.do>0?tot.cost/tot.do:0);
+  document.getElementById('kpi-ccbm').textContent=fmtK(tot.cbm>0?tot.cost/tot.cbm:0);
 
-  const olf = tot.cap > 0 ? tot.cbm / tot.cap : 0;
-  document.getElementById('kpi-cost').textContent = fmtK(tot.cost);
-  document.getElementById('kpi-trip').textContent = fmt(tot.trip);
-  document.getElementById('kpi-do').textContent = fmt(tot.do);
-  document.getElementById('kpi-dp').textContent = fmt(tot.dp);
-  document.getElementById('kpi-olf').textContent = pct(olf);
-  document.getElementById('kpi-olf').style.color = olfColor(olf);
-  document.getElementById('kpi-costdo').textContent = fmtK(tot.do > 0 ? tot.cost/tot.do : 0);
-  document.getElementById('kpi-costcbm').textContent = fmtK(tot.cbm > 0 ? tot.cost/tot.cbm : 0);
+  const pill=document.getElementById('kpi-olf-pill');
+  const cls=oc(olf);pill.className='olf-pill '+cls;
+  pill.textContent=cls==='green'?'● Optimal':cls==='amber'?'● Cukup':'● Rendah';
 
-  renderTrend(filtered);
-  renderOlf(rows);
-  renderTable(rows);
+  renderTrend(fil);renderOlf(rows);renderTable(rows);
 }
 
-// ─── CHART TREND ──────────────────────────────────────────────────────────────
-function renderTrend(filtered) {
-  const byJalurMonth = {};
-  filtered.forEach(r => {
-    const j = r['Jalur'] || 'Lainnya';
-    const m = r['Month'] || '';
-    const key = j;
-    if (!byJalurMonth[key]) byJalurMonth[key] = {};
-    if (!byJalurMonth[key][m]) byJalurMonth[key][m] = {cost:0,do:0,cbm:0};
-    const b = byJalurMonth[key][m];
-    b.cost += parseNum(r['Total Cost']);
-    b.do += parseNum(r['DO']);
-    b.cbm += parseNum(r['CBM']);
+function renderTrend(fil){
+  const bm={};
+  fil.forEach(r=>{
+    const j=r['Jalur']||'Lainnya',mo=r['Month']||'';
+    if(!bm[j])bm[j]={};if(!bm[j][mo])bm[j][mo]={cost:0,do:0,cbm:0};
+    const b=bm[j][mo];b.cost+=pn(r['Total Cost']);b.do+=pn(r['DO']);b.cbm+=pn(r['CBM']);
   });
-
-  const months = [...new Set(filtered.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>Number(a)-Number(b));
-  const monthLabels = months.map(m => {
-    const names = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
-    return names[Number(m)] || m;
-  });
-
-  const jalurs = Object.keys(byJalurMonth).slice(0, 8);
-  const colors = ['#00e5a0','#0090ff','#ffaa00','#ff4444','#a855f7','#f97316','#06b6d4','#84cc16'];
-
-  const datasets = jalurs.map((j,i) => ({
-    label: j,
-    data: months.map(m => {
-      const b = byJalurMonth[j][m];
-      if (!b) return 0;
-      if (trendMetric === 'cost') return b.cost;
-      if (trendMetric === 'costdo') return b.do > 0 ? b.cost/b.do : 0;
-      if (trendMetric === 'costcbm') return b.cbm > 0 ? b.cost/b.cbm : 0;
-    }),
-    borderColor: colors[i % colors.length],
-    backgroundColor: colors[i % colors.length] + '22',
-    tension: 0.3, pointRadius: 4, borderWidth: 2, fill: false,
+  const months=[...new Set(fil.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>+a-+b);
+  const jalurs=Object.keys(bm).slice(0,8);
+  const colors=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#db2777','#65a30d'];
+  const datasets=jalurs.map((j,i)=>({
+    label:j,
+    data:months.map(mo=>{const b=bm[j][mo];if(!b)return 0;if(tmet==='cost')return b.cost;if(tmet==='cdo')return b.do>0?b.cost/b.do:0;return b.cbm>0?b.cost/b.cbm:0;}),
+    borderColor:colors[i%colors.length],backgroundColor:colors[i%colors.length]+'18',
+    tension:.3,pointRadius:3,borderWidth:2,fill:false,
   }));
-
-  if (chartTrend) chartTrend.destroy();
-  chartTrend = new Chart(document.getElementById('chart-trend'), {
-    type: 'line',
-    data: { labels: monthLabels, datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#7a8099', font: { size: 11 }, boxWidth: 12 } } },
-      scales: {
-        x: { grid: { color: '#1e2330' }, ticks: { color: '#7a8099', font: { size: 10 } } },
-        y: { grid: { color: '#1e2330' }, ticks: { color: '#7a8099', font: { size: 10 }, callback: v => fmtK(v) } },
-      }
-    }
-  });
+  if(cTrend)cTrend.destroy();
+  cTrend=new Chart(document.getElementById('c-trend'),{type:'line',data:{labels:months.map(m=>MN[+m]||m),datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
 }
 
-// ─── CHART OLF ────────────────────────────────────────────────────────────────
-function renderOlf(rows) {
-  const sorted = [...rows].sort((a,b) => b.olf - a.olf);
-  const labels = sorted.map(r => r.jalur);
-  const values = sorted.map(r => parseFloat((r.olf * 100).toFixed(1)));
-  const colors = values.map(v => v >= 75 ? '#00e5a0' : v >= 50 ? '#ffaa00' : '#ff4444');
-
-  if (chartOlf) chartOlf.destroy();
-  chartOlf = new Chart(document.getElementById('chart-olf'), {
-    type: 'bar',
-    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ctx.raw + '%' } }
-      },
-      scales: {
-        x: { grid: { color: '#1e2330' }, ticks: { color: '#7a8099', font: { size: 10 }, callback: v => v+'%' }, max: 100 },
-        y: { grid: { display: false }, ticks: { color: '#7a8099', font: { size: 10 } } },
-      }
-    }
-  });
+function renderOlf(rows){
+  const s=[...rows].sort((a,b)=>b.olf-a.olf);
+  const vals=s.map(r=>parseFloat((r.olf*100).toFixed(1)));
+  if(cOlf)cOlf.destroy();
+  cOlf=new Chart(document.getElementById('c-olf'),{type:'bar',data:{labels:s.map(r=>r.jalur),datasets:[{data:vals,backgroundColor:vals.map(v=>v>=75?'#16a34a':v>=50?'#d97706':'#dc2626'),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'%'}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>v+'%'},max:100},y:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}}}}});
 }
 
-// ─── TABLE ────────────────────────────────────────────────────────────────────
-function renderTable(rows) {
-  let sorted = [...rows].sort((a,b) => sortAsc ? a[sortKey]-b[sortKey] : b[sortKey]-a[sortKey]);
-  if (sortKey === 'jalur') sorted = [...rows].sort((a,b) => sortAsc ? a.jalur.localeCompare(b.jalur) : b.jalur.localeCompare(a.jalur));
+function renderTable(rows){
+  let sorted=[...rows].sort((a,b)=>sasc?a[skey]-b[skey]:b[skey]-a[skey]);
+  if(skey==='jalur')sorted=[...rows].sort((a,b)=>sasc?a.jalur.localeCompare(b.jalur):b.jalur.localeCompare(a.jalur));
+  const tb=document.getElementById('tbody');
+  if(!sorted.length){tb.innerHTML=`<tr><td colspan="18" class="empty">Tidak ada data</td></tr>`;return;}
+  tb.innerHTML=sorted.map(r=>`<tr>
+    <td>${r.jalur}</td>
+    <td>${fmt(r.trip)}</td><td>${fmt(r.do)}</td><td>${fmt(r.dp)}</td>
+    <td>${r.cbm.toFixed(1)}</td>
+    <td><span class="olf-badge ${oc(r.olf)}">${pct(r.olf)}</span></td>
+    <td>${fmt(r.cost)}</td><td>${fmt(r.ctrip)}</td><td>${fmt(r.cdo)}</td>
+    <td>${fmt(r.cdp)}</td><td>${fmt(r.ccbm)}</td>
+    <td>${fmt2(r.dodp)}</td><td>${fmt2(r.dotrip)}</td>
+    <td>${fmt2(r.cbmdo)}</td><td>${fmt2(r.cbmdp)}</td>
+    <td>${fmt(r.ujp)}</td><td>${fmt(r.vr)}</td><td>${fmt(r.mpp)}</td>
+  </tr>`).join('');
 
-  const tbody = document.getElementById('table-body');
-  if (sorted.length === 0) { tbody.innerHTML = `<tr><td colspan="14" class="empty">Tidak ada data</td></tr>`; return; }
-
-  tbody.innerHTML = sorted.map(r => `
-    <tr>
-      <td>${r.jalur}</td>
-      <td>${fmt(r.trip)}</td>
-      <td>${fmt(r.do)}</td>
-      <td>${fmt(r.dp)}</td>
-      <td>${r.cbm.toFixed(1)}</td>
-      <td><div class="olf-cell"><span class="olf-dot" style="background:${olfColor(r.olf)}"></span>${pct(r.olf)}</div></td>
-      <td>${fmt(r.cost)}</td>
-      <td>${fmt(r.costtrip)}</td>
-      <td>${fmt(r.costdo)}</td>
-      <td>${fmt(r.costdp)}</td>
-      <td>${fmt(r.costcbm)}</td>
-      <td>${fmt(r.ujptrip)}</td>
-      <td>${fmt(r.vrtrip)}</td>
-      <td>${fmt(r.mpptrip)}</td>
-    </tr>`).join('');
-
-  // Footer total
-  const t = sorted.reduce((a,r) => ({
-    trip:a.trip+r.trip, do:a.do+r.do, dp:a.dp+r.dp, cbm:a.cbm+r.cbm,
-    capest:a.capest+(r.olf>0?r.cbm/r.olf:0), cost:a.cost+r.cost,
-    ujp:a.ujp+(r.ujptrip*r.trip), vr:a.vr+(r.vrtrip*r.trip), mpp:a.mpp+(r.mpptrip*r.trip)
-  }), {trip:0,do:0,dp:0,cbm:0,capest:0,cost:0,ujp:0,vr:0,mpp:0});
-  const tolf = t.capest > 0 ? t.cbm/t.capest : 0;
-
-  document.getElementById('table-foot').innerHTML = `
-    <tr>
-      <td>TOTAL</td>
-      <td>${fmt(t.trip)}</td>
-      <td>${fmt(t.do)}</td>
-      <td>${fmt(t.dp)}</td>
-      <td>${t.cbm.toFixed(1)}</td>
-      <td><div class="olf-cell"><span class="olf-dot" style="background:${olfColor(tolf)}"></span>${pct(tolf)}</div></td>
-      <td>${fmt(t.cost)}</td>
-      <td>${fmt(t.trip>0?t.cost/t.trip:0)}</td>
-      <td>${fmt(t.do>0?t.cost/t.do:0)}</td>
-      <td>${fmt(t.dp>0?t.cost/t.dp:0)}</td>
-      <td>${fmt(t.cbm>0?t.cost/t.cbm:0)}</td>
-      <td>${fmt(t.trip>0?t.ujp/t.trip:0)}</td>
-      <td>${fmt(t.trip>0?t.vr/t.trip:0)}</td>
-      <td>${fmt(t.trip>0?t.mpp/t.trip:0)}</td>
-    </tr>`;
+  const t=sorted.reduce((a,r)=>({
+    trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,
+    ce:a.ce+(r.olf>0?r.cbm/r.olf:0),cost:a.cost+r.cost,
+    ujp:a.ujp+(r.ujp*r.trip),vr:a.vr+(r.vr*r.trip),mpp:a.mpp+(r.mpp*r.trip)
+  }),{trip:0,do:0,dp:0,cbm:0,ce:0,cost:0,ujp:0,vr:0,mpp:0});
+  const to=t.ce>0?t.cbm/t.ce:0;
+  document.getElementById('tfoot').innerHTML=`<tr>
+    <td>TOTAL</td>
+    <td>${fmt(t.trip)}</td><td>${fmt(t.do)}</td><td>${fmt(t.dp)}</td>
+    <td>${t.cbm.toFixed(1)}</td>
+    <td><span class="olf-badge ${oc(to)}">${pct(to)}</span></td>
+    <td>${fmt(t.cost)}</td><td>${fmt(t.trip>0?t.cost/t.trip:0)}</td>
+    <td>${fmt(t.do>0?t.cost/t.do:0)}</td><td>${fmt(t.dp>0?t.cost/t.dp:0)}</td>
+    <td>${fmt(t.cbm>0?t.cost/t.cbm:0)}</td>
+    <td>${fmt2(t.dp>0?t.do/t.dp:0)}</td><td>${fmt2(t.trip>0?t.do/t.trip:0)}</td>
+    <td>${fmt2(t.do>0?t.cbm/t.do:0)}</td><td>${fmt2(t.dp>0?t.cbm/t.dp:0)}</td>
+    <td>${fmt(t.trip>0?t.ujp/t.trip:0)}</td><td>${fmt(t.trip>0?t.vr/t.trip:0)}</td>
+    <td>${fmt(t.trip>0?t.mpp/t.trip:0)}</td>
+  </tr>`;
 }
 
-// ─── INTERACTIONS ─────────────────────────────────────────────────────────────
-function setTrendMetric(m, btn) {
-  trendMetric = m;
-  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderTrend(getFiltered());
-}
+function setMode(m,btn){vmode=m;document.querySelectorAll('.tgl-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctoggle').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTrend(getFil());}
+function setTab(t,btn){ttab=t;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function srt(k){if(skey===k)sasc=!sasc;else{skey=k;sasc=false;}render();}
+function toggleGrp(id){const el=document.getElementById('grp-'+id);el.style.display=el.style.display==='none'?'block':'none';}
 
-function setTab(tab, btn) {
-  tableTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  render();
-}
-
-function sortTable(key) {
-  if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = false; }
-  document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
-  render();
-}
-
-// Filter change
-['f-date-from','f-date-to','f-shipment','f-delivery','f-kategori','f-armada'].forEach(id => {
-  document.getElementById(id).addEventListener('change', render);
-});
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
 loadData();
 </script>
 </body>
