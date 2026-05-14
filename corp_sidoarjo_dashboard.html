@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Cost DK — Corp Sidoarjo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --sidebar-bg:#1a2e6b;--sidebar-active:#2d4a9e;--sidebar-hover:#243580;
@@ -14,11 +14,10 @@
   --border:#e2e8f0;--border-light:#f1f5f9;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;
   --green:#16a34a;--green-bg:#f0fdf4;--amber:#d97706;--amber-bg:#fffbeb;
   --red:#dc2626;--red-bg:#fef2f2;
-  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  --font:'Plus Jakarta Sans',sans-serif;--mono:'Inter',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:13px;}
-
 #loading-screen{position:fixed;inset:0;background:#fff;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
 .spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -27,8 +26,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 #error-screen h2{color:var(--red);font-weight:700;}
 #error-screen p{color:var(--text2);text-align:center;max-width:460px;line-height:1.6;}
 .btn-primary{padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);}
-
-/* SIDEBAR */
 .sidebar{width:215px;min-width:215px;background:var(--sidebar-bg);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
 .sidebar::-webkit-scrollbar{width:4px;}
 .sidebar::-webkit-scrollbar-thumb{background:#2d4a9e;border-radius:4px;}
@@ -48,10 +45,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .sb-sub-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
 .sb-arrow{margin-left:auto;font-size:10px;color:var(--sidebar-dim);transition:transform .2s;}
 .sb-arrow.open{transform:rotate(180deg);}
-
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-
-/* TOPBAR */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;height:50px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
 .topbar-left{display:flex;align-items:center;gap:10px;}
 .page-title{font-size:15px;font-weight:700;color:var(--text);}
@@ -63,10 +57,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .update-badge{background:var(--accent-light);color:var(--accent);padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;font-family:var(--mono);}
 .btn-refresh{display:flex;align-items:center;gap:4px;padding:5px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:6px;font-size:12px;cursor:pointer;transition:all .15s;font-family:var(--font);}
 .btn-refresh:hover{border-color:var(--accent);color:var(--accent);}
-
 .content{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
-
-/* FILTER */
 .filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;}
 .fg{display:flex;flex-direction:column;gap:3px;}
 .fl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;}
@@ -74,22 +65,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .fg select:focus,.fg input:focus{border-color:var(--accent);}
 .date-row{display:flex;gap:5px;align-items:center;}
 .date-row span{color:var(--text3);font-size:11px;}
-
-/* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
 @media(max-width:1500px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;transition:box-shadow .15s;}
 .kpi-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06);}
 .kpi-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
-.kpi-value{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--text);line-height:1;}
+.kpi-value{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;}
 .kpi-value.blue{color:var(--accent);}
 .kpi-sub{font-size:10px;color:var(--text3);margin-top:4px;}
 .olf-pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
 .olf-pill.green{background:var(--green-bg);color:var(--green);}
 .olf-pill.amber{background:var(--amber-bg);color:var(--amber);}
 .olf-pill.red{background:var(--red-bg);color:var(--red);}
-
-/* CHARTS */
 .charts-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;}
 @media(max-width:1100px){.charts-grid{grid-template-columns:1fr;}}
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
@@ -99,8 +86,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .ctoggle{padding:3px 9px;border:1px solid var(--border);background:transparent;color:var(--text2);border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--font);}
 .ctoggle.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
 .chart-wrap{position:relative;height:230px;}
-
-/* TABLE */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 .table-top{padding:14px 16px 0;}
 .table-title{font-size:13px;font-weight:700;color:var(--text);}
@@ -114,7 +99,7 @@ thead{position:sticky;top:0;z-index:5;}
 th{background:var(--bg);color:var(--text2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:right;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);transition:color .15s;}
 th:first-child{text-align:left;}
 th:hover{color:var(--accent);}
-td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-light);color:var(--text);font-family:var(--mono);font-size:12px;}
+td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-light);color:var(--text);font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;}
 td:first-child{text-align:left;font-family:var(--font);font-weight:500;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--accent-light);}
@@ -125,10 +110,10 @@ tfoot td:first-child{color:var(--text2);}
 .olf-badge.amber{background:var(--amber-bg);color:var(--amber);}
 .olf-badge.red{background:var(--red-bg);color:var(--red);}
 .empty{padding:40px;text-align:center;color:var(--text3);font-size:13px;}
+th.divider,td.divider{border-left:2px solid var(--border);}
 </style>
 </head>
 <body>
-
 <div id="loading-screen">
   <div class="spinner"></div>
   <div style="font-size:13px;color:var(--text2);font-weight:500;">Memuat data...</div>
@@ -149,8 +134,6 @@ tfoot td:first-child{color:var(--text2);}
     <div class="sb-section">MENU</div>
     <button class="sb-item active"><span class="sb-dot" style="background:#60a5fa"></span>Overview</button>
     <div class="sb-section">SITE</div>
-
-    <!-- Jababeka — expanded by default -->
     <button class="sb-item" onclick="toggleGrp('jababeka',this)">
       <span class="sb-dot" style="background:#34d399"></span>Jababeka
       <span class="sb-badge">3</span>
@@ -161,8 +144,6 @@ tfoot td:first-child{color:var(--text2);}
       <a class="sb-sub" href="ahi_jababeka_dashboard.html"><span class="sb-sub-dot"></span>AHI Jababeka</a>
       <a class="sb-sub" href="kls_jababeka_dashboard.html"><span class="sb-sub-dot"></span>KLS Jababeka</a>
     </div>
-
-    <!-- Cikupa — expanded by default -->
     <button class="sb-item" onclick="toggleGrp('cikupa',this)">
       <span class="sb-dot" style="background:#fbbf24"></span>Cikupa
       <span class="sb-badge">1</span>
@@ -171,8 +152,6 @@ tfoot td:first-child{color:var(--text2);}
     <div id="grp-cikupa">
       <a class="sb-sub" href="hci_cikupa_dashboard.html"><span class="sb-sub-dot"></span>HCI Cikupa</a>
     </div>
-
-    <!-- Corp — expanded by default -->
     <button class="sb-item" onclick="toggleGrp('corp',this)">
       <span class="sb-dot" style="background:#a78bfa"></span>Corp
       <span class="sb-badge">3</span>
@@ -249,6 +228,7 @@ tfoot td:first-child{color:var(--text2);}
               <button class="ctoggle active" onclick="setTrend('cost',this)">Cost</button>
               <button class="ctoggle" onclick="setTrend('cdo',this)">Cost/DO</button>
               <button class="ctoggle" onclick="setTrend('ccbm',this)">Cost/CBM</button>
+              <button class="ctoggle" onclick="setTrend('cdp',this)">Cost/DP</button>
             </div>
           </div>
           <div class="chart-wrap"><canvas id="c-trend"></canvas></div>
@@ -287,9 +267,16 @@ tfoot td:first-child{color:var(--text2);}
               <th onclick="srt('dotrip')">DO/Trip</th>
               <th onclick="srt('cbmdo')">CBM/DO</th>
               <th onclick="srt('cbmdp')">CBM/DP</th>
-              <th onclick="srt('ujp')">UJP/Trip</th>
-              <th onclick="srt('vr')">VR/Trip</th>
-              <th onclick="srt('mpp')">MPP/Trip</th>
+              <th onclick="srt('ujptrip')">UJP/Trip</th>
+              <th onclick="srt('vrtrip')">VR/Trip</th>
+              <th onclick="srt('mpptrip')">MPP/Trip</th>
+              <th class="divider" onclick="srt('avgdp')">Avg DP</th>
+              <th onclick="srt('avgkm')">Avg KM</th>
+              <th onclick="srt('kmltr')">KM/Liter</th>
+              <th onclick="srt('costkm')">Cost/KM</th>
+              <th onclick="srt('tujp')">Total UJP</th>
+              <th onclick="srt('tvr')">Total VR</th>
+              <th onclick="srt('tmpp')">Total MPP</th>
             </tr></thead>
             <tbody id="tbody"></tbody>
             <tfoot id="tfoot"></tfoot>
@@ -374,28 +361,39 @@ function agg(data){
   const m={};
   data.forEach(r=>{
     const j=r['Jalur']||'Lainnya';
-    if(!m[j])m[j]={trip:0,do:0,dp:0,cbm:0,cap:0,cost:0,ujp:0,vr:0,mpp:0};
+    if(!m[j])m[j]={trip:0,do:0,dp:0,cbm:0,cap:0,cost:0,ujp:0,vr:0,mpp:0,fuel:0,jarak:0};
     const b=m[j];b.trip++;
     b.do+=pn(r['DO']);b.dp+=pn(r['DP']);b.cbm+=pn(r['CBM']);
     b.cap+=pn(r['Capacity Armada']);b.cost+=pn(r['Total Cost']);
     b.ujp+=pn(r['UJP']);b.vr+=pn(r['Sewa Armada']);b.mpp+=pn(r['Prof Fee']);
+    b.fuel+=pn(r['Qty Fuel']);b.jarak+=pn(r['Jarak']);
   });
-  return Object.entries(m).map(([j,b])=>({
-    jalur:j,trip:b.trip,do:b.do,dp:b.dp,cbm:b.cbm,
-    olf:b.cap>0?b.cbm/b.cap:0,
-    cost:b.cost,
-    ctrip:b.trip>0?b.cost/b.trip:0,
-    cdo:b.do>0?b.cost/b.do:0,
-    cdp:b.dp>0?b.cost/b.dp:0,
-    ccbm:b.cbm>0?b.cost/b.cbm:0,
-    dodp:b.dp>0?b.do/b.dp:0,
-    dotrip:b.trip>0?b.do/b.trip:0,
-    cbmdo:b.do>0?b.cbm/b.do:0,
-    cbmdp:b.dp>0?b.cbm/b.dp:0,
-    ujp:b.trip>0?b.ujp/b.trip:0,
-    vr:b.trip>0?b.vr/b.trip:0,
-    mpp:b.trip>0?b.mpp/b.trip:0,
-  }));
+  return Object.entries(m).map(([j,b])=>{
+    const avgkm=b.trip>0?b.jarak/b.trip:0;
+    const avgltr=b.trip>0?b.fuel/b.trip:0;
+    return {
+      jalur:j,trip:b.trip,do:b.do,dp:b.dp,cbm:b.cbm,
+      olf:b.cap>0?b.cbm/b.cap:0,
+      cost:b.cost,
+      ctrip:b.trip>0?b.cost/b.trip:0,
+      cdo:b.do>0?b.cost/b.do:0,
+      cdp:b.dp>0?b.cost/b.dp:0,
+      ccbm:b.cbm>0?b.cost/b.cbm:0,
+      dodp:b.dp>0?b.do/b.dp:0,
+      dotrip:b.trip>0?b.do/b.trip:0,
+      cbmdo:b.do>0?b.cbm/b.do:0,
+      cbmdp:b.dp>0?b.cbm/b.dp:0,
+      ujptrip:b.trip>0?b.ujp/b.trip:0,
+      vrtrip:b.trip>0?b.vr/b.trip:0,
+      mpptrip:b.trip>0?b.mpp/b.trip:0,
+      avgdp:b.trip>0?b.dp/b.trip:0,
+      avgkm:avgkm,
+      kmltr:avgltr>0?avgkm/avgltr:0,
+      costkm:b.jarak>0?b.cost/b.jarak:0,
+      tujp:b.ujp,tvr:b.vr,tmpp:b.mpp,
+      _jarak:b.jarak,_fuel:b.fuel,_ujp:b.ujp,_vr:b.vr,_mpp:b.mpp,
+    };
+  });
 }
 
 function render(){
@@ -404,7 +402,6 @@ function render(){
   const totCap=rows.reduce((a,r)=>a+(r.olf>0?r.cbm/r.olf:0),0);
   const tot=rows.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,cost:a.cost+r.cost}),{trip:0,do:0,dp:0,cbm:0,cost:0});
   const olf=totCap>0?tot.cbm/totCap:0;
-
   document.getElementById('kpi-cost').textContent=fmtK(tot.cost);
   document.getElementById('kpi-trip').textContent=fmt(tot.trip);
   document.getElementById('kpi-do').textContent=fmt(tot.do);
@@ -413,32 +410,52 @@ function render(){
   document.getElementById('kpi-olf').textContent=pct(olf);
   document.getElementById('kpi-cdo').textContent=fmtK(tot.do>0?tot.cost/tot.do:0);
   document.getElementById('kpi-ccbm').textContent=fmtK(tot.cbm>0?tot.cost/tot.cbm:0);
-
   const pill=document.getElementById('kpi-olf-pill');
   const cls=oc(olf);pill.className='olf-pill '+cls;
   pill.textContent=cls==='green'?'● Optimal':cls==='amber'?'● Cukup':'● Rendah';
-
   renderTrend(fil);renderOlf(rows);renderTable(rows);
 }
 
 function renderTrend(fil){
+  const months=[...new Set(fil.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>+a-+b);
+  const jalurs=[...new Set(fil.map(r=>r['Jalur']||'Lainnya'))];
   const bm={};
   fil.forEach(r=>{
     const j=r['Jalur']||'Lainnya',mo=r['Month']||'';
-    if(!bm[j])bm[j]={};if(!bm[j][mo])bm[j][mo]={cost:0,do:0,cbm:0};
-    const b=bm[j][mo];b.cost+=pn(r['Total Cost']);b.do+=pn(r['DO']);b.cbm+=pn(r['CBM']);
+    if(!bm[j])bm[j]={};
+    if(!bm[j][mo])bm[j][mo]={cost:0,do:0,cbm:0,dp:0};
+    const b=bm[j][mo];
+    b.cost+=pn(r['Total Cost']);b.do+=pn(r['DO']);b.cbm+=pn(r['CBM']);b.dp+=pn(r['DP']);
   });
-  const months=[...new Set(fil.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>+a-+b);
-  const jalurs=Object.keys(bm).slice(0,8);
-  const colors=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#db2777','#65a30d'];
-  const datasets=jalurs.map((j,i)=>({
-    label:j,
-    data:months.map(mo=>{const b=bm[j][mo];if(!b)return 0;if(tmet==='cost')return b.cost;if(tmet==='cdo')return b.do>0?b.cost/b.do:0;return b.cbm>0?b.cost/b.cbm:0;}),
-    borderColor:colors[i%colors.length],backgroundColor:colors[i%colors.length]+'18',
-    tension:.3,pointRadius:3,borderWidth:2,fill:false,
+  const palette=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#0284c7','#9333ea','#15803d'];
+  const datasets=months.map((mo,i)=>({
+    label:MN[+mo]||mo,
+    data:jalurs.map(j=>{
+      const b=bm[j]&&bm[j][mo]?bm[j][mo]:null;
+      if(!b)return 0;
+      if(tmet==='cost')return b.cost;
+      if(tmet==='cdo')return b.do>0?b.cost/b.do:0;
+      if(tmet==='ccbm')return b.cbm>0?b.cost/b.cbm:0;
+      if(tmet==='cdp')return b.dp>0?b.cost/b.dp:0;
+      return 0;
+    }),
+    backgroundColor:palette[i%palette.length]+'cc',
+    borderColor:palette[i%palette.length],
+    borderWidth:1,borderRadius:3,
   }));
   if(cTrend)cTrend.destroy();
-  cTrend=new Chart(document.getElementById('c-trend'),{type:'line',data:{labels:months.map(m=>MN[+m]||m),datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
+  cTrend=new Chart(document.getElementById('c-trend'),{
+    type:'bar',
+    data:{labels:jalurs,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
+        y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}
+      }
+    }
+  });
 }
 
 function renderOlf(rows){
@@ -452,7 +469,7 @@ function renderTable(rows){
   let sorted=[...rows].sort((a,b)=>sasc?a[skey]-b[skey]:b[skey]-a[skey]);
   if(skey==='jalur')sorted=[...rows].sort((a,b)=>sasc?a.jalur.localeCompare(b.jalur):b.jalur.localeCompare(a.jalur));
   const tb=document.getElementById('tbody');
-  if(!sorted.length){tb.innerHTML=`<tr><td colspan="18" class="empty">Tidak ada data</td></tr>`;return;}
+  if(!sorted.length){tb.innerHTML=`<tr><td colspan="25" class="empty">Tidak ada data</td></tr>`;return;}
   tb.innerHTML=sorted.map(r=>`<tr>
     <td>${r.jalur}</td>
     <td>${fmt(r.trip)}</td><td>${fmt(r.do)}</td><td>${fmt(r.dp)}</td>
@@ -462,15 +479,25 @@ function renderTable(rows){
     <td>${fmt(r.cdp)}</td><td>${fmt(r.ccbm)}</td>
     <td>${fmt2(r.dodp)}</td><td>${fmt2(r.dotrip)}</td>
     <td>${fmt2(r.cbmdo)}</td><td>${fmt2(r.cbmdp)}</td>
-    <td>${fmt(r.ujp)}</td><td>${fmt(r.vr)}</td><td>${fmt(r.mpp)}</td>
+    <td>${fmt(r.ujptrip)}</td><td>${fmt(r.vrtrip)}</td><td>${fmt(r.mpptrip)}</td>
+    <td class="divider">${fmt2(r.avgdp)}</td>
+    <td>${fmt2(r.avgkm)}</td>
+    <td>${fmt2(r.kmltr)}</td>
+    <td>${fmt(r.costkm)}</td>
+    <td>${fmt(r.tujp)}</td>
+    <td>${fmt(r.tvr)}</td>
+    <td>${fmt(r.tmpp)}</td>
   </tr>`).join('');
 
   const t=sorted.reduce((a,r)=>({
     trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,
     ce:a.ce+(r.olf>0?r.cbm/r.olf:0),cost:a.cost+r.cost,
-    ujp:a.ujp+(r.ujp*r.trip),vr:a.vr+(r.vr*r.trip),mpp:a.mpp+(r.mpp*r.trip)
-  }),{trip:0,do:0,dp:0,cbm:0,ce:0,cost:0,ujp:0,vr:0,mpp:0});
+    ujp:a.ujp+r._ujp,vr:a.vr+r._vr,mpp:a.mpp+r._mpp,
+    jarak:a.jarak+r._jarak,fuel:a.fuel+r._fuel,
+  }),{trip:0,do:0,dp:0,cbm:0,ce:0,cost:0,ujp:0,vr:0,mpp:0,jarak:0,fuel:0});
   const to=t.ce>0?t.cbm/t.ce:0;
+  const tavgkm=t.trip>0?t.jarak/t.trip:0;
+  const tavgltr=t.trip>0?t.fuel/t.trip:0;
   document.getElementById('tfoot').innerHTML=`<tr>
     <td>TOTAL</td>
     <td>${fmt(t.trip)}</td><td>${fmt(t.do)}</td><td>${fmt(t.dp)}</td>
@@ -483,6 +510,11 @@ function renderTable(rows){
     <td>${fmt2(t.do>0?t.cbm/t.do:0)}</td><td>${fmt2(t.dp>0?t.cbm/t.dp:0)}</td>
     <td>${fmt(t.trip>0?t.ujp/t.trip:0)}</td><td>${fmt(t.trip>0?t.vr/t.trip:0)}</td>
     <td>${fmt(t.trip>0?t.mpp/t.trip:0)}</td>
+    <td class="divider">${fmt2(t.trip>0?t.dp/t.trip:0)}</td>
+    <td>${fmt2(tavgkm)}</td>
+    <td>${fmt2(tavgltr>0?tavgkm/tavgltr:0)}</td>
+    <td>${fmt(t.jarak>0?t.cost/t.jarak:0)}</td>
+    <td>${fmt(t.ujp)}</td><td>${fmt(t.vr)}</td><td>${fmt(t.mpp)}</td>
   </tr>`;
 }
 
@@ -497,7 +529,6 @@ function toggleGrp(id){
   el.style.display=open?'none':'block';
   arr.classList.toggle('open',!open);
 }
-
 loadData();
 </script>
 </body>
