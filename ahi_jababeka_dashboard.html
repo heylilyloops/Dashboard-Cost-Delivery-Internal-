@@ -77,15 +77,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .olf-pill.green{background:var(--green-bg);color:var(--green);}
 .olf-pill.amber{background:var(--amber-bg);color:var(--amber);}
 .olf-pill.red{background:var(--red-bg);color:var(--red);}
-.charts-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;}
-@media(max-width:1100px){.charts-grid{grid-template-columns:1fr;}}
+/* Charts stacked vertically */
+.charts-col{display:flex;flex-direction:column;gap:12px;}
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
 .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .chart-title{font-size:13px;font-weight:700;color:var(--text);}
 .ctoggle-group{display:flex;gap:3px;}
 .ctoggle{padding:3px 9px;border:1px solid var(--border);background:transparent;color:var(--text2);border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--font);}
 .ctoggle.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
-.chart-wrap{position:relative;height:230px;}
+.chart-wrap{position:relative;height:240px;}
+.chart-wrap-olf{position:relative;height:220px;}
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 .table-top{padding:14px 16px 0;}
 .table-title{font-size:13px;font-weight:700;color:var(--text);}
@@ -93,18 +94,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .tab-btn{padding:7px 13px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--font);margin-bottom:-1px;}
 .tab-btn:hover{color:var(--text2);}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
-.table-wrap{overflow-x:auto;max-height:400px;overflow-y:auto;}
+.table-wrap{overflow-x:auto;max-height:420px;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead{position:sticky;top:0;z-index:5;}
 th{background:var(--bg);color:var(--text2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:right;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);transition:color .15s;}
-th:first-child{text-align:left;}
+th:first-child{text-align:left;position:sticky;left:0;z-index:6;background:var(--bg);}
 th:hover{color:var(--accent);}
 td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-light);color:var(--text);font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;}
-td:first-child{text-align:left;font-family:var(--font);font-weight:500;}
-tr:last-child td{border-bottom:none;}
+td:first-child{text-align:left;font-family:var(--font);font-weight:500;position:sticky;left:0;z-index:2;background:var(--surface);}
 tr:hover td{background:var(--accent-light);}
+tr:hover td:first-child{background:var(--accent-light);}
+tr:last-child td{border-bottom:none;}
 tfoot td{background:var(--bg);font-weight:700;border-top:2px solid var(--border);}
-tfoot td:first-child{color:var(--text2);}
+tfoot td:first-child{color:var(--text2);background:var(--bg);}
 .olf-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--font);}
 .olf-badge.green{background:var(--green-bg);color:var(--green);}
 .olf-badge.amber{background:var(--amber-bg);color:var(--amber);}
@@ -220,7 +222,7 @@ th.divider,td.divider{border-left:2px solid var(--border);}
         <div class="kpi-card"><div class="kpi-label">Cost / CBM</div><div class="kpi-value" id="kpi-ccbm">—</div><div class="kpi-sub">IDR per CBM</div></div>
       </div>
 
-      <div class="charts-grid">
+      <div class="charts-col">
         <div class="chart-card">
           <div class="chart-header">
             <div class="chart-title">Trend Cost per Jalur</div>
@@ -235,7 +237,7 @@ th.divider,td.divider{border-left:2px solid var(--border);}
         </div>
         <div class="chart-card">
           <div class="chart-header"><div class="chart-title">OLF per Jalur (%)</div></div>
-          <div class="chart-wrap"><canvas id="c-olf"></canvas></div>
+          <div class="chart-wrap-olf"><canvas id="c-olf"></canvas></div>
         </div>
       </div>
 
@@ -258,11 +260,6 @@ th.divider,td.divider{border-left:2px solid var(--border);}
               <th onclick="srt('dp')">DP</th>
               <th onclick="srt('cbm')">CBM</th>
               <th onclick="srt('olf')">OLF%</th>
-              <th onclick="srt('cost')">Total Cost</th>
-              <th onclick="srt('ctrip')">Cost/Trip</th>
-              <th onclick="srt('cdo')">Cost/DO</th>
-              <th onclick="srt('cdp')">Cost/DP</th>
-              <th onclick="srt('ccbm')">Cost/CBM</th>
               <th onclick="srt('dodp')">DO/DP</th>
               <th onclick="srt('dotrip')">DO/Trip</th>
               <th onclick="srt('cbmdo')">CBM/DO</th>
@@ -270,13 +267,18 @@ th.divider,td.divider{border-left:2px solid var(--border);}
               <th onclick="srt('ujptrip')">UJP/Trip</th>
               <th onclick="srt('vrtrip')">VR/Trip</th>
               <th onclick="srt('mpptrip')">MPP/Trip</th>
+              <th class="divider" onclick="srt('tujp')">Total UJP</th>
+              <th onclick="srt('tvr')">Total VR</th>
+              <th onclick="srt('tmpp')">Total MPP</th>
+              <th onclick="srt('cost')">Total Cost</th>
+              <th onclick="srt('ctrip')">Cost/Trip</th>
+              <th onclick="srt('cdo')">Cost/DO</th>
+              <th onclick="srt('cdp')">Cost/DP</th>
+              <th onclick="srt('ccbm')">Cost/CBM</th>
               <th class="divider" onclick="srt('avgdp')">Avg DP</th>
               <th onclick="srt('avgkm')">Avg KM</th>
               <th onclick="srt('kmltr')">KM/Liter</th>
               <th onclick="srt('costkm')">Cost/KM</th>
-              <th onclick="srt('tujp')">Total UJP</th>
-              <th onclick="srt('tvr')">Total VR</th>
-              <th onclick="srt('tmpp')">Total MPP</th>
             </tr></thead>
             <tbody id="tbody"></tbody>
             <tfoot id="tfoot"></tfoot>
@@ -291,9 +293,20 @@ th.divider,td.divider{border-left:2px solid var(--border);}
 const CONFIG={CSV_URL:'https://raw.githubusercontent.com/heylilyloops/Dashboard-Cost-Delivery-Internal-/main/data/AHI_JABABEKA.csv',SITE_LABEL:'AHI Jababeka',OWNER_FILTER:'AHI'};
 let raw=[],tmet='cost',ttab='',skey='cost',sasc=false,vmode='full',cTrend=null,cOlf=null;
 const MN=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+
+// Format angka Indonesia: RB/JT/M/T dengan separator titik
+const fmtID=n=>{
+  if(!Number.isFinite(n))return'—';
+  const abs=Math.abs(n);
+  if(abs>=1e12)return(n/1e12).toFixed(1).replace('.',',')+'T';
+  if(abs>=1e9)return(n/1e9).toFixed(1).replace('.',',')+'M';
+  if(abs>=1e6)return(n/1e6).toFixed(1).replace('.',',')+'JT';
+  if(abs>=1e3)return(n/1e3).toFixed(1).replace('.',',')+'RB';
+  return Math.round(n).toLocaleString('id-ID');
+};
+// Format angka penuh dengan titik sebagai separator ribuan (untuk tabel)
 const fmt=n=>Number.isFinite(n)?Math.round(n).toLocaleString('id-ID'):'—';
 const fmt2=n=>Number.isFinite(n)?n.toFixed(2):'—';
-const fmtK=n=>{if(!Number.isFinite(n))return'—';if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(0)+'K';return Math.round(n).toString();};
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
 const pn=v=>{const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;};
 const pd=s=>{if(!s)return null;const p=s.split('/');return p.length===3?new Date(p[2],p[1]-1,p[0]):new Date(s);};
@@ -402,14 +415,14 @@ function render(){
   const totCap=rows.reduce((a,r)=>a+(r.olf>0?r.cbm/r.olf:0),0);
   const tot=rows.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,cost:a.cost+r.cost}),{trip:0,do:0,dp:0,cbm:0,cost:0});
   const olf=totCap>0?tot.cbm/totCap:0;
-  document.getElementById('kpi-cost').textContent=fmtK(tot.cost);
-  document.getElementById('kpi-trip').textContent=fmt(tot.trip);
-  document.getElementById('kpi-do').textContent=fmt(tot.do);
-  document.getElementById('kpi-dp').textContent=fmt(tot.dp);
-  document.getElementById('kpi-cbm').textContent=tot.cbm.toFixed(1);
+  document.getElementById('kpi-cost').textContent=fmtID(tot.cost);
+  document.getElementById('kpi-trip').textContent=fmtID(tot.trip);
+  document.getElementById('kpi-do').textContent=fmtID(tot.do);
+  document.getElementById('kpi-dp').textContent=fmtID(tot.dp);
+  document.getElementById('kpi-cbm').textContent=Math.round(tot.cbm).toLocaleString('id-ID');
   document.getElementById('kpi-olf').textContent=pct(olf);
-  document.getElementById('kpi-cdo').textContent=fmtK(tot.do>0?tot.cost/tot.do:0);
-  document.getElementById('kpi-ccbm').textContent=fmtK(tot.cbm>0?tot.cost/tot.cbm:0);
+  document.getElementById('kpi-cdo').textContent=fmtID(tot.do>0?tot.cost/tot.do:0);
+  document.getElementById('kpi-ccbm').textContent=fmtID(tot.cbm>0?tot.cost/tot.cbm:0);
   const pill=document.getElementById('kpi-olf-pill');
   const cls=oc(olf);pill.className='olf-pill '+cls;
   pill.textContent=cls==='green'?'● Optimal':cls==='amber'?'● Cukup':'● Rendah';
@@ -445,14 +458,13 @@ function renderTrend(fil){
   }));
   if(cTrend)cTrend.destroy();
   cTrend=new Chart(document.getElementById('c-trend'),{
-    type:'bar',
-    data:{labels:jalurs,datasets},
+    type:'bar',data:{labels:jalurs,datasets},
     options:{
       responsive:true,maintainAspectRatio:false,
       plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},
       scales:{
         x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
-        y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}
+        y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtID(v)}}
       }
     }
   });
@@ -473,20 +485,21 @@ function renderTable(rows){
   tb.innerHTML=sorted.map(r=>`<tr>
     <td>${r.jalur}</td>
     <td>${fmt(r.trip)}</td><td>${fmt(r.do)}</td><td>${fmt(r.dp)}</td>
-    <td>${r.cbm.toFixed(1)}</td>
+    <td>${Math.round(r.cbm).toLocaleString('id-ID')}</td>
     <td><span class="olf-badge ${oc(r.olf)}">${pct(r.olf)}</span></td>
-    <td>${fmt(r.cost)}</td><td>${fmt(r.ctrip)}</td><td>${fmt(r.cdo)}</td>
-    <td>${fmt(r.cdp)}</td><td>${fmt(r.ccbm)}</td>
     <td>${fmt2(r.dodp)}</td><td>${fmt2(r.dotrip)}</td>
     <td>${fmt2(r.cbmdo)}</td><td>${fmt2(r.cbmdp)}</td>
     <td>${fmt(r.ujptrip)}</td><td>${fmt(r.vrtrip)}</td><td>${fmt(r.mpptrip)}</td>
+    <td class="divider">${fmt(r.tujp)}</td>
+    <td>${fmt(r.tvr)}</td>
+    <td>${fmt(r.tmpp)}</td>
+    <td>${fmt(r.cost)}</td>
+    <td>${fmt(r.ctrip)}</td><td>${fmt(r.cdo)}</td>
+    <td>${fmt(r.cdp)}</td><td>${fmt(r.ccbm)}</td>
     <td class="divider">${fmt2(r.avgdp)}</td>
     <td>${fmt2(r.avgkm)}</td>
     <td>${fmt2(r.kmltr)}</td>
     <td>${fmt(r.costkm)}</td>
-    <td>${fmt(r.tujp)}</td>
-    <td>${fmt(r.tvr)}</td>
-    <td>${fmt(r.tmpp)}</td>
   </tr>`).join('');
 
   const t=sorted.reduce((a,r)=>({
@@ -501,20 +514,24 @@ function renderTable(rows){
   document.getElementById('tfoot').innerHTML=`<tr>
     <td>TOTAL</td>
     <td>${fmt(t.trip)}</td><td>${fmt(t.do)}</td><td>${fmt(t.dp)}</td>
-    <td>${t.cbm.toFixed(1)}</td>
+    <td>${Math.round(t.cbm).toLocaleString('id-ID')}</td>
     <td><span class="olf-badge ${oc(to)}">${pct(to)}</span></td>
-    <td>${fmt(t.cost)}</td><td>${fmt(t.trip>0?t.cost/t.trip:0)}</td>
-    <td>${fmt(t.do>0?t.cost/t.do:0)}</td><td>${fmt(t.dp>0?t.cost/t.dp:0)}</td>
-    <td>${fmt(t.cbm>0?t.cost/t.cbm:0)}</td>
     <td>${fmt2(t.dp>0?t.do/t.dp:0)}</td><td>${fmt2(t.trip>0?t.do/t.trip:0)}</td>
     <td>${fmt2(t.do>0?t.cbm/t.do:0)}</td><td>${fmt2(t.dp>0?t.cbm/t.dp:0)}</td>
     <td>${fmt(t.trip>0?t.ujp/t.trip:0)}</td><td>${fmt(t.trip>0?t.vr/t.trip:0)}</td>
     <td>${fmt(t.trip>0?t.mpp/t.trip:0)}</td>
+    <td class="divider">${fmt(t.ujp)}</td>
+    <td>${fmt(t.vr)}</td>
+    <td>${fmt(t.mpp)}</td>
+    <td>${fmt(t.cost)}</td>
+    <td>${fmt(t.trip>0?t.cost/t.trip:0)}</td>
+    <td>${fmt(t.do>0?t.cost/t.do:0)}</td>
+    <td>${fmt(t.dp>0?t.cost/t.dp:0)}</td>
+    <td>${fmt(t.cbm>0?t.cost/t.cbm:0)}</td>
     <td class="divider">${fmt2(t.trip>0?t.dp/t.trip:0)}</td>
     <td>${fmt2(tavgkm)}</td>
     <td>${fmt2(tavgltr>0?tavgkm/tavgltr:0)}</td>
     <td>${fmt(t.jarak>0?t.cost/t.jarak:0)}</td>
-    <td>${fmt(t.ujp)}</td><td>${fmt(t.vr)}</td><td>${fmt(t.mpp)}</td>
   </tr>`;
 }
 
