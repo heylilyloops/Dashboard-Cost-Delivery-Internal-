@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Cost DK — Kawan Lama Group</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sb:#1a2e6b;--sb-act:#2d4a9e;--sb-hov:#243580;
+  --sb-txt:#c8d4f5;--sb-dim:#7a92cc;--sb-sec:#5a76c0;
+  --acc:#2563eb;--acc-l:#eff4ff;--bg:#f4f6fb;--sur:#fff;
+  --bdr:#e2e8f0;--bdr-l:#f1f5f9;--tx:#1e293b;--tx2:#64748b;--tx3:#94a3b8;
+  --gr:#16a34a;--gr-b:#f0fdf4;--am:#d97706;--am-b:#fffbeb;--rd:#dc2626;--rd-b:#fef2f2;
+  --fn:'Plus Jakarta Sans',sans-serif;--mo:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fn);background:var(--bg);color:var(--tx);display:flex;min-height:100vh;font-size:13px;}
+
+/* LOADING */
+#ls{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.spin{width:34px;height:34px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:sp .8s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+#ls-detail{font-size:11px;color:var(--tx3);font-family:var(--mo);text-align:center;max-width:400px;line-height:1.6;}
+#es{position:fixed;inset:0;background:#fff;z-index:9998;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;}
+#es h2{color:var(--rd);font-weight:700;}
+#es p{color:var(--tx2);text-align:center;max-width:460px;line-height:1.6;}
+.btn-p{padding:8px 20px;background:var(--acc);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fn);}
+
+/* SIDEBAR */
+.sidebar{width:215px;min-width:215px;background:var(--sb);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;position:fixed;left:0;top:0;bottom:0;z-index:10;padding-bottom:44px;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:#2d4a9e;border-radius:4px;}
+.sb-brand{padding:16px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+.sb-bi{width:32px;height:32px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;font-family:var(--mo);flex-shrink:0;}
+.sb-bn{font-size:13px;font-weight:700;color:#fff;}
+.sb-bs{font-size:9px;color:var(--sb-dim);margin-top:1px;letter-spacing:.04em;}
+.sb-sec{padding:14px 14px 5px;font-size:9px;font-weight:700;color:var(--sb-sec);letter-spacing:.12em;text-transform:uppercase;}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 14px;color:var(--sb-txt);font-size:12px;font-weight:500;cursor:pointer;transition:background .15s;border:none;background:transparent;width:100%;text-align:left;}
+.sb-item:hover{background:var(--sb-hov);}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;font-family:var(--mo);}
+.sb-sub{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 30px;color:var(--sb-dim);text-decoration:none;font-size:11px;transition:all .15s;border:none;background:transparent;width:100%;cursor:pointer;text-align:left;}
+.sb-sub:hover{color:var(--sb-txt);background:var(--sb-hov);}
+.sb-sub.active{color:#fff;background:var(--sb-hov);}
+.sb-sub-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
+.sb-arr{margin-left:auto;font-size:10px;color:var(--sb-dim);transition:transform .2s;}
+.sb-arr.open{transform:rotate(180deg);}
+.sb-loading{padding:4px 14px 4px 30px;font-size:10px;color:var(--sb-dim);font-style:italic;}
+
+/* ConnectOne - fixed outside all */
+#co-btn{position:fixed;bottom:0;left:0;width:215px;display:flex;align-items:center;gap:8px;padding:12px 14px;background:#111d35;color:#7a92cc;text-decoration:none;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;border-top:1px solid rgba(255,255,255,.08);z-index:99999;transition:background .15s;}
+#co-btn:hover{background:#1e2d4a;color:#c8d4f5;}
+#co-btn svg{width:13px;height:13px;flex-shrink:0;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;margin-left:215px;min-height:100vh;}
+.topbar{background:var(--sur);border-bottom:1px solid var(--bdr);padding:0 18px;height:50px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:9;}
+.tl{display:flex;align-items:center;gap:10px;}
+.pg-title{font-size:15px;font-weight:700;}
+.tgl-grp{display:flex;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;padding:3px;}
+.tgl-btn{padding:3px 12px;border-radius:4px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--tx2);cursor:pointer;transition:all .15s;font-family:var(--fn);}
+.tgl-btn.active{background:var(--acc);color:#fff;}
+.top-sel{border:1px solid var(--bdr);background:var(--sur);color:var(--tx);padding:5px 10px;border-radius:6px;font-size:12px;font-family:var(--fn);outline:none;}
+.tr{display:flex;align-items:center;gap:8px;}
+.upd-badge{background:var(--acc-l);color:var(--acc);padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;font-family:var(--mo);}
+.btn-ref{display:flex;align-items:center;gap:4px;padding:5px 12px;border:1px solid var(--bdr);background:var(--sur);color:var(--tx2);border-radius:6px;font-size:12px;cursor:pointer;transition:all .15s;font-family:var(--fn);}
+.btn-ref:hover{border-color:var(--acc);color:var(--acc);}
+
+/* CONTENT */
+.content{flex:1;padding:16px 18px 40px;display:flex;flex-direction:column;gap:14px;}
+
+/* FILTER */
+.filter-bar{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;padding:12px 14px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;}
+.fg{display:flex;flex-direction:column;gap:3px;}
+.fl{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;}
+.fg select,.fg input{border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:5px 9px;border-radius:6px;font-size:12px;font-family:var(--fn);outline:none;transition:border-color .15s;min-width:110px;}
+.fg select:focus,.fg input:focus{border-color:var(--acc);}
+.date-row{display:flex;gap:5px;align-items:center;}
+.date-row span{color:var(--tx3);font-size:11px;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
+@media(max-width:1500px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
+.kpi-card{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;padding:14px;transition:box-shadow .15s;}
+.kpi-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.kpi-lbl{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
+.kpi-val{font-family:var(--mo);font-size:19px;font-weight:600;color:var(--tx);line-height:1;font-variant-numeric:tabular-nums;}
+.kpi-val.blue{color:var(--acc);}
+.kpi-sub{font-size:10px;color:var(--tx3);margin-top:4px;}
+.olf-pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+.olf-pill.green{background:var(--gr-b);color:var(--gr);}
+.olf-pill.amber{background:var(--am-b);color:var(--am);}
+.olf-pill.red{background:var(--rd-b);color:var(--rd);}
+
+/* CHART */
+.chart-card{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;padding:14px;}
+.chart-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.chart-title{font-size:13px;font-weight:700;}
+.ctgl-grp{display:flex;gap:3px;}
+.ctgl{padding:3px 9px;border:1px solid var(--bdr);background:transparent;color:var(--tx2);border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--fn);}
+.ctgl.active{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600;}
+.chart-wrap{position:relative;height:260px;}
+.chart-wrap-olf{position:relative;height:240px;}
+
+/* TABLE */
+.table-card{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;}
+.table-top{padding:14px 16px 0;}
+.table-title{font-size:13px;font-weight:700;}
+.table-tabs{display:flex;padding:0 16px;margin-top:8px;border-bottom:1px solid var(--bdr);overflow-x:auto;}
+.tab-btn{padding:7px 13px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--tx3);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--fn);margin-bottom:-1px;}
+.tab-btn:hover{color:var(--tx2);}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc);font-weight:600;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead{position:sticky;top:0;z-index:5;}
+th{background:var(--bg);color:var(--tx2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:right;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--bdr);transition:color .15s;}
+th:first-child{text-align:left;position:sticky;left:0;z-index:6;background:var(--bg);}
+th:hover{color:var(--acc);}
+td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--bdr-l);color:var(--tx);font-family:var(--mo);font-size:12px;font-variant-numeric:tabular-nums;}
+td:first-child{text-align:left;font-family:var(--fn);font-weight:500;position:sticky;left:0;z-index:2;background:var(--sur);}
+tr:hover td{background:var(--acc-l);}
+tr:hover td:first-child{background:var(--acc-l);}
+tr:last-child td{border-bottom:none;}
+tfoot td{background:var(--bg);font-weight:700;border-top:2px solid var(--bdr);}
+tfoot td:first-child{color:var(--tx2);background:var(--bg);}
+.olf-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--fn);}
+.olf-badge.green{background:var(--gr-b);color:var(--gr);}
+.olf-badge.amber{background:var(--am-b);color:var(--am);}
+.olf-badge.red{background:var(--rd-b);color:var(--rd);}
+.empty{padding:40px;text-align:center;color:var(--tx3);font-size:13px;}
+th.dv,td.dv{border-left:2px solid var(--bdr);}
+</style>
+</head>
+<body>
+
+<div id="ls">
+  <div class="spin"></div>
+  <div style="font-size:13px;color:var(--tx2);font-weight:500;">Memuat semua data...</div>
+  <div id="ls-detail"></div>
+</div>
+<div id="es">
+  <h2>Gagal memuat data</h2>
+  <p id="em">Tidak dapat mengambil data CSV.</p>
+  <button class="btn-p" onclick="loadAll()">↺ Coba Lagi</button>
+</div>
+
+<a id="co-btn" href="https://rahmatpambudi-dot.github.io/connectone/" title="Kembali ke ConnectOne Hub">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  ConnectOne
+</a>
+
+<div id="app" style="display:none;width:100%;">
+  <div class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-bi">DK</div>
+      <div><div class="sb-bn">Cost DK</div><div class="sb-bs">DASHBOARD PENGIRIMAN</div></div>
+    </div>
+    <div class="sb-sec">SITE</div>
+
+    <button class="sb-item" onclick="toggleGrp('jab',this)">
+      <span class="sb-dot" style="background:#34d399"></span>Jababeka
+      <span class="sb-badge">3</span><span class="sb-arr open" id="arr-jab">▾</span>
+    </button>
+    <div id="grp-jab">
+      <button class="sb-sub active" onclick="switchSite('hci_jab',this)"><span class="sb-sub-dot"></span>HCI Jababeka<span id="st-hci_jab" class="sb-loading">loading...</span></button>
+      <button class="sb-sub" onclick="switchSite('ahi_jab',this)"><span class="sb-sub-dot"></span>AHI Jababeka<span id="st-ahi_jab" class="sb-loading">loading...</span></button>
+      <button class="sb-sub" onclick="switchSite('kls_jab',this)"><span class="sb-sub-dot"></span>KLS Jababeka<span id="st-kls_jab" class="sb-loading">loading...</span></button>
+    </div>
+
+    <button class="sb-item" onclick="toggleGrp('cik',this)">
+      <span class="sb-dot" style="background:#fbbf24"></span>Cikupa
+      <span class="sb-badge">1</span><span class="sb-arr open" id="arr-cik">▾</span>
+    </button>
+    <div id="grp-cik">
+      <button class="sb-sub" onclick="switchSite('hci_cik',this)"><span class="sb-sub-dot"></span>HCI Cikupa<span id="st-hci_cik" class="sb-loading">loading...</span></button>
+    </div>
+
+    <button class="sb-item" onclick="toggleGrp('cor',this)">
+      <span class="sb-dot" style="background:#a78bfa"></span>Corp
+      <span class="sb-badge">3</span><span class="sb-arr open" id="arr-cor">▾</span>
+    </button>
+    <div id="grp-cor">
+      <button class="sb-sub" onclick="switchSite('cor_sid',this)"><span class="sb-sub-dot"></span>Sidoarjo<span id="st-cor_sid" class="sb-loading">loading...</span></button>
+      <button class="sb-sub" onclick="switchSite('cor_tal',this)"><span class="sb-sub-dot"></span>Tallo<span id="st-cor_tal" class="sb-loading">loading...</span></button>
+      <button class="sb-sub" onclick="switchSite('cor_tam',this)"><span class="sb-sub-dot"></span>Tamora<span id="st-cor_tam" class="sb-loading">loading...</span></button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tl">
+        <div class="pg-title" id="page-title">HCI Jababeka</div>
+        <div class="tgl-grp">
+          <button class="tgl-btn active" onclick="setMode('full',this)">Full Period</button>
+          <button class="tgl-btn" onclick="setMode('mtd',this)">MTD</button>
+        </div>
+        <select class="top-sel" id="f-month" onchange="render()">
+          <option value="">Semua Bulan</option>
+          <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+          <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+          <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+          <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+        </select>
+      </div>
+      <div class="tr">
+        <span class="upd-badge" id="ts">—</span>
+        <button class="btn-ref" onclick="loadAll()">↺ Refresh</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="filter-bar">
+        <div class="fg"><div class="fl">Periode</div>
+          <div class="date-row">
+            <input type="date" id="f-from" onchange="render()"><span>—</span>
+            <input type="date" id="f-to" onchange="render()">
+          </div>
+        </div>
+        <div class="fg"><div class="fl">Shipment Area</div>
+          <select id="f-ship" onchange="render()"><option value="">Semua</option><option value="DALAM KOTA">Dalam Kota</option><option value="LUAR KOTA">Luar Kota</option></select>
+        </div>
+        <div class="fg"><div class="fl">Type Delivery</div>
+          <select id="f-del" onchange="render()"><option value="">Semua</option><option>Store</option><option>Customer</option><option>HUB</option><option>Other Delivery</option><option>Satelite</option></select>
+        </div>
+        <div class="fg"><div class="fl">Kategori</div>
+          <select id="f-kat" onchange="render()"><option value="">Semua</option><option value="REGULAR">Regular</option><option value="NON REGULAR">Non Regular</option></select>
+        </div>
+        <div class="fg"><div class="fl">Type Armada</div>
+          <select id="f-arm" onchange="render()"><option value="">Semua</option></select>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-lbl">Total Cost</div><div class="kpi-val blue" id="kpi-cost">—</div><div class="kpi-sub">IDR</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Total Trip</div><div class="kpi-val" id="kpi-trip">—</div><div class="kpi-sub">LC</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Total DO</div><div class="kpi-val" id="kpi-do">—</div><div class="kpi-sub">Delivery Order</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Total DP</div><div class="kpi-val" id="kpi-dp">—</div><div class="kpi-sub">Drop Point</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Total CBM</div><div class="kpi-val" id="kpi-cbm">—</div><div class="kpi-sub">m³</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">OLF</div><div class="kpi-val" id="kpi-olf">—</div><div id="kpi-olf-pill" class="olf-pill green">● Optimal</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Cost / DO</div><div class="kpi-val" id="kpi-cdo">—</div><div class="kpi-sub">IDR per DO</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Cost / CBM</div><div class="kpi-val" id="kpi-ccbm">—</div><div class="kpi-sub">IDR per CBM</div></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-hdr">
+          <div class="chart-title">Trend Cost per Jalur</div>
+          <div class="ctgl-grp">
+            <button class="ctgl active" onclick="setTrend('cost',this)">Cost</button>
+            <button class="ctgl" onclick="setTrend('cdo',this)">Cost/DO</button>
+            <button class="ctgl" onclick="setTrend('ccbm',this)">Cost/CBM</button>
+            <button class="ctgl" onclick="setTrend('cdp',this)">Cost/DP</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="c-trend"></canvas></div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-top"><div class="table-title">Detail per Jalur</div></div>
+        <div class="table-tabs">
+          <button class="tab-btn active" onclick="setTab('',this)">Semua</button>
+          <button class="tab-btn" onclick="setTab('Customer',this)">Customer</button>
+          <button class="tab-btn" onclick="setTab('Store',this)">Store</button>
+          <button class="tab-btn" onclick="setTab('HUB',this)">HUB</button>
+          <button class="tab-btn" onclick="setTab('Other Delivery',this)">Other Delivery</button>
+          <button class="tab-btn" onclick="setTab('Satelite',this)">Satelite</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th onclick="srt('jalur')">Jalur</th>
+              <th onclick="srt('trip')">Trip</th>
+              <th onclick="srt('do')">DO</th>
+              <th onclick="srt('dp')">DP</th>
+              <th onclick="srt('cbm')">CBM</th>
+              <th onclick="srt('olf')">OLF%</th>
+              <th onclick="srt('dodp')">DO/DP</th>
+              <th onclick="srt('dotrip')">DO/Trip</th>
+              <th onclick="srt('cbmdo')">CBM/DO</th>
+              <th onclick="srt('cbmdp')">CBM/DP</th>
+              <th onclick="srt('ujptrip')">UJP/Trip</th>
+              <th onclick="srt('vrtrip')">VR/Trip</th>
+              <th onclick="srt('mpptrip')">MPP/Trip</th>
+              <th class="dv" onclick="srt('tujp')">Total UJP</th>
+              <th onclick="srt('tvr')">Total VR</th>
+              <th onclick="srt('tmpp')">Total MPP</th>
+              <th onclick="srt('cost')">Total Cost</th>
+              <th onclick="srt('ctrip')">Cost/Trip</th>
+              <th onclick="srt('cdo')">Cost/DO</th>
+              <th onclick="srt('cdp')">Cost/DP</th>
+              <th onclick="srt('ccbm')">Cost/CBM</th>
+              <th class="dv" onclick="srt('avgdp')">Avg DP</th>
+              <th onclick="srt('avgkm')">Avg KM</th>
+              <th onclick="srt('kmltr')">KM/Liter</th>
+              <th onclick="srt('costkm')">Cost/KM</th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+            <tfoot id="tfoot"></tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-hdr"><div class="chart-title">OLF per Jalur (%)</div></div>
+        <div class="chart-wrap-olf"><canvas id="c-olf"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE='https://raw.githubusercontent.com/heylilyloops/Dashboard-Cost-Delivery-Internal-/main/data/';
+const SITES={
+  hci_jab:{label:'HCI Jababeka',csv:'HCI_JABABEKA.csv',owner:'HCI',grp:'Jababeka'},
+  ahi_jab:{label:'AHI Jababeka',csv:'AHI_JABABEKA.csv',owner:'AHI',grp:'Jababeka'},
+  kls_jab:{label:'KLS Jababeka',csv:'KLS_JABABEKA.csv',owner:'KLS',grp:'Jababeka'},
+  hci_cik:{label:'HCI Cikupa',csv:'HCI_CIKUPA.csv',owner:'HCI',grp:'Cikupa'},
+  cor_sid:{label:'Corp Sidoarjo',csv:'CORP_SIDOARJO.csv',owner:'',grp:'Corp'},
+  cor_tal:{label:'Corp Tallo',csv:'CORP_TALLO.csv',owner:'',grp:'Corp'},
+  cor_tam:{label:'Corp Tamora',csv:'CORP_TAMORA.csv',owner:'',grp:'Corp'},
+};
+
+let allData={},curSite='hci_jab',tmet='cost',ttab='',skey='cost',sasc=false,vmode='full',cTrend=null,cOlf=null;
+const MN=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+const fmtID=n=>{if(!Number.isFinite(n))return'—';const a=Math.abs(n);if(a>=1e12)return(n/1e12).toFixed(1).replace('.',',')+'T';if(a>=1e9)return(n/1e9).toFixed(1).replace('.',',')+'M';if(a>=1e6)return(n/1e6).toFixed(1).replace('.',',')+'JT';if(a>=1e3)return(n/1e3).toFixed(1).replace('.',',')+'RB';return Math.round(n).toLocaleString('id-ID');};
+const fmt=n=>Number.isFinite(n)?Math.round(n).toLocaleString('id-ID'):'—';
+const fmt2=n=>Number.isFinite(n)?n.toFixed(2):'—';
+const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
+const pn=v=>{const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;};
+const pd=s=>{if(!s)return null;const p=s.split('/');return p.length===3?new Date(+p[2],+p[1]-1,+p[0]):new Date(s);};
+const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
+
+function parseCSV(t){
+  const lines=t.trim().split('\n');
+  const hdr=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+  return lines.slice(1).filter(l=>l.trim()).map(line=>{
+    const vals=[];let cur='',inQ=false;
+    for(const c of line){if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){vals.push(cur.trim());cur='';}else cur+=c;}
+    vals.push(cur.trim());
+    const o={};hdr.forEach((h,i)=>{o[h]=(vals[i]||'').replace(/"/g,'').trim();});return o;
+  });
+}
+
+async function loadSite(id){
+  const s=SITES[id];
+  const el=document.getElementById('st-'+id);
+  try{
+    const res=await fetch(BASE+s.csv+'?t='+Date.now());
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    let rows=parseCSV(await res.text());
+    if(s.owner)rows=rows.filter(r=>r['OWNER']===s.owner);
+    allData[id]=rows;
+    if(el)el.textContent='✓';
+  }catch(e){
+    allData[id]=[];
+    if(el)el.textContent='✗';
+  }
+}
+
+async function loadAll(){
+  document.getElementById('ls').style.display='flex';
+  document.getElementById('es').style.display='none';
+  document.getElementById('app').style.display='none';
+  allData={};
+  const ids=Object.keys(SITES);
+  let done=0;
+  const detail=document.getElementById('ls-detail');
+  // Reset status labels
+  ids.forEach(id=>{const el=document.getElementById('st-'+id);if(el)el.textContent='loading...';});
+  // Load all in parallel
+  await Promise.all(ids.map(async id=>{
+    detail.textContent=`Memuat ${SITES[id].label}...`;
+    await loadSite(id);
+    done++;
+    detail.textContent=`${done}/${ids.length} site selesai`;
+  }));
+  // Check if at least current site loaded
+  if(!allData[curSite]||!allData[curSite].length){
+    // Try first available
+    const avail=ids.find(id=>allData[id]&&allData[id].length);
+    if(!avail){
+      document.getElementById('ls').style.display='none';
+      document.getElementById('es').style.display='flex';
+      document.getElementById('em').textContent='Semua data gagal dimuat. Cek koneksi dan coba lagi.';
+      return;
+    }
+    curSite=avail;
+  }
+  document.getElementById('ts').textContent='Update: '+new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('ls').style.display='none';
+  document.getElementById('app').style.display='flex';
+  updateArmadaFilter();
+  updateActiveBtn();
+  render();
+}
+
+function updateArmadaFilter(){
+  const raw=allData[curSite]||[];
+  const arms=[...new Set(raw.map(r=>r['Type Armada']).filter(Boolean))].sort();
+  const sel=document.getElementById('f-arm');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Semua</option>'+arms.map(a=>`<option value="${a}"${a===cur?' selected':''}>${a}</option>`).join('');
+}
+
+function updateActiveBtn(){
+  document.getElementById('page-title').textContent=SITES[curSite].label;
+  document.querySelectorAll('.sb-sub').forEach(b=>b.classList.remove('active'));
+  // find by onclick attribute matching curSite
+  document.querySelectorAll('.sb-sub').forEach(b=>{
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+curSite+"'"))b.classList.add('active');
+  });
+}
+
+function switchSite(id,btn){
+  if(!allData[id]){return;}
+  curSite=id;
+  // reset filters
+  document.getElementById('f-from').value='';
+  document.getElementById('f-to').value='';
+  document.getElementById('f-ship').value='';
+  document.getElementById('f-del').value='';
+  document.getElementById('f-kat').value='';
+  document.getElementById('f-month').value='';
+  ttab='';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab-btn').classList.add('active');
+  updateArmadaFilter();
+  updateActiveBtn();
+  render();
+}
+
+function getFil(){
+  const from=document.getElementById('f-from').value;
+  const to=document.getElementById('f-to').value;
+  const ship=document.getElementById('f-ship').value;
+  const del=document.getElementById('f-del').value;
+  const kat=document.getElementById('f-kat').value;
+  const arm=document.getElementById('f-arm').value;
+  const mon=document.getElementById('f-month').value;
+  const today=new Date();
+  return(allData[curSite]||[]).filter(r=>{
+    if(ship&&r['Shipment Area']!==ship)return false;
+    if(del&&r['Type Delivery']!==del)return false;
+    if(kat&&r['Kategori']!==kat)return false;
+    if(arm&&r['Type Armada']!==arm)return false;
+    if(mon&&String(pn(r['Month']))!==mon)return false;
+    const d=pd(r['Delivery Date']);
+    if(vmode==='mtd'&&d){if(d.getMonth()!==today.getMonth()||d.getFullYear()!==today.getFullYear())return false;}
+    if(vmode==='full'){if(from&&d&&d<new Date(from))return false;if(to&&d&&d>new Date(to))return false;}
+    return true;
+  });
+}
+
+function agg(data){
+  const m={};
+  data.forEach(r=>{
+    const j=(r['Jalur']||'Lainnya').trim();
+    if(!m[j])m[j]={trip:0,do:0,dp:0,cbm:0,cap:0,cost:0,ujp:0,vr:0,mpp:0,fuel:0,jarak:0};
+    const b=m[j];b.trip++;
+    b.do+=pn(r['DO']);b.dp+=pn(r['DP']);b.cbm+=pn(r['CBM']);
+    b.cap+=pn(r['Capacity Armada']);b.cost+=pn(r['Total Cost']);
+    b.ujp+=pn(r['UJP']);b.vr+=pn(r['Sewa Armada']);b.mpp+=pn(r['Prof Fee']);
+    b.fuel+=pn(r['Qty Fuel']);b.jarak+=pn(r['Jarak']);
+  });
+  return Object.entries(m).map(([j,b])=>{
+    const avgkm=b.trip>0?b.jarak/b.trip:0;
+    const avgltr=b.trip>0?b.fuel/b.trip:0;
+    return{jalur:j,trip:b.trip,do:b.do,dp:b.dp,cbm:b.cbm,olf:b.cap>0?b.cbm/b.cap:0,cost:b.cost,
+      ctrip:b.trip>0?b.cost/b.trip:0,cdo:b.do>0?b.cost/b.do:0,cdp:b.dp>0?b.cost/b.dp:0,ccbm:b.cbm>0?b.cost/b.cbm:0,
+      dodp:b.dp>0?b.do/b.dp:0,dotrip:b.trip>0?b.do/b.trip:0,cbmdo:b.do>0?b.cbm/b.do:0,cbmdp:b.dp>0?b.cbm/b.dp:0,
+      ujptrip:b.trip>0?b.ujp/b.trip:0,vrtrip:b.trip>0?b.vr/b.trip:0,mpptrip:b.trip>0?b.mpp/b.trip:0,
+      avgdp:b.trip>0?b.dp/b.trip:0,avgkm,kmltr:avgltr>0?avgkm/avgltr:0,costkm:b.jarak>0?b.cost/b.jarak:0,
+      tujp:b.ujp,tvr:b.vr,tmpp:b.mpp,_jarak:b.jarak,_fuel:b.fuel,_ujp:b.ujp,_vr:b.vr,_mpp:b.mpp};
+  });
+}
+
+function render(){
+  const fil=getFil();
+  const rows=agg(ttab?fil.filter(r=>r['Type Delivery']===ttab):fil);
+  const totCap=rows.reduce((a,r)=>a+(r.olf>0?r.cbm/r.olf:0),0);
+  const tot=rows.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,cost:a.cost+r.cost}),{trip:0,do:0,dp:0,cbm:0,cost:0});
+  const olf=totCap>0?tot.cbm/totCap:0;
+  document.getElementById('kpi-cost').textContent=fmtID(tot.cost);
+  document.getElementById('kpi-trip').textContent=fmtID(tot.trip);
+  document.getElementById('kpi-do').textContent=fmtID(tot.do);
+  document.getElementById('kpi-dp').textContent=fmtID(tot.dp);
+  document.getElementById('kpi-cbm').textContent=Math.round(tot.cbm).toLocaleString('id-ID');
+  document.getElementById('kpi-olf').textContent=pct(olf);
+  document.getElementById('kpi-cdo').textContent=fmtID(tot.do>0?tot.cost/tot.do:0);
+  document.getElementById('kpi-ccbm').textContent=fmtID(tot.cbm>0?tot.cost/tot.cbm:0);
+  const pill=document.getElementById('kpi-olf-pill');
+  const cls=oc(olf);pill.className='olf-pill '+cls;
+  pill.textContent=cls==='green'?'● Optimal':cls==='amber'?'● Cukup':'● Rendah';
+  renderTrend(fil);renderOlf(rows);renderTable(rows);
+}
+
+function renderTrend(fil){
+  const months=[...new Set(fil.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>pn(a)-pn(b));
+  const jalurs=[...new Set(fil.map(r=>(r['Jalur']||'Lainnya').trim()))];
+  const bm={};
+  fil.forEach(r=>{
+    const j=(r['Jalur']||'Lainnya').trim(),mo=r['Month']||'';
+    if(!bm[j])bm[j]={};
+    if(!bm[j][mo])bm[j][mo]={cost:0,do:0,cbm:0,dp:0};
+    const b=bm[j][mo];b.cost+=pn(r['Total Cost']);b.do+=pn(r['DO']);b.cbm+=pn(r['CBM']);b.dp+=pn(r['DP']);
+  });
+  const pal=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#0284c7','#9333ea','#15803d'];
+  const datasets=months.map((mo,i)=>({
+    label:MN[+mo]||mo,
+    data:jalurs.map(j=>{const b=bm[j]&&bm[j][mo]?bm[j][mo]:null;if(!b)return 0;
+      if(tmet==='cost')return b.cost;if(tmet==='cdo')return b.do>0?b.cost/b.do:0;
+      if(tmet==='ccbm')return b.cbm>0?b.cost/b.cbm:0;if(tmet==='cdp')return b.dp>0?b.cost/b.dp:0;return 0;}),
+    backgroundColor:pal[i%pal.length]+'cc',borderColor:pal[i%pal.length],borderWidth:1,borderRadius:3,
+  }));
+  if(cTrend)cTrend.destroy();
+  cTrend=new Chart(document.getElementById('c-trend'),{type:'bar',data:{labels:jalurs,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},
+      scales:{x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
+              y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtID(v)}}}}});
+}
+
+function renderOlf(rows){
+  const s=[...rows].sort((a,b)=>b.olf-a.olf);
+  const vals=s.map(r=>parseFloat((r.olf*100).toFixed(1)));
+  if(cOlf)cOlf.destroy();
+  cOlf=new Chart(document.getElementById('c-olf'),{type:'bar',data:{labels:s.map(r=>r.jalur),
+    datasets:[{data:vals,backgroundColor:vals.map(v=>v>=75?'#16a34a':v>=50?'#d97706':'#dc2626'),borderRadius:4,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>ctx.raw+'%'}}},
+      scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>v+'%'},max:100},
+              y:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}}}}});
+}
+
+function renderTable(rows){
+  let sorted=[...rows].sort((a,b)=>sasc?a[skey]-b[skey]:b[skey]-a[skey]);
+  if(skey==='jalur')sorted=[...rows].sort((a,b)=>sasc?a.jalur.localeCompare(b.jalur):b.jalur.localeCompare(a.jalur));
+  const tb=document.getElementById('tbody');
+  if(!sorted.length){tb.innerHTML=`<tr><td colspan="25" class="empty">Tidak ada data</td></tr>`;return;}
+  tb.innerHTML=sorted.map(r=>`<tr>
+    <td>${r.jalur}</td><td>${fmt(r.trip)}</td><td>${fmt(r.do)}</td><td>${fmt(r.dp)}</td>
+    <td>${Math.round(r.cbm).toLocaleString('id-ID')}</td>
+    <td><span class="olf-badge ${oc(r.olf)}">${pct(r.olf)}</span></td>
+    <td>${fmt2(r.dodp)}</td><td>${fmt2(r.dotrip)}</td><td>${fmt2(r.cbmdo)}</td><td>${fmt2(r.cbmdp)}</td>
+    <td>${fmt(r.ujptrip)}</td><td>${fmt(r.vrtrip)}</td><td>${fmt(r.mpptrip)}</td>
+    <td class="dv">${fmt(r.tujp)}</td><td>${fmt(r.tvr)}</td><td>${fmt(r.tmpp)}</td><td>${fmt(r.cost)}</td>
+    <td>${fmt(r.ctrip)}</td><td>${fmt(r.cdo)}</td><td>${fmt(r.cdp)}</td><td>${fmt(r.ccbm)}</td>
+    <td class="dv">${fmt2(r.avgdp)}</td><td>${fmt2(r.avgkm)}</td><td>${fmt2(r.kmltr)}</td><td>${fmt(r.costkm)}</td>
+  </tr>`).join('');
+  const t=sorted.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,
+    ce:a.ce+(r.olf>0?r.cbm/r.olf:0),cost:a.cost+r.cost,
+    ujp:a.ujp+r._ujp,vr:a.vr+r._vr,mpp:a.mpp+r._mpp,jarak:a.jarak+r._jarak,fuel:a.fuel+r._fuel}),
+    {trip:0,do:0,dp:0,cbm:0,ce:0,cost:0,ujp:0,vr:0,mpp:0,jarak:0,fuel:0});
+  const to=t.ce>0?t.cbm/t.ce:0;
+  const tavgkm=t.trip>0?t.jarak/t.trip:0;
+  const tavgltr=t.trip>0?t.fuel/t.trip:0;
+  document.getElementById('tfoot').innerHTML=`<tr>
+    <td>TOTAL</td><td>${fmt(t.trip)}</td><td>${fmt(t.do)}</td><td>${fmt(t.dp)}</td>
+    <td>${Math.round(t.cbm).toLocaleString('id-ID')}</td>
+    <td><span class="olf-badge ${oc(to)}">${pct(to)}</span></td>
+    <td>${fmt2(t.dp>0?t.do/t.dp:0)}</td><td>${fmt2(t.trip>0?t.do/t.trip:0)}</td>
+    <td>${fmt2(t.do>0?t.cbm/t.do:0)}</td><td>${fmt2(t.dp>0?t.cbm/t.dp:0)}</td>
+    <td>${fmt(t.trip>0?t.ujp/t.trip:0)}</td><td>${fmt(t.trip>0?t.vr/t.trip:0)}</td><td>${fmt(t.trip>0?t.mpp/t.trip:0)}</td>
+    <td class="dv">${fmt(t.ujp)}</td><td>${fmt(t.vr)}</td><td>${fmt(t.mpp)}</td><td>${fmt(t.cost)}</td>
+    <td>${fmt(t.trip>0?t.cost/t.trip:0)}</td><td>${fmt(t.do>0?t.cost/t.do:0)}</td>
+    <td>${fmt(t.dp>0?t.cost/t.dp:0)}</td><td>${fmt(t.cbm>0?t.cost/t.cbm:0)}</td>
+    <td class="dv">${fmt2(t.trip>0?t.dp/t.trip:0)}</td>
+    <td>${fmt2(tavgkm)}</td><td>${fmt2(tavgltr>0?tavgkm/tavgltr:0)}</td>
+    <td>${fmt(t.jarak>0?t.cost/t.jarak:0)}</td>
+  </tr>`;
+}
+
+function setMode(m,btn){vmode=m;document.querySelectorAll('.tgl-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTrend(getFil());}
+function setTab(t,btn){ttab=t;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function srt(k){if(skey===k)sasc=!sasc;else{skey=k;sasc=false;}render();}
+function toggleGrp(id){
+  const el=document.getElementById('grp-'+id);
+  const arr=document.getElementById('arr-'+id);
+  const open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  arr.classList.toggle('open',!open);
+}
+
+loadAll();
+</script>
+</body>
+</html>
