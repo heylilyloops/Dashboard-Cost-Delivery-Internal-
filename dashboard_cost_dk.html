@@ -328,7 +328,16 @@ const fmt=n=>Number.isFinite(n)?Math.round(n).toLocaleString('id-ID'):'—';
 const fmt2=n=>Number.isFinite(n)?n.toFixed(2):'—';
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
 const pn=v=>{const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;};
-const pd=s=>{if(!s)return null;const p=s.split('/');return p.length===3?new Date(+p[2],+p[1]-1,+p[0]):new Date(s);};
+const pd=s=>{
+  if(!s)return null;
+  const p=s.split('/');
+  if(p.length===3){
+    const a=+p[0],b=+p[1],y=+p[2];
+    if(y>1000)return new Date(y,a-1,b); // M/D/YYYY
+    return new Date(y+2000,a-1,b);     // DD/MM/YY fallback
+  }
+  return new Date(s);
+};
 const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
 function parseCSV(t){
