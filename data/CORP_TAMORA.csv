@@ -4351,3 +4351,78 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 260522C149,HCI,5/22/2026,CDELC,BK8807MH,Medan,Sumatera Utara,Solar,11.03,Customer,15,7.54,10,10,90000,476880,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,6:59:00,386880,,68
 260522H011,HCI,5/22/2026,FUSO,BK8815MG,Pekanbaru,Riau,,,HUB,97,32.86,34,3,,773760,Sumatera,PEKANBARU,FUSO,Internal,SumateraPEKANBARUFUSO,LUAR KOTA,,,,5,REGULAR,-1107952:49:00,773760,,-566827
 260522C153,HCI,5/22/2026,CDELC,BK8871MS,Medan,Sumatera Utara,,,Customer,13,6.43,10,8,5000,391880,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,6:32:00,386880,,-23226
+260523D088,FBI,5/23/2026,PICKUP,A8330VX,Medan,Sumatera Utara,Pertalite,4,Store,7,1.67,3,4,49000,290800,Sumatera,MEDAN,MINI VAN BOX,Internal,SumateraMEDANMINI VAN BOX,DALAM KOTA,,,,5,REGULAR,9:48:00,241800,,33
+260523D084,HCI,5/23/2026,CDELC,BK8009MI,Medan,Sumatera Utara,Solar,6.62,Store,37,10.0,10,1,50000,243440,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,5:26:00,193440,,44
+260523C132,HCI,5/23/2026,CDELC,BK8031LM,Medan,Sumatera Utara,,,Customer,13,3.13,10,8,,386880,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,6:54:00,386880,,-269545
+260523C134,HCI,5/23/2026,CDELC,BK8073MQ,Medan,Sumatera Utara,,,Customer,12,7.82,10,12,9000,395880,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,6:48:00,386880,,-177266
+260523H045,HCI,5/23/2026,CDELC,BK8074MQ,Pematangsiantar,Sumatera Utara,,,HUB,16,8.76,10,2,219000,412440,Sumatera,PEMATANGSIANTAR,CDE,Internal,SumateraPEMATANGSIANTARCDE,LUAR KOTA,,,,5,REGULAR,6:30:00,193440,,-147279
+260523C135,HCI,5/23/2026,CDELC,BK8075MQ,Medan,Sumatera Utara,,,Customer,27,6.38,10,11,10000,203440,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,7:06:00,193440,,-179791
+260523C184,HCI,5/23/2026,CDELC,BK8135LM,Medan,Sumatera Utara,Solar,5.88,Customer,1,5.37,10,1,50500,243940,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,NON REGULAR,2:43:00,193440,,51
+260523D087,FBI,5/23/2026,PICKUP,BK8136LM,Medan,Sumatera Utara,Pertalite,8.9,Store,15,1.82,3,8,96500,338300,Sumatera,MEDAN,MINI VAN BOX,Internal,SumateraMEDANMINI VAN BOX,DALAM KOTA,,,,5,REGULAR,7:49:00,241800,,70
+260523D101,AHI,5/23/2026,CDELC,BK8141LM,Medan,Sumatera Utara,Solar,3.97,Store,21,8.78,10,1,27000,268800,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,8:23:00,241800,,26
+260523D085,HCI,5/23/2026,CDELC,BK8146LM,Medan,Sumatera Utara,Solar,5.88,Store,17,8.24,10,1,58000,251440,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,0:35:00,193440,,43
+260523C142,HCI,5/23/2026,CDELC,BK8172LM,Medan,Sumatera Utara,,,Customer,17,6.98,10,12,20000,406880,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,6:48:00,386880,,-116770
+260523C136,HCI,5/23/2026,CDELC,BK8191MQ,Binjai,Sumatera Utara,,,Customer,10,9.76,10,5,23000,216440,Sumatera,BINJAI,CDE,Internal,SumateraBINJAICDE,DALAM KOTA,,,,5,REGULAR,3:58:00,193440,,-166023
+260523D086,HCI,5/23/2026,CDELC,BK8192MQ,Medan,Sumatera Utara,Solar,8.68,Store,25,9.28,10,3,74000,267440,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,4:53:00,193440,,53
+260523C149,HCI,5/23/2026,CDELC,BK8299MH,Deli Serdang,Sumatera Utara,Solar,14.71,Customer,14,8.55,10,9,104000,490880,Sumatera,DELI SERDANG,CDE,Internal,SumateraDELI SERDANGCDE,DALAM KOTA,,,,5,REGULAR,8:59:00,386880,,126
+260523C133,HCI,5/23/2026,CDELC,BK8309MS,Medan,Sumatera Utara,,,Customer,31,7.34,10,17,32500,419380,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,8:06:00,386880,,-77435
+260523C255,HCI,5/23/2026,PICKUP,BK8633MS,Medan,Sumatera Utara,Pertalite,3.1,Customer,1,2.2,3,1,35000,228440,Sumatera,MEDAN,PICKUP,Internal,SumateraMEDANPICKUP,DALAM KOTA,,,,5,REGULAR,2:04:00,193440,,29
+260523C257,HCI,5/23/2026,CDELC,BK8646MS,Medan,Sumatera Utara,,,Customer,1,8.0,11,1,,193440,Sumatera,MEDAN,CDE LONG CHASSIS,Internal,SumateraMEDANCDE LONG CHASSIS,DALAM KOTA,,,,5,REGULAR,-4:49:00,193440,,-50049
+260523C157,HCI,5/23/2026,CDELC,BK8647MS,Toba,#N/A,,,Customer,3,3.79,10,1,335000,528440,Sumatera,TOBA,CDE,Internal,SumateraTOBACDE,LUAR KOTA,,,,5,NON REGULAR,10:53:00,193440,,419
+260523C150,HCI,5/23/2026,PICKUP,BK8696MS,Medan,Sumatera Utara,Pertalite,7.4,Customer,4,3.0,3,4,88500,281940,Sumatera,MEDAN,PICKUP,Internal,SumateraMEDANPICKUP,DALAM KOTA,,,,5,REGULAR,6:19:00,193440,,70
+260523C159,HCI,5/23/2026,CDELC,BK8803MH,Toba,#N/A,Solar,44.85,Customer,2,7.79,10,1,521000,907880,Sumatera,TOBA,CDE,Internal,SumateraTOBACDE,LUAR KOTA,,,,5,NON REGULAR,25:00:00,386880,,452
+260523C147,HCI,5/23/2026,CDELC,BK8804MH,Medan,Sumatera Utara,Solar,14.71,Customer,12,6.07,10,8,118500,505380,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,6:23:00,386880,,95
+260523D113,HCI,5/23/2026,CDELC,BK8805MH,Medan,Sumatera Utara,Solar,8.82,Store,4,8.8,10,4,60000,301800,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,1:14:00,241800,,46
+260523C154,HCI,5/23/2026,CDELC,BK8806MH,Medan,Sumatera Utara,Solar,2.65,Customer,2,9.47,10,1,18000,211440,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,NON REGULAR,0:52:00,193440,,17
+260523C148,HCI,5/23/2026,CDELC,BK8807MH,Medan,Sumatera Utara,,,Customer,13,7.16,10,10,,386880,Sumatera,MEDAN,CDE,Internal,SumateraMEDANCDE,DALAM KOTA,,,,5,REGULAR,5:05:00,386880,,-186212
+260523C160,HCI,5/23/2026,CDELC,BK8871MS,Toba,#N/A,,,Customer,1,10.0,10,1,89500,476380,Sumatera,TOBA,CDE,Internal,SumateraTOBACDE,LUAR KOTA,,,,5,NON REGULAR,-0:26:00,386880,,-23336
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+260523D088,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523D084,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C132,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C134,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523H045,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C135,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C184,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523D087,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523D101,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523D085,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C142,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C136,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523D086,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C149,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C133,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C255,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C257,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C157,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C150,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C159,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C147,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523D113,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C154,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C148,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
+260523C160,,,#N/A,,,#N/A,,,,,,,,,,Sumatera,,,,Sumatera,,,,,12,,,0,,
