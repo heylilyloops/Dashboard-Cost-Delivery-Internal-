@@ -3739,37 +3739,37 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 260605D131,FBI,6/5/2026,PICKUP,DD8772UF,Makassar,Sulawesi Selatan,Pertalite,6.2,Store,28,2.23,3,6,99000,330047,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,REGULAR,5:27:00,92980,138067,61,,,,,,,AHI
 260605D132,AHI,6/5/2026,PICKUP,DD8797SZ,Makassar,Sulawesi Selatan,Pertalite,2.35,Store,1,3.0,3,1,56000,207613,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,REGULAR,1:29:00,92980,58633,42,,,,,,,AHI
 260605D162,HCI,6/5/2026,PICKUP,DD8797SZ,Makassar,Sulawesi Selatan,Pertalite,4.2,Store,10,2.56,3,2,73000,224613,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,REGULAR,2:39:00,92980,58633,40,,,,,,,HCI
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
+260605C286,HCI,6/6/2026,PICKUP,DD8797SZ,Makassar,Sulawesi Selatan,Pertalite,3.3,Customer,3,0.1,3,1,33000,165069,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,REGULAR,2:31:00,92980,39089,25,,,,,,,HCI
+260606C004,HCI,6/6/2026,CDELC,A8348VA,Makassar,Sulawesi Selatan,Solar,13.53,Customer,17,8.5,10,15,121000,649153,Sulawesi,MAKASSAR,CDE,Internal,SulawesiMAKASSARCDE,DALAM KOTA,,,,6,REGULAR,8:38:00,371920,156233,93,,,,,,,HCI
+260606C012,HCI,6/6/2026,CDELC,A8550VX,Makassar,Sulawesi Selatan,Solar,18.09,Customer,9,3.31,10,2,138500,324460,Sulawesi,MAKASSAR,CDE,Internal,SulawesiMAKASSARCDE,DALAM KOTA,,,,6,REGULAR,3:47:00,185960,0,54,,,,,,,HCI
+260606C017,AHI,6/6/2026,CDELC,A8609ZF,Makassar,Sulawesi Selatan,Solar,14.71,Customer,11,8.31,11,11,116000,709087,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,8:18:00,371920,221167,110,,,,,,,AHI
+260606C006,HCI,6/6/2026,CDELC,A8997ZD,Makassar,Sulawesi Selatan,Solar,13.68,Customer,12,9.07,11,11,120000,690187,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,8:26:00,371920,198267,101,,,,,,,HCI
+260606C003,HCI,6/6/2026,CDELC,DD8140AK,Maros,Sulawesi Selatan,Solar,14.71,Customer,10,9.54,11,9,131000,795287,Sulawesi,MAROS,CDE LONG CHASSIS,Internal,SulawesiMAROSCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,5:10:00,371920,292367,98,,,,,,,HCI
+260606C005,HCI,6/6/2026,CDELC,DD8165UE,Makassar,Sulawesi Selatan,Solar,14.26,Customer,20,10.43,11,14,97000,747887,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,7:47:00,371920,278967,112,,,,,,,HCI
+260606D074,HCI,6/6/2026,CDELC,DD8173RV,Gowa,Sulawesi Selatan,Solar,7.35,Store,49,7.46,10,2,87000,435860,Sulawesi,GOWA,CDE,Internal,SulawesiGOWACDE,DALAM KOTA,,,,6,REGULAR,6:44:00,185960,162900,59,,,,,,,HCI
+260606C009,HCI,6/6/2026,CDELC,DD8194AK,Makassar,Sulawesi Selatan,Solar,14.71,Customer,25,10.75,11,23,122000,786287,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,9:31:00,371920,292367,83,,,,,,,HCI
+260606C007,HCI,6/6/2026,CDELC,DD8195AK,Gowa,Sulawesi Selatan,Solar,18.53,Customer,13,11.0,11,12,169000,833287,Sulawesi,GOWA,CDE LONG CHASSIS,Internal,SulawesiGOWACDE LONG CHASSIS,DALAM KOTA,,,,6,NON REGULAR,9:16:00,371920,292367,121,,,,,,,HCI
+260606C008,HCI,6/6/2026,PICKUP,DD8199SJ,Makassar,Sulawesi Selatan,Pertalite,8.0,Customer,9,3.0,3,9,91000,575420,Sulawesi,MAKASSAR,PICKUP,Internal,SulawesiMAKASSARPICKUP,DALAM KOTA,,,,6,REGULAR,6:26:00,371920,112500,74,,,,,,,HCI
+260606C232,HCI,6/6/2026,CDELC,DD8212RV,Makassar,Sulawesi Selatan,Solar,5.59,Customer,1,8.0,10,1,99000,447427,Sulawesi,MAKASSAR,CDE,Internal,SulawesiMAKASSARCDE,DALAM KOTA,,,,6,REGULAR,4:45:00,185960,162467,0,,,,,,,HCI
+260606D070,AHI,6/6/2026,CDDLC,DD8283SY,Makassar,Sulawesi Selatan,Solar,7.35,Store,71,15.8,16,4,71000,485327,Sulawesi,MAKASSAR,CDD LONG CHASSIS,Internal,SulawesiMAKASSARCDD LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,6:07:00,185960,228367,51,,,,,,,AHI
+260606D072,HCI,6/6/2026,CDELC,DD8328KJ,Makassar,Sulawesi Selatan,Solar,6.62,Store,94,10.88,11,4,107000,585327,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,6:27:00,185960,292367,47,,,,,,,HCI
+260606D073,HCI,6/6/2026,CDDLC,DD8632RG,Makassar,Sulawesi Selatan,Solar,7.5,Store,22,15.85,16,1,56000,505727,Sulawesi,MAKASSAR,CDD LONG CHASSIS,Internal,SulawesiMAKASSARCDD LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,5:57:00,185960,263767,67,,,,,,,HCI
+260606D071,HCI,6/6/2026,CDELC,DD8634RG,Makassar,Sulawesi Selatan,Solar,6.62,Store,46,10.19,11,3,78000,468893,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,8:16:00,185960,204933,65,,,,,,,HCI
+260606C010,HCI,6/6/2026,CDELC,DD8705RM,Makassar,Sulawesi Selatan,Solar,6.62,Customer,1,11.0,11,1,77500,677253,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,NON REGULAR,8:47:00,371920,227833,50,,,,,,,HCI
+260606C011,HCI,6/6/2026,PICKUP,DD8772UF,Makassar,Sulawesi Selatan,Pertalite,4.9,Customer,1,3.0,3,1,81000,405027,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,REGULAR,6:51:00,185960,138067,43,,,,,,,HCI
+260606C016,AHI,6/6/2026,PICKUP,DD8797SZ,Makassar,Sulawesi Selatan,Pertalite,10.0,Customer,11,1.9,3,9,187000,598009,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,REGULAR,7:00:00,371920,39089,125,,,,,,,AHI
+260606C252,AHI,6/6/2026,PICKUP,DD8797SZ,Makassar,Sulawesi Selatan,Pertalite,3.0,Customer,1,0.48,3,1,45500,177569,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,NON REGULAR,1108317:03:00,92980,39089,35,,,,,,,AHI
+260607C002,HCI,6/7/2026,CDELC,DD8389QW,Maros,Sulawesi Selatan,Solar,14.71,Customer,14,9.0,11,11,122000,800587,Sulawesi,MAROS,CDE LONG CHASSIS,Internal,SulawesiMAROSCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,6:56:00,371920,306667,102,,,,,,,HCI
+260607C003,HCI,6/7/2026,CDELC,DD8212RV,Makassar,Sulawesi Selatan,Solar,11.03,Customer,8,8.03,10,8,86000,620387,Sulawesi,MAKASSAR,CDE,Internal,SulawesiMAKASSARCDE,DALAM KOTA,,,,6,REGULAR,7:45:00,371920,162467,122,,,,,,,HCI
+260607C004,HCI,6/7/2026,CDELC,DD8634RG,Makassar,Sulawesi Selatan,Solar,14.71,Customer,13,9.58,11,10,130000,706853,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,7:01:00,371920,204933,106,,,,,,,HCI
+260607C005,HCI,6/7/2026,CDELC,DD8987RG,Makassar,Sulawesi Selatan,,,Customer,15,10.87,11,12,31000,607853,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,-0:24:00,371920,204933,-154872,,,,,,,HCI
+260607C011,HCI,6/7/2026,PICKUP,DD8199SJ,Makassar,Sulawesi Selatan,Pertalite,5.3,Customer,3,0.75,3,1,57000,262480,Sulawesi,MAKASSAR,PICKUP,Internal,SulawesiMAKASSARPICKUP,DALAM KOTA,,,,6,REGULAR,-0:26:00,92980,112500,65,,,,,,,HCI
+260607C012,AHI,6/7/2026,CDELC,DD8140AK,Makassar,Sulawesi Selatan,Solar,14.71,Customer,10,6.78,11,9,100000,764287,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,6:49:00,371920,292367,89,,,,,,,AHI
+260607D054,AHI,6/7/2026,CDDLC,DD8283SY,Makassar,Sulawesi Selatan,Solar,6.32,Store,113,15.45,16,5,63000,477327,Sulawesi,MAKASSAR,CDD LONG CHASSIS,Internal,SulawesiMAKASSARCDD LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,6:13:00,185960,228367,49,,,,,,,AHI
+260607D055,AHI,6/7/2026,CDDLC,DD8632RG,Makassar,Sulawesi Selatan,Solar,5.29,Store,47,16.0,16,1,56000,505727,Sulawesi,MAKASSAR,CDD LONG CHASSIS,Internal,SulawesiMAKASSARCDD LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,5:35:00,185960,263767,35,,,,,,,AHI
+260607D056,HCI,6/7/2026,CDELC,A8997ZD,Makassar,Sulawesi Selatan,Solar,7.79,Store,44,11.0,11,2,53000,344247,Sulawesi,MAKASSAR,CDE LONG CHASSIS,Internal,SulawesiMAKASSARCDE LONG CHASSIS,DALAM KOTA,,,,6,REGULAR,3:48:00,92980,198267,50,,,,,,,HCI
+260607D058,AHI,6/7/2026,CDELC,DD8173RV,Makassar,Sulawesi Selatan,Solar,6.76,Store,82,9.96,10,4,77000,425860,Sulawesi,MAKASSAR,CDE,Internal,SulawesiMAKASSARCDE,DALAM KOTA,,,,6,REGULAR,7:08:00,185960,162900,51,,,,,,,AHI
+260607D084,AHI,6/7/2026,PICKUP,DD8772UF,Makassar,Sulawesi Selatan,Pertalite,3.8,Store,20,3.0,3,1,38000,362027,Sulawesi,MAKASSAR,MINI VAN BOX,Internal,SulawesiMAKASSARMINI VAN BOX,DALAM KOTA,,,,6,REGULAR,4:27:00,185960,138067,41,,,,,,,AHI
 ,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,
