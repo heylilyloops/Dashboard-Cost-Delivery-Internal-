@@ -77,6 +77,11 @@ body{font-family:var(--fn);background:var(--bg);color:var(--tx);display:flex;min
 .fl{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;}
 .fg select,.fg input{border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:5px 9px;border-radius:6px;font-size:12px;font-family:var(--fn);outline:none;transition:border-color .15s;min-width:110px;}
 .fg select:focus,.fg input:focus{border-color:var(--acc);}
+#f-from,#f-to{border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:5px 9px;border-radius:6px;font-size:12px;font-family:var(--fn);outline:none;min-width:120px;}
+.quick-btn{padding:5px 11px;border:1px solid var(--bdr);background:var(--bg);color:var(--tx2);border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--fn);white-space:nowrap;}
+.quick-btn:hover{border-color:var(--acc);color:var(--acc);}
+.quick-btn.active{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600;}
+.date-filter-group{display:flex;flex-direction:column;}
 .date-row{display:flex;gap:5px;align-items:center;}
 .date-row span{color:var(--tx3);font-size:11px;}
 
@@ -195,18 +200,7 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
   <div class="main">
     <div class="topbar">
       <div class="tl">
-        <div class="pg-title" id="page-title">HCI Jababeka</div>
-        <div class="tgl-grp">
-          <button class="tgl-btn active" onclick="setMode('full',this)">Full Period</button>
-          <button class="tgl-btn" onclick="setMode('mtd',this)">MTD</button>
-        </div>
-        <select class="top-sel" id="f-month" onchange="render()">
-          <option value="">Semua Bulan</option>
-          <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
-          <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-          <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
-          <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
-        </select>
+        <div class="pg-title" id="page-title">Semua Site</div>
       </div>
       <div class="tr">
         <span class="upd-badge" id="ts">—</span>
@@ -216,10 +210,19 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
 
     <div class="content">
       <div class="filter-bar">
-        <div class="fg"><div class="fl">Periode</div>
-          <div class="date-row">
-            <input type="date" id="f-from" onchange="render()"><span>—</span>
-            <input type="date" id="f-to" onchange="render()">
+        <div class="date-filter-group">
+          <div class="fl" style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Delivery Date</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div>
+              <div style="font-size:9px;color:var(--tx3);margin-bottom:3px;">DARI</div>
+              <input type="date" id="f-from" onchange="clearQuick();render()">
+            </div>
+            <span style="color:var(--tx3);font-size:13px;margin-top:10px;">→</span>
+            <div>
+              <div style="font-size:9px;color:var(--tx3);margin-bottom:3px;">SAMPAI</div>
+              <input type="date" id="f-to" onchange="clearQuick();render()">
+            </div>
+            <div id="quick-btns" style="display:flex;gap:4px;margin-top:10px;flex-wrap:wrap;"></div>
           </div>
         </div>
         <div class="fg"><div class="fl">Shipment Area</div>
@@ -417,12 +420,69 @@ function getActiveRaw(){
   return allData[curSite]||[];
 }
 
+function buildQuickBtns(){
+  const raw=getActiveRaw();
+  const months=[...new Set(raw.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>+a-+b);
+  const MN2=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+  const container=document.getElementById('quick-btns');
+  container.innerHTML='';
+  // Semua button
+  const btnAll=document.createElement('button');
+  btnAll.className='quick-btn active';btnAll.id='qb-all';btnAll.textContent='Semua';
+  btnAll.onclick=()=>setQuick('all');
+  container.appendChild(btnAll);
+  // MTD button
+  const btnMTD=document.createElement('button');
+  btnMTD.className='quick-btn';btnMTD.id='qb-mtd';btnMTD.textContent='MTD';
+  btnMTD.onclick=()=>setQuick('mtd');
+  container.appendChild(btnMTD);
+  // Month buttons
+  months.forEach(mo=>{
+    const btn=document.createElement('button');
+    btn.className='quick-btn';btn.id='qb-'+mo;btn.textContent=MN2[+mo]||mo;
+    btn.onclick=()=>setQuick('month',mo);
+    container.appendChild(btn);
+  });
+}
+
+let activeQuick='all';
+function setQuick(type,val){
+  activeQuick=type==='month'?'m'+val:type;
+  // update active state
+  document.querySelectorAll('.quick-btn').forEach(b=>b.classList.remove('active'));
+  if(type==='all')document.getElementById('qb-all')?.classList.add('active');
+  else if(type==='mtd')document.getElementById('qb-mtd')?.classList.add('active');
+  else document.getElementById('qb-'+val)?.classList.add('active');
+  // set date inputs
+  const today=new Date();
+  if(type==='all'){
+    document.getElementById('f-from').value='';
+    document.getElementById('f-to').value='';
+  }else if(type==='mtd'){
+    const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0');
+    document.getElementById('f-from').value=`${y}-${m}-01`;
+    document.getElementById('f-to').value=today.toISOString().split('T')[0];
+  }else if(type==='month'){
+    const y=today.getFullYear(),m=String(+val).padStart(2,'0');
+    const lastDay=new Date(y,+val,0).getDate();
+    document.getElementById('f-from').value=`${y}-${m}-01`;
+    document.getElementById('f-to').value=`${y}-${m}-${String(lastDay).padStart(2,'0')}`;
+  }
+  render();
+}
+
+function clearQuick(){
+  activeQuick='custom';
+  document.querySelectorAll('.quick-btn').forEach(b=>b.classList.remove('active'));
+}
+
 function updateArmadaFilter(){
   const raw=getActiveRaw();
   const arms=[...new Set(raw.map(r=>r['Type Armada']).filter(Boolean))].sort();
   const sel=document.getElementById('f-arm');
   const cur=sel.value;
   sel.innerHTML='<option value="">Semua</option>'+arms.map(a=>`<option value="${a}"${a===cur?' selected':''}>${a}</option>`).join('');
+  buildQuickBtns();
 }
 
 function updateActiveBtn(){
@@ -443,7 +503,7 @@ function switchSite(id,btn){
   document.getElementById('f-ship').value='';
   document.getElementById('f-del').value='';
   document.getElementById('f-kat').value='';
-  document.getElementById('f-month').value='';
+  activeQuick='all';
   ttab='';
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('.tab-btn').classList.add('active');
@@ -459,17 +519,14 @@ function getFil(){
   const del=document.getElementById('f-del').value;
   const kat=document.getElementById('f-kat').value;
   const arm=document.getElementById('f-arm').value;
-  const mon=document.getElementById('f-month').value;
-  const today=new Date();
   return getActiveRaw().filter(r=>{
     if(ship&&r['Shipment Area']!==ship)return false;
     if(del&&r['Type Delivery']!==del)return false;
     if(kat&&r['Kategori']!==kat)return false;
     if(arm&&r['Type Armada']!==arm)return false;
-    if(mon&&String(pn(r['Month']))!==mon)return false;
     const d=pd(r['Delivery Date']);
-    if(vmode==='mtd'&&d){if(d.getMonth()!==today.getMonth()||d.getFullYear()!==today.getFullYear())return false;}
-    if(vmode==='full'){if(from&&d&&d<new Date(from))return false;if(to&&d&&d>new Date(to))return false;}
+    if(from&&d&&d<new Date(from))return false;
+    if(to&&d&&d>new Date(to+'T23:59:59'))return false;
     return true;
   });
 }
@@ -605,7 +662,6 @@ function renderTable(rows){
   </tr>`;
 }
 
-function setMode(m,btn){vmode=m;document.querySelectorAll('.tgl-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
 function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTrend(getFil());}
 function setTab(t,btn){ttab=t;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
 function srt(k){if(skey===k)sasc=!sasc;else{skey=k;sasc=false;}render();}
