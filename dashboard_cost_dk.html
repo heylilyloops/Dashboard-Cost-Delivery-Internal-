@@ -161,6 +161,7 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
       <div><div class="sb-bn">Cost DK</div><div class="sb-bs">DASHBOARD PENGIRIMAN</div></div>
     </div>
     <div class="sb-sec">SITE</div>
+    <button class="sb-sub active" style="padding:6px 14px;font-weight:600;color:#fff;" onclick="switchSite('all',this)"><span class="sb-sub-dot" style="background:#60a5fa;opacity:1;"></span>Semua Site</button>
 
     <button class="sb-item" onclick="toggleGrp('jab',this)">
       <span class="sb-dot" style="background:#34d399"></span>Jababeka
@@ -327,7 +328,7 @@ const SITES={
   cor_tam:{label:'Corp Tamora',csv:'CORP_TAMORA.csv',owner:'',grp:'Corp'},
 };
 
-let allData={},curSite='hci_jab',tmet='cost',ttab='',skey='cost',sasc=false,vmode='full',cTrend=null,cOlf=null;
+let allData={},curSite='all',tmet='cost',ttab='',skey='cost',sasc=false,vmode='full',cTrend=null,cOlf=null;
 const MN=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
 const fmtID=n=>{if(!Number.isFinite(n))return'—';const a=Math.abs(n);if(a>=1e12)return(n/1e12).toFixed(1).replace('.',',')+'T';if(a>=1e9)return(n/1e9).toFixed(1).replace('.',',')+'M';if(a>=1e6)return(n/1e6).toFixed(1).replace('.',',')+'JT';if(a>=1e3)return(n/1e3).toFixed(1).replace('.',',')+'RB';return Math.round(n).toLocaleString('id-ID');};
 const fmt=n=>Number.isFinite(n)?Math.round(n).toLocaleString('id-ID'):'—';
@@ -405,13 +406,19 @@ async function loadAll(){
   document.getElementById('ts').textContent='Update: '+new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
   document.getElementById('ls').style.display='none';
   document.getElementById('app').style.display='flex';
+  curSite='all';
   updateArmadaFilter();
   updateActiveBtn();
   render();
 }
 
+function getActiveRaw(){
+  if(curSite==='all') return Object.values(allData).flat();
+  return allData[curSite]||[];
+}
+
 function updateArmadaFilter(){
-  const raw=allData[curSite]||[];
+  const raw=getActiveRaw();
   const arms=[...new Set(raw.map(r=>r['Type Armada']).filter(Boolean))].sort();
   const sel=document.getElementById('f-arm');
   const cur=sel.value;
@@ -419,18 +426,18 @@ function updateArmadaFilter(){
 }
 
 function updateActiveBtn(){
-  document.getElementById('page-title').textContent=SITES[curSite].label;
+  document.getElementById('page-title').textContent=curSite==='all'?'Semua Site':SITES[curSite].label;
   document.querySelectorAll('.sb-sub').forEach(b=>b.classList.remove('active'));
-  // find by onclick attribute matching curSite
   document.querySelectorAll('.sb-sub').forEach(b=>{
-    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+curSite+"'"))b.classList.add('active');
+    const oc=b.getAttribute('onclick')||'';
+    if(curSite==='all'&&oc.includes("'all'"))b.classList.add('active');
+    else if(curSite!=='all'&&oc.includes("'"+curSite+"'"))b.classList.add('active');
   });
 }
 
 function switchSite(id,btn){
-  if(!allData[id]){return;}
+  if(id!=='all'&&!allData[id])return;
   curSite=id;
-  // reset filters
   document.getElementById('f-from').value='';
   document.getElementById('f-to').value='';
   document.getElementById('f-ship').value='';
@@ -454,7 +461,7 @@ function getFil(){
   const arm=document.getElementById('f-arm').value;
   const mon=document.getElementById('f-month').value;
   const today=new Date();
-  return(allData[curSite]||[]).filter(r=>{
+  return getActiveRaw().filter(r=>{
     if(ship&&r['Shipment Area']!==ship)return false;
     if(del&&r['Type Delivery']!==del)return false;
     if(kat&&r['Kategori']!==kat)return false;
