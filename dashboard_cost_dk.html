@@ -81,14 +81,17 @@ body{font-family:var(--fn);background:var(--bg);color:var(--tx);display:flex;min
 .date-row span{color:var(--tx3);font-size:11px;}
 
 /* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;}
-@media(max-width:1500px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
+.kpi-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:10px;}
+@media(max-width:1600px){.kpi-grid{grid-template-columns:repeat(6,1fr);}}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
 .kpi-card{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;padding:14px;transition:box-shadow .15s;}
 .kpi-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06);}
 .kpi-lbl{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
 .kpi-val{font-family:var(--mo);font-size:19px;font-weight:600;color:var(--tx);line-height:1;font-variant-numeric:tabular-nums;}
 .kpi-val.blue{color:var(--acc);}
 .kpi-sub{font-size:10px;color:var(--tx3);margin-top:4px;}
+.kpi-pct{font-size:11px;font-weight:600;color:var(--tx2);margin-top:5px;font-family:var(--mo);}
+.kpi-pct span{font-size:9px;font-weight:400;color:var(--tx3);margin-left:2px;}
 .olf-pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
 .olf-pill.green{background:var(--gr-b);color:var(--gr);}
 .olf-pill.amber{background:var(--am-b);color:var(--am);}
@@ -241,6 +244,9 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
         <div class="kpi-card"><div class="kpi-lbl">OLF</div><div class="kpi-val" id="kpi-olf">—</div><div id="kpi-olf-pill" class="olf-pill green">● Optimal</div></div>
         <div class="kpi-card"><div class="kpi-lbl">Cost / DO</div><div class="kpi-val" id="kpi-cdo">—</div><div class="kpi-sub">IDR per DO</div></div>
         <div class="kpi-card"><div class="kpi-lbl">Cost / CBM</div><div class="kpi-val" id="kpi-ccbm">—</div><div class="kpi-sub">IDR per CBM</div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Total UJP</div><div class="kpi-val" id="kpi-ujp">—</div><div class="kpi-pct" id="kpi-ujp-pct">—<span>dari Total Cost</span></div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Total VR</div><div class="kpi-val" id="kpi-vr">—</div><div class="kpi-pct" id="kpi-vr-pct">—<span>dari Total Cost</span></div></div>
+        <div class="kpi-card"><div class="kpi-lbl">Total MPP</div><div class="kpi-val" id="kpi-mpp">—</div><div class="kpi-pct" id="kpi-mpp-pct">—<span>dari Total Cost</span></div></div>
       </div>
 
       <div class="chart-card">
@@ -498,6 +504,18 @@ function render(){
   document.getElementById('kpi-olf').textContent=pct(olf);
   document.getElementById('kpi-cdo').textContent=fmtID(tot.do>0?tot.cost/tot.do:0);
   document.getElementById('kpi-ccbm').textContent=fmtID(tot.cbm>0?tot.cost/tot.cbm:0);
+
+  // UJP, VR, MPP totals + kontribusi
+  const totUJP=rows.reduce((a,r)=>a+r._ujp,0);
+  const totVR=rows.reduce((a,r)=>a+r._vr,0);
+  const totMPP=rows.reduce((a,r)=>a+r._mpp,0);
+  const pctFmt=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
+  document.getElementById('kpi-ujp').textContent=fmtID(totUJP);
+  document.getElementById('kpi-vr').textContent=fmtID(totVR);
+  document.getElementById('kpi-mpp').textContent=fmtID(totMPP);
+  document.getElementById('kpi-ujp-pct').innerHTML=pctFmt(tot.cost>0?totUJP/tot.cost:0)+'<span> dari Total Cost</span>';
+  document.getElementById('kpi-vr-pct').innerHTML=pctFmt(tot.cost>0?totVR/tot.cost:0)+'<span> dari Total Cost</span>';
+  document.getElementById('kpi-mpp-pct').innerHTML=pctFmt(tot.cost>0?totMPP/tot.cost:0)+'<span> dari Total Cost</span>';
   const pill=document.getElementById('kpi-olf-pill');
   const cls=oc(olf);pill.className='olf-pill '+cls;
   pill.textContent=cls==='green'?'● Optimal':cls==='amber'?'● Cukup':'● Rendah';
