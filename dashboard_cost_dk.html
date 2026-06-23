@@ -386,12 +386,18 @@ const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
 function parseCSV(t){
   const lines=t.trim().split('\n');
-  const hdr=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').replace(/\n/g,' '));
+  const hdr=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').replace(/\r/g,'').replace(/\n/g,' '));
+  // normalize known variant names
+  const normalize=h=>{
+    if(h==='Shipment Area'||h==='Shipment  Area'||h.startsWith('Shipment'))return'Shipment Area';
+    return h;
+  };
+  const normHdr=hdr.map(normalize);
   return lines.slice(1).filter(l=>l.trim()).map(line=>{
     const vals=[];let cur='',inQ=false;
     for(const c of line){if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){vals.push(cur.trim());cur='';}else cur+=c;}
     vals.push(cur.trim());
-    const o={};hdr.forEach((h,i)=>{o[h]=(vals[i]||'').replace(/"/g,'').trim();});return o;
+    const o={};normHdr.forEach((h,i)=>{o[h]=(vals[i]||'').replace(/"/g,'').trim();});return o;
   });
 }
 
