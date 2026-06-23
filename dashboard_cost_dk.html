@@ -447,21 +447,9 @@ const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
 function parseCSV(t){
   t=t.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  
-  // Split into lines respecting quoted fields
-  const lines=[];
-  let cur='',inQ=false;
-  for(let i=0;i<t.length;i++){
-    const c=t[i];
-    if(c==='"'){inQ=!inQ;cur+=c;}
-    else if(c==='\n'&&!inQ){lines.push(cur);cur='';}
-    else cur+=c;
-  }
-  if(cur)lines.push(cur);
-  
+  const lines=t.split('\n');
   if(!lines.length)return[];
   
-  // Parse a single CSV line into fields
   const parseLine=s=>{
     const vals=[];let f='',inq=false;
     for(let i=0;i<s.length;i++){
@@ -474,7 +462,6 @@ function parseCSV(t){
     return vals;
   };
   
-  // Parse header - normalize names
   const rawHdr=parseLine(lines[0]);
   const hdr=rawHdr.map(h=>{
     h=h.replace(/\s+/g,' ').trim();
@@ -482,10 +469,15 @@ function parseCSV(t){
     return h;
   });
   
+  // Only keep columns we need
+  const KEEP=new Set(['LC','OWNER','Delivery Date','Jalur','Type Delivery','Shipment Area','DO','CBM','Capacity Armada','DP','UJP','Total Cost','Sewa Armada','Prof Fee','Qty Fuel','Jarak','Month','Kategori','Type Armada']);
+  const idxMap=[];
+  hdr.forEach((h,i)=>{if(KEEP.has(h))idxMap.push([h,i]);});
+  
   return lines.slice(1).filter(l=>l.trim()).map(line=>{
     const vals=parseLine(line);
     const o={};
-    hdr.forEach((h,i)=>{o[h]=(vals[i]||'').trim();});
+    idxMap.forEach(([h,i])=>{o[h]=(vals[i]||'').trim();});
     return o;
   });
 }
