@@ -385,19 +385,48 @@ const pd=s=>{if(!s)return null;const p=s.split('/');if(p.length===3){const a=+p[
 const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
 function parseCSV(t){
-  const lines=t.trim().split('\n');
-  const hdr=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').replace(/\r/g,'').replace(/\n/g,' '));
-  // normalize known variant names
-  const normalize=h=>{
-    if(h==='Shipment Area'||h==='Shipment  Area'||h.startsWith('Shipment'))return'Shipment Area';
-    return h;
-  };
-  const normHdr=hdr.map(normalize);
-  return lines.slice(1).filter(l=>l.trim()).map(line=>{
+  // Handle \r\n and \r
+  t=t.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  // Split respecting quoted fields (handles embedded newlines in headers)
+  const splitLine=s=>{
     const vals=[];let cur='',inQ=false;
-    for(const c of line){if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){vals.push(cur.trim());cur='';}else cur+=c;}
+    for(let i=0;i<s.length;i++){
+      const c=s[i];
+      if(c==='"'){inQ=!inQ;}
+      else if(c===','&&!inQ){vals.push(cur.trim());cur='';}
+      else cur+=c;
+    }
     vals.push(cur.trim());
-    const o={};normHdr.forEach((h,i)=>{o[h]=(vals[i]||'').replace(/"/g,'').trim();});return o;
+    return vals;
+  };
+  // Find header line - need to handle quoted headers with embedded newlines
+  // Parse entire file token by token
+  const rows=[];let cur='',inQ=false,rowVals=[];
+  for(let i=0;i<t.length;i++){
+    const c=t[i];
+    if(c==='"'){inQ=!inQ;}
+    else if(c===','&&!inQ){rowVals.push(cur.replace(/\n/g,' ').trim());cur='';}
+    else if(c==='\n'&&!inQ){
+      rowVals.push(cur.replace(/\n/g,' ').trim());
+      if(rowVals.some(v=>v))rows.push(rowVals);
+      rowVals=[];cur='';
+    }else cur+=c;
+  }
+  if(cur||rowVals.length)rowVals.push(cur.replace(/\n/g,' ').trim());
+  if(rowVals.some(v=>v))rows.push(rowVals);
+
+  if(!rows.length)return[];
+  // Normalize header names
+  const hdr=rows[0].map(h=>h.replace(/"/g,'').replace(/\s+/g,' ').trim());
+  // Fix known variant: "Shipment Area" split across cells
+  const normHdr=hdr.map(h=>{
+    if(/shipment/i.test(h))return'Shipment Area';
+    return h;
+  });
+  return rows.slice(1).filter(r=>r.some(v=>v)).map(r=>{
+    const o={};
+    normHdr.forEach((h,i)=>{o[h]=(r[i]||'').replace(/"/g,'').trim();});
+    return o;
   });
 }
 
