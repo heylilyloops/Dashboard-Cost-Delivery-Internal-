@@ -509,12 +509,17 @@ async function loadAll(){
   allData={};
   const ids=Object.keys(SITES);
   const detail=document.getElementById('ls-detail');
-  let done=0;
   ids.forEach(id=>{const el=document.getElementById('st-'+id);if(el)el.textContent='...';});
-  await Promise.all(ids.map(async id=>{
-    await loadSite(id);done++;
-    detail.textContent=`${done}/${ids.length} site selesai`;
-  }));
+  
+  // Load sequentially to avoid overwhelming browser with large CSV parsing
+  for(let i=0;i<ids.length;i++){
+    const id=ids[i];
+    detail.textContent=`(${i+1}/${ids.length}) Memuat ${SITES[id].label}...`;
+    await loadSite(id);
+    // Give browser a chance to breathe between loads
+    await new Promise(r=>setTimeout(r,50));
+  }
+  
   document.getElementById('ts').textContent='Update: '+new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
   document.getElementById('ls').style.display='none';
   document.getElementById('app').style.display='flex';
