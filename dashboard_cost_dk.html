@@ -318,10 +318,49 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
 
     <!-- PAGE: COST TREND -->
     <div id="page-trend" class="page">
+      <!-- Filter bar same as overview -->
+      <div class="filter-bar">
+        <div class="date-filter-group">
+          <div class="fl" style="margin-bottom:6px;">Delivery Date</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div><div style="font-size:9px;color:var(--tx3);margin-bottom:3px;">DARI</div><input type="date" id="tf-from" onchange="clearTrendQuick();renderTrendPage();"></div>
+            <span style="color:var(--tx3);font-size:13px;margin-top:10px;">→</span>
+            <div><div style="font-size:9px;color:var(--tx3);margin-bottom:3px;">SAMPAI</div><input type="date" id="tf-to" onchange="clearTrendQuick();renderTrendPage();"></div>
+            <div id="tquick-btns" style="display:flex;gap:4px;margin-top:10px;flex-wrap:wrap;"></div>
+          </div>
+        </div>
+        <div class="fg"><div class="fl">Shipment Area</div>
+          <select id="tf-ship" onchange="renderTrendPage()"><option value="">Semua</option><option value="DALAM KOTA">Dalam Kota</option><option value="LUAR KOTA">Luar Kota</option></select>
+        </div>
+        <div class="fg"><div class="fl">Type Delivery</div>
+          <select id="tf-del" onchange="renderTrendPage()"><option value="">Semua</option><option>Store</option><option>Customer</option><option>HUB</option><option>Other Delivery</option><option>Satelite</option></select>
+        </div>
+        <div class="fg"><div class="fl">Kategori</div>
+          <select id="tf-kat" onchange="renderTrendPage()"><option value="">Semua</option><option value="REGULAR">Regular</option><option value="NON REGULAR">Non Regular</option></select>
+        </div>
+        <div class="fg"><div class="fl">Type Armada</div>
+          <select id="tf-arm" onchange="renderTrendPage()"><option value="">Semua</option></select>
+        </div>
+      </div>
+
       <div class="trend-toggle-bar">
         <span class="fl">Tampilkan per:</span>
         <button class="view-btn active" onclick="setTrendView('site',this)">By Site</button>
         <button class="view-btn" onclick="setTrendView('bu',this)">By BU</button>
+      </div>
+
+      <!-- Combined chart: Total Cost, UJP, VR, MPP in 1 chart -->
+      <div class="chart-card">
+        <div class="chart-hdr">
+          <div class="chart-title">Cost Components per Bulan</div>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;">
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><span style="width:20px;height:3px;background:#2563eb;display:inline-block;border-radius:2px;"></span>Total Cost</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><span style="width:20px;height:0;border-top:3px dashed #16a34a;display:inline-block;"></span>UJP</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><span style="width:20px;height:0;border-top:3px dashed #d97706;display:inline-block;"></span>Sewa Armada</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><span style="width:20px;height:0;border-top:3px dotted #7c3aed;display:inline-block;"></span>MPP</span>
+          </div>
+        </div>
+        <div class="chart-wrap-trend"><canvas id="ct-combined"></canvas></div>
       </div>
 
       <div class="trend-charts-grid">
@@ -370,8 +409,8 @@ function getBULabel(siteId, ownerVal){
 
 let allData={},curSite='all',curPage='overview',trendView='site';
 let tmet='cost',ttab='',skey='cost',sasc=false;
-let activeQuick='all';
-let cTrend=null,cOlf=null,ctCost=null,ctUJP=null,ctVR=null,ctMPP=null;
+let activeQuick='all',activeTrendQuick='all';
+let cTrend=null,cOlf=null,ctCost=null,ctUJP=null,ctVR=null,ctMPP=null,ctCombined=null;
 const MN=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
 const PAL=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#0284c7','#9333ea','#15803d'];
 
@@ -475,10 +514,15 @@ function getActiveRaw(){
 function updateArmadaFilter(){
   const raw=getActiveRaw();
   const arms=[...new Set(raw.map(r=>r['Type Armada']).filter(Boolean))].sort();
+  // Overview filter
   const sel=document.getElementById('f-arm');
   const cur=sel.value;
   sel.innerHTML='<option value="">Semua</option>'+arms.map(a=>`<option value="${a}"${a===cur?' selected':''}>${a}</option>`).join('');
+  // Trend filter
+  const tsel=document.getElementById('tf-arm');
+  if(tsel){const tcur=tsel.value;tsel.innerHTML='<option value="">Semua</option>'+arms.map(a=>`<option value="${a}"${a===tcur?' selected':''}>${a}</option>`).join('');}
   buildQuickBtns();
+  buildTrendQuickBtns();
 }
 
 function buildQuickBtns(){
@@ -584,6 +628,7 @@ function agg(data){
 function renderAll(){
   renderOverview();
   if(curPage==='trend')renderTrendPage();
+  else buildTrendQuickBtns();
 }
 
 function renderOverview(){
@@ -695,12 +740,58 @@ function setTrendView(view,btn){
   renderTrendPage();
 }
 
-function buildTrendDatasets(groupKey){
-  // groupKey: function(row) => label string
+function getTrendFil(){
+  const from=document.getElementById('tf-from')?.value||'';
+  const to=document.getElementById('tf-to')?.value||'';
+  const ship=document.getElementById('tf-ship')?.value||'';
+  const del=document.getElementById('tf-del')?.value||'';
+  const kat=document.getElementById('tf-kat')?.value||'';
+  const arm=document.getElementById('tf-arm')?.value||'';
+  return getActiveRaw().filter(r=>{
+    if(ship&&r['Shipment Area']!==ship)return false;
+    if(del&&r['Type Delivery']!==del)return false;
+    if(kat&&r['Kategori']!==kat)return false;
+    if(arm&&r['Type Armada']!==arm)return false;
+    const d=pd(r['Delivery Date']);
+    if(from&&d&&d<new Date(from))return false;
+    if(to&&d&&d>new Date(to+'T23:59:59'))return false;
+    return true;
+  });
+}
+
+function buildTrendQuickBtns(){
   const raw=getActiveRaw();
   const months=[...new Set(raw.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>+a-+b);
+  const container=document.getElementById('tquick-btns');
+  if(!container)return;
+  container.innerHTML='';
+  const btnAll=document.createElement('button');
+  btnAll.className='quick-btn'+(activeTrendQuick==='all'?' active':'');btnAll.textContent='Semua';
+  btnAll.onclick=()=>setTrendQuick('all');container.appendChild(btnAll);
+  const btnMTD=document.createElement('button');
+  btnMTD.className='quick-btn'+(activeTrendQuick==='mtd'?' active':'');btnMTD.textContent='MTD';
+  btnMTD.onclick=()=>setTrendQuick('mtd');container.appendChild(btnMTD);
+  months.forEach(mo=>{
+    const btn=document.createElement('button');
+    btn.className='quick-btn'+(activeTrendQuick==='m'+mo?' active':'');btn.textContent=MN[+mo]||mo;
+    btn.onclick=()=>setTrendQuick('month',mo);container.appendChild(btn);
+  });
+}
+
+function setTrendQuick(type,val){
+  activeTrendQuick=type==='month'?'m'+val:type;
+  const today=new Date();
+  if(type==='all'){document.getElementById('tf-from').value='';document.getElementById('tf-to').value='';}
+  else if(type==='mtd'){const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0');document.getElementById('tf-from').value=`${y}-${m}-01`;document.getElementById('tf-to').value=today.toISOString().split('T')[0];}
+  else if(type==='month'){const y=today.getFullYear(),m=String(+val).padStart(2,'0'),ld=new Date(y,+val,0).getDate();document.getElementById('tf-from').value=`${y}-${m}-01`;document.getElementById('tf-to').value=`${y}-${m}-${String(ld).padStart(2,'0')}`;}
+  buildTrendQuickBtns();renderTrendPage();
+}
+function clearTrendQuick(){activeTrendQuick='custom';buildTrendQuickBtns();}
+
+function buildTrendDatasets(groupKey, fil){
+  const months=[...new Set(fil.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>+a-+b);
   const groups={};
-  raw.forEach(r=>{
+  fil.forEach(r=>{
     const g=groupKey(r);const mo=r['Month']||'';
     if(!groups[g])groups[g]={};
     if(!groups[g][mo])groups[g][mo]={cost:0,ujp:0,vr:0,mpp:0};
@@ -716,10 +807,10 @@ function buildTrendDatasets(groupKey){
     borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]+'30',
     tension:.3,pointRadius:3,borderWidth:2,fill:false,
   }));
-  return{labels,cost:makeDS('cost'),ujp:makeDS('ujp'),vr:makeDS('vr'),mpp:makeDS('mpp')};
+  return{labels,cost:makeDS('cost'),ujp:makeDS('ujp'),vr:makeDS('vr'),mpp:makeDS('mpp'),months,groups,groupNames};
 }
 
-function makeTrendChart(canvasId,existingChart,labels,datasets,title){
+function makeTrendChart(canvasId,existingChart,labels,datasets){
   if(existingChart)existingChart.destroy();
   return new Chart(document.getElementById(canvasId),{type:'line',
     data:{labels,datasets},
@@ -730,17 +821,37 @@ function makeTrendChart(canvasId,existingChart,labels,datasets,title){
 }
 
 function renderTrendPage(){
+  const fil=getTrendFil();
   let groupKey;
-  if(trendView==='site'){
-    groupKey=r=>SITES[r._siteId]?.label||r._siteId;
-  }else{
-    groupKey=r=>r._bu||'Lainnya';
-  }
-  const{labels,cost,ujp,vr,mpp}=buildTrendDatasets(groupKey);
-  ctCost=makeTrendChart('ct-cost',ctCost,labels,cost,'Total Cost');
-  ctUJP=makeTrendChart('ct-ujp',ctUJP,labels,ujp,'UJP');
-  ctVR=makeTrendChart('ct-vr',ctVR,labels,vr,'Sewa Armada');
-  ctMPP=makeTrendChart('ct-mpp',ctMPP,labels,mpp,'MPP');
+  if(trendView==='site') groupKey=r=>SITES[r._siteId]?.label||r._siteId;
+  else groupKey=r=>r._bu||'Lainnya';
+
+  const{labels,cost,ujp,vr,mpp,months,groups,groupNames}=buildTrendDatasets(groupKey,fil);
+
+  // Combined chart: aggregate all groups into single lines per metric
+  const aggByMonth=(field)=>months.map(mo=>{
+    let total=0;
+    groupNames.forEach(g=>{if(groups[g][mo])total+=groups[g][mo][field];});
+    return total;
+  });
+  const combinedDS=[
+    {label:'Total Cost',data:aggByMonth('cost'),borderColor:'#2563eb',backgroundColor:'#2563eb20',borderWidth:2.5,tension:.3,pointRadius:4,fill:false,borderDash:[]},
+    {label:'UJP',data:aggByMonth('ujp'),borderColor:'#16a34a',backgroundColor:'#16a34a20',borderWidth:2,tension:.3,pointRadius:4,fill:false,borderDash:[6,3]},
+    {label:'Sewa Armada',data:aggByMonth('vr'),borderColor:'#d97706',backgroundColor:'#d9770620',borderWidth:2,tension:.3,pointRadius:4,fill:false,borderDash:[6,3]},
+    {label:'MPP',data:aggByMonth('mpp'),borderColor:'#7c3aed',backgroundColor:'#7c3aed20',borderWidth:2,tension:.3,pointRadius:4,fill:false,borderDash:[2,2]},
+  ];
+  if(ctCombined)ctCombined.destroy();
+  ctCombined=new Chart(document.getElementById('ct-combined'),{type:'line',
+    data:{labels,datasets:combinedDS},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},
+      scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#64748b',font:{size:10}}},
+              y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtID(v)}}}}});
+
+  ctCost=makeTrendChart('ct-cost',ctCost,labels,cost);
+  ctUJP=makeTrendChart('ct-ujp',ctUJP,labels,ujp);
+  ctVR=makeTrendChart('ct-vr',ctVR,labels,vr);
+  ctMPP=makeTrendChart('ct-mpp',ctMPP,labels,mpp);
 }
 
 function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderJalurTrend(getFil());}
