@@ -424,9 +424,21 @@ const BU_MAP={
   'KLS':'KLS','KI':'KLS','KRS':'KLS',
   'TGI':'TGI',
 };
+
+// Site default BU when OWNER is empty
+const SITE_DEFAULT_BU={
+  hci_jab:'HCI',hci_cik:'HCI',
+  ahi_jab:'AHI',
+  kls_jab:'KLS',
+  cor_sid:null,cor_tal:null,cor_tam:null, // corp must use OWNER
+};
+
 function getBULabel(siteId, ownerVal){
-  if(!ownerVal||!ownerVal.trim()) return SITES[siteId]?.label||siteId;
-  return BU_MAP[ownerVal.trim()]||ownerVal.trim();
+  const o=(ownerVal||'').trim();
+  if(o&&BU_MAP[o])return BU_MAP[o];
+  if(o&&!BU_MAP[o])return o; // unknown owner, use as-is
+  // OWNER empty - use site default
+  return SITE_DEFAULT_BU[siteId]||'Lainnya';
 }
 
 let allData={},curSite='all',curPage='overview',trendView='site';
@@ -462,8 +474,10 @@ function parseCSV(t){
   const result=[];
   for(let i=1;i<lines.length;i++){
     const line=lines[i];
-    if(!line)continue;
+    if(!line||!line.trim())continue;
     const vals=line.split(',');
+    // Skip rows where LC (first col) is empty
+    if(!vals[0]||!vals[0].trim())continue;
     const o={};
     for(let j=0;j<idxMap.length;j++){
       const[h,idx]=idxMap[j];
