@@ -399,12 +399,15 @@ const SITES={
 };
 
 // BU mapping
+const BU_MAP={
+  'HCI':'HCI','GPC':'HCI',
+  'AHI':'AHI','NKA':'AHI',
+  'FBI':'FBI','MLY':'FBI',
+  'KLS':'KLS','KI':'KLS','KRS':'KLS',
+  'TGI':'TGI',
+};
 function getBULabel(siteId, ownerVal){
-  if(siteId==='hci_jab'||siteId==='hci_cik') return 'HCI';
-  if(siteId==='kls_jab') return 'KLS';
-  if(siteId==='ahi_jab') return ownerVal||'AHI';
-  // Corp sites — use owner value
-  return ownerVal||'Corp';
+  return BU_MAP[ownerVal]||ownerVal||'Lainnya';
 }
 
 let allData={},curSite='all',curPage='overview',trendView='site';
