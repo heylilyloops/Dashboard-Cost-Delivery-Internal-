@@ -363,6 +363,24 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
         <div class="chart-wrap-trend"><canvas id="ct-combined"></canvas></div>
       </div>
 
+      <!-- AI Insight Card -->
+      <div class="chart-card" id="insight-card">
+        <div class="chart-hdr">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3" fill="#2563eb" stroke="none"/></svg>
+            <div class="chart-title">AI Insight</div>
+          </div>
+          <span id="insight-status" style="font-size:10px;color:var(--tx3);font-family:var(--mo);">—</span>
+        </div>
+        <div id="insight-body" style="min-height:80px;font-size:13px;line-height:1.7;color:var(--tx2);">
+          <div id="insight-loading" style="display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:12px;">
+            <div class="spin" style="width:16px;height:16px;border-width:2px;"></div>
+            Menganalisis data...
+          </div>
+          <div id="insight-text" style="display:none;white-space:pre-wrap;"></div>
+        </div>
+      </div>
+
       <div class="trend-charts-grid">
         <div class="chart-card">
           <div class="chart-hdr"><div class="chart-title">Total Cost per Bulan</div></div>
@@ -407,7 +425,8 @@ const BU_MAP={
   'TGI':'TGI',
 };
 function getBULabel(siteId, ownerVal){
-  return BU_MAP[ownerVal]||ownerVal||'Lainnya';
+  if(!ownerVal||!ownerVal.trim()) return SITES[siteId]?.label||siteId;
+  return BU_MAP[ownerVal.trim()]||ownerVal.trim();
 }
 
 let allData={},curSite='all',curPage='overview',trendView='site';
@@ -427,22 +446,16 @@ const pd=s=>{if(!s)return null;const p=s.split('/');if(p.length===3){const a=+p[
 const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
 function parseCSV(t){
-  // Handle \r\n and \r
   t=t.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  // Split respecting quoted fields (handles embedded newlines in headers)
-  const splitLine=s=>{
-    const vals=[];let cur='',inQ=false;
-    for(let i=0;i<s.length;i++){
-      const c=s[i];
-      if(c==='"'){inQ=!inQ;}
-      else if(c===','&&!inQ){vals.push(cur.trim());cur='';}
-      else cur+=c;
+  // If entire file starts with a quote wrapping everything, unwrap first
+  if(t.startsWith('"')&&t.indexOf('\n')>0){
+    const firstNL=t.indexOf('\n');
+    const firstLine=t.substring(0,firstNL);
+    // If header line is one big quoted field containing commas, unwrap it
+    if(firstLine.startsWith('"')&&firstLine.endsWith('"')&&!firstLine.slice(1,-1).includes('"')){
+      t=firstLine.slice(1,-1)+'\n'+t.substring(firstNL+1);
     }
-    vals.push(cur.trim());
-    return vals;
-  };
-  // Find header line - need to handle quoted headers with embedded newlines
-  // Parse entire file token by token
+  }
   const rows=[];let cur='',inQ=false,rowVals=[];
   for(let i=0;i<t.length;i++){
     const c=t[i];
@@ -454,21 +467,12 @@ function parseCSV(t){
       rowVals=[];cur='';
     }else cur+=c;
   }
-  if(cur||rowVals.length)rowVals.push(cur.replace(/\n/g,' ').trim());
-  if(rowVals.some(v=>v))rows.push(rowVals);
-
+  if(cur||rowVals.length){rowVals.push(cur.replace(/\n/g,' ').trim());if(rowVals.some(v=>v))rows.push(rowVals);}
   if(!rows.length)return[];
-  // Normalize header names
   const hdr=rows[0].map(h=>h.replace(/"/g,'').replace(/\s+/g,' ').trim());
-  // Fix known variant: "Shipment Area" split across cells
-  const normHdr=hdr.map(h=>{
-    if(/shipment/i.test(h))return'Shipment Area';
-    return h;
-  });
+  const normHdr=hdr.map(h=>/shipment/i.test(h)?'Shipment Area':h);
   return rows.slice(1).filter(r=>r.some(v=>v)).map(r=>{
-    const o={};
-    normHdr.forEach((h,i)=>{o[h]=(r[i]||'').replace(/"/g,'').trim();});
-    return o;
+    const o={};normHdr.forEach((h,i)=>{o[h]=(r[i]||'').replace(/"/g,'').trim();});return o;
   });
 }
 
@@ -855,8 +859,103 @@ function renderTrendPage(){
   ctUJP=makeTrendChart('ct-ujp',ctUJP,labels,ujp);
   ctVR=makeTrendChart('ct-vr',ctVR,labels,vr);
   ctMPP=makeTrendChart('ct-mpp',ctMPP,labels,mpp);
+
+  // Debounce insight generation
+  if(insightTimer)clearTimeout(insightTimer);
+  insightTimer=setTimeout(()=>generateInsight(fil,groups,months,groupNames),800);
 }
 
+let insightTimer=null;
+async function generateInsight(fil,groups,months,groupNames){
+  // show loading
+  document.getElementById('insight-loading').style.display='flex';
+  document.getElementById('insight-text').style.display='none';
+  document.getElementById('insight-status').textContent='Menganalisis...';
+
+  // Build summary data for prompt
+  const MN2=MN;
+  const byMonth={};
+  months.forEach(mo=>{
+    byMonth[MN2[+mo]||mo]={cost:0,ujp:0,vr:0,mpp:0};
+    groupNames.forEach(g=>{
+      if(groups[g][mo]){
+        byMonth[MN2[+mo]||mo].cost+=groups[g][mo].cost;
+        byMonth[MN2[+mo]||mo].ujp+=groups[g][mo].ujp;
+        byMonth[MN2[+mo]||mo].vr+=groups[g][mo].vr;
+        byMonth[MN2[+mo]||mo].mpp+=groups[g][mo].mpp;
+      }
+    });
+  });
+
+  // Build jalur efficiency data
+  const jalurMap={};
+  fil.forEach(r=>{
+    const j=(r['Jalur']||'Lainnya').trim();
+    if(!jalurMap[j])jalurMap[j]={cost:0,do:0,dp:0,cbm:0,ujp:0,trip:0};
+    jalurMap[j].cost+=pn(r['Total Cost']);jalurMap[j].do+=pn(r['DO']);
+    jalurMap[j].dp+=pn(r['DP']);jalurMap[j].cbm+=pn(r['CBM']);
+    jalurMap[j].ujp+=pn(r['UJP']);jalurMap[j].trip++;
+  });
+  const jalurStats=Object.entries(jalurMap).map(([j,b])=>({
+    jalur:j,trip:b.trip,cost:b.cost,
+    costDO:b.do>0?Math.round(b.cost/b.do):0,
+    costCBM:b.cbm>0?Math.round(b.cost/b.cbm):0,
+    costDP:b.dp>0?Math.round(b.cost/b.dp):0,
+    ujpRatio:b.cost>0?(b.ujp/b.cost*100).toFixed(1):0,
+  })).sort((a,b)=>b.cost-a.cost).slice(0,10);
+
+  const siteName=curSite==='all'?'Semua Site':SITES[curSite]?.label||curSite;
+  const viewLabel=trendView==='bu'?'By BU':'By Site';
+
+  const prompt=`Kamu adalah analis logistik supply chain NDC-RDC Indonesia untuk perusahaan Kawan Lama Group.
+
+Analisis data cost pengiriman Dalam Kota (DK) berikut dan berikan insight strategis dalam Bahasa Indonesia.
+
+KONTEKS: ${siteName} | ${viewLabel}
+PERIODE: ${months.map(m=>MN2[+m]||m).join(', ')}
+
+DATA TREND BULANAN (dalam juta IDR):
+${Object.entries(byMonth).map(([m,v])=>`${m}: Total Cost=${(v.cost/1e6).toFixed(1)}JT, UJP=${(v.ujp/1e6).toFixed(1)}JT, Sewa Armada=${(v.vr/1e6).toFixed(1)}JT, MPP=${(v.mpp/1e6).toFixed(1)}JT`).join('\n')}
+
+${groupNames.length>1?`DATA PER ${trendView==='bu'?'BU':'SITE'}:\n${groupNames.map(g=>{
+  const totals=months.reduce((a,mo)=>({cost:a.cost+(groups[g][mo]?.cost||0),ujp:a.ujp+(groups[g][mo]?.ujp||0)}),{cost:0,ujp:0});
+  return `${g}: Total Cost=${(totals.cost/1e6).toFixed(1)}JT, UJP=${(totals.ujp/1e6).toFixed(1)}JT`;
+}).join('\n')}`:''} 
+
+TOP 10 JALUR (efisiensi cost):
+${jalurStats.map(j=>`${j.jalur}: ${j.trip} trip, Cost/DO=Rp${j.costDO.toLocaleString()}, Cost/CBM=Rp${j.costCBM.toLocaleString()}, Cost/DP=Rp${j.costDP.toLocaleString()}, %UJP=${j.ujpRatio}%`).join('\n')}
+
+Berikan insight strategic 3-4 paragraf mencakup:
+1. Trend utama (naik/turun, bulan paling signifikan, komponen mana yang dominan)
+2. Identifikasi inefisiensi: jalur/BU mana yang cost/DO, cost/CBM, atau cost/DP-nya tinggi dan kemungkinan penyebabnya
+3. Insight kontribusi UJP vs Sewa Armada vs MPP — apakah ada yang tidak proporsional
+4. Rekomendasi aksi konkret (bukan generik)
+
+Gunakan angka spesifik dari data. Tulis dalam format paragraf, bukan bullet points.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.find(c=>c.type==='text')?.text||'Tidak dapat membuat insight.';
+    document.getElementById('insight-text').textContent=text;
+    document.getElementById('insight-text').style.display='block';
+    document.getElementById('insight-loading').style.display='none';
+    document.getElementById('insight-status').textContent='✓ '+new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){
+    document.getElementById('insight-text').textContent='Gagal generate insight: '+e.message;
+    document.getElementById('insight-text').style.display='block';
+    document.getElementById('insight-loading').style.display='none';
+    document.getElementById('insight-status').textContent='✗ Error';
+  }
+}document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderJalurTrend(getFil());}
 function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderJalurTrend(getFil());}
 function setTab(t,btn){ttab=t;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderOverview();}
 function srt(k){if(skey===k)sasc=!sasc;else{skey=k;sasc=false;}renderOverview();}
