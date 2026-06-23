@@ -449,37 +449,29 @@ function parseCSV(t){
   t=t.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
   const lines=t.split('\n');
   if(!lines.length)return[];
-  
-  const parseLine=s=>{
-    const vals=[];let f='',inq=false;
-    for(let i=0;i<s.length;i++){
-      const c=s[i];
-      if(c==='"'){inq=!inq;}
-      else if(c===','&&!inq){vals.push(f.replace(/"/g,'').replace(/\n/g,' ').trim());f='';}
-      else f+=c;
-    }
-    vals.push(f.replace(/"/g,'').replace(/\n/g,' ').trim());
-    return vals;
-  };
-  
-  const rawHdr=parseLine(lines[0]);
-  const hdr=rawHdr.map(h=>{
-    h=h.replace(/\s+/g,' ').trim();
-    if(/shipment/i.test(h))return'Shipment Area';
-    return h;
-  });
-  
-  // Only keep columns we need
+
+  // Fast header parse
+  const rawHdr=lines[0].split(',').map(h=>h.replace(/"/g,'').replace(/\s+/g,' ').trim());
+  const hdr=rawHdr.map(h=>/shipment/i.test(h)?'Shipment Area':h);
+
+  // Only keep columns we need - find their indices once
   const KEEP=new Set(['LC','OWNER','Delivery Date','Jalur','Type Delivery','Shipment Area','DO','CBM','Capacity Armada','DP','UJP','Total Cost','Sewa Armada','Prof Fee','Qty Fuel','Jarak','Month','Kategori','Type Armada']);
   const idxMap=[];
   hdr.forEach((h,i)=>{if(KEEP.has(h))idxMap.push([h,i]);});
-  
-  return lines.slice(1).filter(l=>l.trim()).map(line=>{
-    const vals=parseLine(line);
+
+  const result=[];
+  for(let i=1;i<lines.length;i++){
+    const line=lines[i];
+    if(!line)continue;
+    const vals=line.split(',');
     const o={};
-    idxMap.forEach(([h,i])=>{o[h]=(vals[i]||'').trim();});
-    return o;
-  });
+    for(let j=0;j<idxMap.length;j++){
+      const[h,idx]=idxMap[j];
+      o[h]=(vals[idx]||'').replace(/"/g,'').trim();
+    }
+    result.push(o);
+  }
+  return result;
 }
 
 async function loadSite(id){
@@ -971,7 +963,8 @@ Gunakan angka spesifik dari data. Tulis dalam format paragraf, bukan bullet poin
     document.getElementById('insight-loading').style.display='none';
     document.getElementById('insight-status').textContent='✗ Error';
   }
-}document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderJalurTrend(getFil());}
+}
+
 function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderJalurTrend(getFil());}
 function setTab(t,btn){ttab=t;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderOverview();}
 function srt(k){if(skey===k)sasc=!sasc;else{skey=k;sasc=false;}renderOverview();}
