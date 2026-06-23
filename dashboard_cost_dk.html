@@ -480,15 +480,20 @@ async function loadSite(id){
   const s=SITES[id];
   const el=document.getElementById('st-'+id);
   try{
-    const res=await fetch(BASE+s.csv+'?t='+Date.now());
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),15000);
+    const res=await fetch(BASE+s.csv+'?t='+Date.now(),{signal:controller.signal});
+    clearTimeout(timeout);
     if(!res.ok)throw new Error('HTTP '+res.status);
     let rows=parseCSV(await res.text());
     if(s.owner)rows=rows.filter(r=>r['OWNER']===s.owner);
-    // tag each row with siteId for BU grouping
     rows.forEach(r=>{r._siteId=id;r._bu=getBULabel(id,r['OWNER']);});
     allData[id]=rows;
     if(el)el.textContent='✓';
-  }catch(e){allData[id]=[];if(el)el.textContent='✗';}
+  }catch(e){
+    allData[id]=[];
+    if(el)el.textContent=e.name==='AbortError'?'⏱':'✗';
+  }
 }
 
 async function loadAll(){
