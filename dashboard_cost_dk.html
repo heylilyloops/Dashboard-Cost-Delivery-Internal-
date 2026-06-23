@@ -447,32 +447,46 @@ const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
 function parseCSV(t){
   t=t.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  // If entire file starts with a quote wrapping everything, unwrap first
-  if(t.startsWith('"')&&t.indexOf('\n')>0){
-    const firstNL=t.indexOf('\n');
-    const firstLine=t.substring(0,firstNL);
-    // If header line is one big quoted field containing commas, unwrap it
-    if(firstLine.startsWith('"')&&firstLine.endsWith('"')&&!firstLine.slice(1,-1).includes('"')){
-      t=firstLine.slice(1,-1)+'\n'+t.substring(firstNL+1);
-    }
-  }
-  const rows=[];let cur='',inQ=false,rowVals=[];
+  
+  // Split into lines respecting quoted fields
+  const lines=[];
+  let cur='',inQ=false;
   for(let i=0;i<t.length;i++){
     const c=t[i];
-    if(c==='"'){inQ=!inQ;}
-    else if(c===','&&!inQ){rowVals.push(cur.replace(/\n/g,' ').trim());cur='';}
-    else if(c==='\n'&&!inQ){
-      rowVals.push(cur.replace(/\n/g,' ').trim());
-      if(rowVals.some(v=>v))rows.push(rowVals);
-      rowVals=[];cur='';
-    }else cur+=c;
+    if(c==='"'){inQ=!inQ;cur+=c;}
+    else if(c==='\n'&&!inQ){lines.push(cur);cur='';}
+    else cur+=c;
   }
-  if(cur||rowVals.length){rowVals.push(cur.replace(/\n/g,' ').trim());if(rowVals.some(v=>v))rows.push(rowVals);}
-  if(!rows.length)return[];
-  const hdr=rows[0].map(h=>h.replace(/"/g,'').replace(/\s+/g,' ').trim());
-  const normHdr=hdr.map(h=>/shipment/i.test(h)?'Shipment Area':h);
-  return rows.slice(1).filter(r=>r.some(v=>v)).map(r=>{
-    const o={};normHdr.forEach((h,i)=>{o[h]=(r[i]||'').replace(/"/g,'').trim();});return o;
+  if(cur)lines.push(cur);
+  
+  if(!lines.length)return[];
+  
+  // Parse a single CSV line into fields
+  const parseLine=s=>{
+    const vals=[];let f='',inq=false;
+    for(let i=0;i<s.length;i++){
+      const c=s[i];
+      if(c==='"'){inq=!inq;}
+      else if(c===','&&!inq){vals.push(f.replace(/"/g,'').replace(/\n/g,' ').trim());f='';}
+      else f+=c;
+    }
+    vals.push(f.replace(/"/g,'').replace(/\n/g,' ').trim());
+    return vals;
+  };
+  
+  // Parse header - normalize names
+  const rawHdr=parseLine(lines[0]);
+  const hdr=rawHdr.map(h=>{
+    h=h.replace(/\s+/g,' ').trim();
+    if(/shipment/i.test(h))return'Shipment Area';
+    return h;
+  });
+  
+  return lines.slice(1).filter(l=>l.trim()).map(line=>{
+    const vals=parseLine(line);
+    const o={};
+    hdr.forEach((h,i)=>{o[h]=(vals[i]||'').trim();});
+    return o;
   });
 }
 
