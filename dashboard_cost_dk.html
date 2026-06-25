@@ -262,9 +262,47 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
         <div class="kpi-card"><div class="kpi-lbl">Total MPP</div><div class="kpi-val" id="kpi-mpp">—</div><div class="kpi-pct" id="kpi-mpp-pct">—<span>dari Total Cost</span></div></div>
       </div>
 
-      <div class="chart-card">
-        <div class="chart-hdr">
-          <div class="chart-title">Trend Cost per Jalur</div>
+      <div class="chart-card" id="compare-section">
+        <div class="chart-hdr" style="flex-wrap:wrap;gap:10px;">
+          <div class="chart-title">Perbandingan Periode</div>
+          <div style="font-size:11px;color:var(--tx3);" id="compare-mode-toggle">
+            <button class="ctgl active" onclick="setCmpMode('mom',this)">MoM</button>
+            <button class="ctgl" onclick="setCmpMode('custom',this)">Custom</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#2563eb;display:inline-block;"></span>
+            <span style="font-size:11px;font-weight:600;color:var(--tx2);">PERIODE A:</span>
+            <input type="date" id="cmp-a-from" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+            <span style="color:var(--tx3);">—</span>
+            <input type="date" id="cmp-a-to" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+          </div>
+          <span style="font-size:12px;color:var(--tx3);font-weight:600;">vs</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#d97706;display:inline-block;"></span>
+            <span style="font-size:11px;font-weight:600;color:var(--tx2);">PERIODE B:</span>
+            <input type="date" id="cmp-b-from" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+            <span style="color:var(--tx3);">—</span>
+            <input type="date" id="cmp-b-to" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+          </div>
+          <button onclick="runComparison()" style="padding:6px 18px;background:#1a4d2e;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fn);">Bandingkan</button>
+        </div>
+        <div id="cmp-hint" style="font-size:11px;color:var(--tx3);">Pilih kedua periode lalu klik Bandingkan.</div>
+
+        <!-- KPI comparison -->
+        <div id="cmp-kpi" style="display:none;margin-top:14px;">
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;" id="cmp-kpi-grid"></div>
+        </div>
+
+        <!-- Table comparison -->
+        <div id="cmp-table-wrap" style="display:none;overflow-x:auto;margin-top:4px;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead id="cmp-thead"></thead>
+            <tbody id="cmp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
           <div class="ctgl-grp">
             <button class="ctgl active" onclick="setTrend('cost',this)">Cost</button>
             <button class="ctgl" onclick="setTrend('cdo',this)">Cost/DO</button>
@@ -978,6 +1016,123 @@ Gunakan angka spesifik dari data. Tulis dalam format paragraf, bukan bullet poin
     document.getElementById('insight-status').textContent='✗ Error';
   }
 }
+
+// COMPARISON
+let cmpMode='mom';
+function setCmpMode(m,btn){
+  cmpMode=m;
+  document.querySelectorAll('#compare-mode-toggle .ctgl').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(m==='mom'){
+    const today=new Date();
+    const y=today.getFullYear(),cm=today.getMonth()+1;
+    const pm=cm===1?12:cm-1,pmy=cm===1?y-1:y;
+    const cm2=String(cm).padStart(2,'0'),pm2=String(pm).padStart(2,'0');
+    const cld=new Date(y,cm,0).getDate(),pld=new Date(pmy,pm,0).getDate();
+    document.getElementById('cmp-a-from').value=`${y}-${cm2}-01`;
+    document.getElementById('cmp-a-to').value=`${y}-${cm2}-${String(cld).padStart(2,'0')}`;
+    document.getElementById('cmp-b-from').value=`${pmy}-${pm2}-01`;
+    document.getElementById('cmp-b-to').value=`${pmy}-${pm2}-${String(pld).padStart(2,'0')}`;
+  }
+}
+function getFilByRange(from,to){
+  return getActiveRaw().filter(r=>{
+    if(!r.LC)return false;
+    const d=pd(r['Delivery Date']);if(!d)return false;
+    if(from&&d<new Date(from))return false;
+    if(to&&d>new Date(to+'T23:59:59'))return false;
+    return true;
+  });
+}
+function aggForCmp(data){
+  const m={};
+  data.forEach(r=>{
+    const j=(r['Jalur']||'Lainnya').trim();
+    if(!m[j])m[j]={trip:0,do:0,dp:0,cbm:0,cap:0,cost:0};
+    const b=m[j];b.trip++;
+    b.do+=pn(r['DO']);b.dp+=pn(r['DP']);b.cbm+=pn(r['CBM']);
+    b.cap+=pn(r['Capacity Armada']);b.cost+=pn(r['Total Cost']);
+  });
+  return m;
+}
+function cmpDelta(a,b){return b===0?null:((a-b)/b*100);}
+function fmtDelta(d){
+  if(d===null)return'<span style="color:var(--tx3)">—</span>';
+  const up=d>0,big=Math.abs(d)>5;
+  const col=big?(up?'#dc2626':'#16a34a'):'#64748b';
+  return`<span style="color:${col};font-weight:600">${up?'▲':'▼'}${Math.abs(d).toFixed(1)}%</span>`;
+}
+function runComparison(){
+  const af=document.getElementById('cmp-a-from').value,at=document.getElementById('cmp-a-to').value;
+  const bf=document.getElementById('cmp-b-from').value,bt=document.getElementById('cmp-b-to').value;
+  if(!af||!at||!bf||!bt){document.getElementById('cmp-hint').textContent='Lengkapi semua tanggal.';return;}
+  document.getElementById('cmp-hint').textContent='';
+  const filA=getFilByRange(af,at),filB=getFilByRange(bf,bt);
+  const aggA=aggForCmp(filA),aggB=aggForCmp(filB);
+  const totA={cost:0,trip:0,do:0,cbm:0,cap:0},totB={cost:0,trip:0,do:0,cbm:0,cap:0};
+  Object.values(aggA).forEach(b=>{totA.cost+=b.cost;totA.trip+=b.trip;totA.do+=b.do;totA.cbm+=b.cbm;totA.cap+=b.cap;});
+  Object.values(aggB).forEach(b=>{totB.cost+=b.cost;totB.trip+=b.trip;totB.do+=b.do;totB.cbm+=b.cbm;totB.cap+=b.cap;});
+  const olfA=totA.cap>0?totA.cbm/totA.cap:0,olfB=totB.cap>0?totB.cbm/totB.cap:0;
+  const kpis=[
+    {lbl:'Total Cost',a:totA.cost,b:totB.cost,fmt:fmtID,inv:true},
+    {lbl:'Total Trip',a:totA.trip,b:totB.trip,fmt:fmt,inv:false},
+    {lbl:'Total DO',a:totA.do,b:totB.do,fmt:fmt,inv:false},
+    {lbl:'Cost/DO',a:totA.do>0?totA.cost/totA.do:0,b:totB.do>0?totB.cost/totB.do:0,fmt:fmtID,inv:true},
+    {lbl:'OLF',a:olfA,b:olfB,fmt:v=>pct(v),inv:false},
+  ];
+  document.getElementById('cmp-kpi-grid').innerHTML=kpis.map(k=>{
+    const d=cmpDelta(k.a,k.b),dv=d||0;
+    const concern=k.inv?(dv>5):(dv<-5),good=k.inv?(dv<-5):(dv>5);
+    const bg=concern?'#fef2f2':good?'#f0fdf4':'var(--sur)';
+    const bdr=concern?'#fca5a5':good?'#86efac':'var(--bdr)';
+    return`<div style="background:${bg};border:1px solid ${bdr};border-radius:10px;padding:12px;">
+      <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">${k.lbl}</div>
+      <div style="display:flex;gap:6px;align-items:baseline;margin-bottom:4px;flex-wrap:wrap;">
+        <span style="font-family:var(--mo);font-size:14px;font-weight:600;color:#2563eb;">${k.fmt(k.a)}</span>
+        <span style="font-size:10px;color:var(--tx3);">vs ${k.fmt(k.b)}</span>
+      </div>
+      ${fmtDelta(d)}
+    </div>`;
+  }).join('');
+  const allJ=[...new Set([...Object.keys(aggA),...Object.keys(aggB)])].sort();
+  const rows=allJ.map(j=>{
+    const a=aggA[j]||{trip:0,do:0,cbm:0,cap:0,cost:0};
+    const b=aggB[j]||{trip:0,do:0,cbm:0,cap:0,cost:0};
+    const cdoA=a.do>0?a.cost/a.do:0,cdoB=b.do>0?b.cost/b.do:0;
+    const oA=a.cap>0?a.cbm/a.cap:0,oB=b.cap>0?b.cbm/b.cap:0;
+    return{j,a,b,cdoA,cdoB,oA,oB,dC:cmpDelta(a.cost,b.cost)};
+  }).sort((x,y)=>(y.dC||0)-(x.dC||0));
+  const thStyle='padding:8px 10px;font-size:9px;font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--bdr);white-space:nowrap;';
+  document.getElementById('cmp-thead').innerHTML=`<tr style="background:var(--bg);">
+    <th style="${thStyle}text-align:left;position:sticky;left:0;background:var(--bg);color:var(--tx2);">Jalur</th>
+    <th style="${thStyle}text-align:right;color:#2563eb;">Cost A</th>
+    <th style="${thStyle}text-align:right;color:#d97706;">Cost B</th>
+    <th style="${thStyle}text-align:right;color:var(--tx2);">Δ Cost</th>
+    <th style="${thStyle}text-align:right;color:#2563eb;">Trip A</th>
+    <th style="${thStyle}text-align:right;color:#d97706;">Trip B</th>
+    <th style="${thStyle}text-align:right;color:#2563eb;">Cost/DO A</th>
+    <th style="${thStyle}text-align:right;color:#d97706;">Cost/DO B</th>
+    <th style="${thStyle}text-align:right;color:var(--tx2);">Δ C/DO</th>
+    <th style="${thStyle}text-align:right;color:#2563eb;">OLF A</th>
+    <th style="${thStyle}text-align:right;color:#d97706;">OLF B</th>
+    <th style="${thStyle}text-align:right;color:var(--tx2);">Δ OLF</th>
+  </tr>`;
+  const tdS=(v,c=false)=>`<td style="padding:7px 10px;border-bottom:1px solid var(--bdr-l);font-family:var(--mo);font-size:11px;text-align:right;">${v}</td>`;
+  document.getElementById('cmp-tbody').innerHTML=rows.map(({j,a,b,cdoA,cdoB,oA,oB,dC})=>{
+    const concern=dC!==null&&dC>10;
+    const bg=concern?'#fff5f5':'';
+    return`<tr style="background:${bg}">
+      <td style="padding:7px 10px;border-bottom:1px solid var(--bdr-l);font-size:11px;font-weight:500;position:sticky;left:0;background:${bg||'var(--sur)'};">${j}</td>
+      ${tdS(fmtID(a.cost))}${tdS(fmtID(b.cost))}${tdS(fmtDelta(dC))}
+      ${tdS(fmt(a.trip))}${tdS(fmt(b.trip))}
+      ${tdS(fmtID(cdoA))}${tdS(fmtID(cdoB))}${tdS(fmtDelta(cmpDelta(cdoA,cdoB)))}
+      ${tdS(pct(oA))}${tdS(pct(oB))}${tdS(fmtDelta(cmpDelta(oA,oB)))}
+    </tr>`;
+  }).join('');
+  document.getElementById('cmp-kpi').style.display='block';
+  document.getElementById('cmp-table-wrap').style.display='block';
+}
+setTimeout(()=>{const b=document.querySelector('#compare-mode-toggle .ctgl');if(b)setCmpMode('mom',b);},600);
 
 function setTrend(m,btn){tmet=m;document.querySelectorAll('.ctgl').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderJalurTrend(getFil());}
 function setTab(t,btn){ttab=t;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderOverview();}
