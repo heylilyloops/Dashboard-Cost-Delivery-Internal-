@@ -698,6 +698,8 @@ function renderAll(){
   renderOverview();
   if(curPage==='trend')renderTrendPage();
   else buildTrendQuickBtns();
+  // Auto rerun comparison if results already shown
+  if(document.getElementById('cmp-kpi').style.display!=='none')runComparison();
 }
 
 function renderOverview(){
@@ -727,6 +729,8 @@ function renderOverview(){
   document.getElementById('kpi-vr-pct').innerHTML=pctFmt(tot.cost>0?totVR/tot.cost:0)+'<span> dari Total Cost</span>';
   document.getElementById('kpi-mpp-pct').innerHTML=pctFmt(tot.cost>0?totMPP/tot.cost:0)+'<span> dari Total Cost</span>';
   renderJalurTrend(fil);renderOlf(rows);renderTable(rows);
+  // Auto rerun comparison if already shown
+  if(document.getElementById('cmp-kpi')?.style.display!=='none')runComparison();
 }
 
 function renderJalurTrend(fil){
@@ -1038,8 +1042,16 @@ function setCmpMode(m,btn){
   }
 }
 function getFilByRange(from,to){
+  const ship=document.getElementById('f-ship').value;
+  const del=document.getElementById('f-del').value;
+  const kat=document.getElementById('f-kat').value;
+  const arm=document.getElementById('f-arm').value;
   return getActiveRaw().filter(r=>{
     if(!r.LC)return false;
+    if(ship&&r['Shipment Area']!==ship)return false;
+    if(del&&r['Type Delivery']!==del)return false;
+    if(kat&&r['Kategori']!==kat)return false;
+    if(arm&&r['Type Armada']!==arm)return false;
     const d=pd(r['Delivery Date']);if(!d)return false;
     if(from&&d<new Date(from))return false;
     if(to&&d>new Date(to+'T23:59:59'))return false;
