@@ -260,49 +260,11 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
         <div class="kpi-card"><div class="kpi-lbl">Total UJP</div><div class="kpi-val" id="kpi-ujp">—</div><div class="kpi-pct" id="kpi-ujp-pct">—<span>dari Total Cost</span></div></div>
         <div class="kpi-card"><div class="kpi-lbl">Total VR</div><div class="kpi-val" id="kpi-vr">—</div><div class="kpi-pct" id="kpi-vr-pct">—<span>dari Total Cost</span></div></div>
         <div class="kpi-card"><div class="kpi-lbl">Total MPP</div><div class="kpi-val" id="kpi-mpp">—</div><div class="kpi-pct" id="kpi-mpp-pct">—<span>dari Total Cost</span></div></div>
-      </div>
+      </div><!-- end kpi-grid -->
 
-      <div class="chart-card" id="compare-section">
-        <div class="chart-hdr" style="flex-wrap:wrap;gap:10px;">
-          <div class="chart-title">Perbandingan Periode</div>
-          <div style="font-size:11px;color:var(--tx3);" id="compare-mode-toggle">
-            <button class="ctgl active" onclick="setCmpMode('mom',this)">MoM</button>
-            <button class="ctgl" onclick="setCmpMode('custom',this)">Custom</button>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="width:10px;height:10px;border-radius:50%;background:#2563eb;display:inline-block;"></span>
-            <span style="font-size:11px;font-weight:600;color:var(--tx2);">PERIODE A:</span>
-            <input type="date" id="cmp-a-from" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
-            <span style="color:var(--tx3);">—</span>
-            <input type="date" id="cmp-a-to" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
-          </div>
-          <span style="font-size:12px;color:var(--tx3);font-weight:600;">vs</span>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="width:10px;height:10px;border-radius:50%;background:#d97706;display:inline-block;"></span>
-            <span style="font-size:11px;font-weight:600;color:var(--tx2);">PERIODE B:</span>
-            <input type="date" id="cmp-b-from" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
-            <span style="color:var(--tx3);">—</span>
-            <input type="date" id="cmp-b-to" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
-          </div>
-          <button onclick="runComparison()" style="padding:6px 18px;background:#1a4d2e;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fn);">Bandingkan</button>
-        </div>
-        <div id="cmp-hint" style="font-size:11px;color:var(--tx3);">Pilih kedua periode lalu klik Bandingkan.</div>
-
-        <!-- KPI comparison -->
-        <div id="cmp-kpi" style="display:none;margin-top:14px;">
-          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;" id="cmp-kpi-grid"></div>
-        </div>
-
-        <!-- Table comparison -->
-        <div id="cmp-table-wrap" style="display:none;overflow-x:auto;margin-top:4px;">
-          <table style="width:100%;border-collapse:collapse;font-size:12px;">
-            <thead id="cmp-thead"></thead>
-            <tbody id="cmp-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="chart-card">
+        <div class="chart-hdr">
+          <div class="chart-title">Trend Cost per Jalur</div>
           <div class="ctgl-grp">
             <button class="ctgl active" onclick="setTrend('cost',this)">Cost</button>
             <button class="ctgl" onclick="setTrend('cdo',this)">Cost/DO</button>
@@ -352,7 +314,47 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
         <div class="chart-hdr"><div class="chart-title">OLF per Jalur (%)</div></div>
         <div class="chart-wrap-olf"><canvas id="c-olf"></canvas></div>
       </div>
-    </div>
+
+      <!-- COMPARISON SECTION -->
+      <div class="chart-card">
+        <div class="chart-hdr" style="flex-wrap:wrap;gap:10px;">
+          <div class="chart-title">Perbandingan Periode</div>
+          <div id="compare-mode-toggle" class="ctgl-grp">
+            <button class="ctgl active" onclick="setCmpMode('mom',this)">MoM</button>
+            <button class="ctgl" onclick="setCmpMode('custom',this)">Custom</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#2563eb;display:inline-block;"></span>
+            <span style="font-size:11px;font-weight:600;color:var(--tx2);">PERIODE A:</span>
+            <input type="date" id="cmp-a-from" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+            <span style="color:var(--tx3);">—</span>
+            <input type="date" id="cmp-a-to" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+          </div>
+          <span style="font-size:12px;color:var(--tx3);font-weight:600;">vs</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#d97706;display:inline-block;"></span>
+            <span style="font-size:11px;font-weight:600;color:var(--tx2);">PERIODE B:</span>
+            <input type="date" id="cmp-b-from" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+            <span style="color:var(--tx3);">—</span>
+            <input type="date" id="cmp-b-to" style="border:1px solid var(--bdr);background:var(--bg);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;">
+          </div>
+          <button onclick="runComparison()" style="padding:6px 18px;background:#1a4d2e;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fn);">Bandingkan</button>
+        </div>
+        <div id="cmp-hint" style="font-size:11px;color:var(--tx3);">Pilih kedua periode lalu klik Bandingkan.</div>
+        <div id="cmp-kpi" style="display:none;margin-top:14px;">
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;" id="cmp-kpi-grid"></div>
+        </div>
+        <div id="cmp-table-wrap" style="display:none;overflow-x:auto;margin-top:4px;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead id="cmp-thead"></thead>
+            <tbody id="cmp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- end page-overview -->
 
     <!-- PAGE: COST TREND -->
     <div id="page-trend" class="page">
