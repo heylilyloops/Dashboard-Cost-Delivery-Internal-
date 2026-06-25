@@ -742,19 +742,32 @@ function renderJalurTrend(fil){
     if(!bm[j])bm[j]={};if(!bm[j][mo])bm[j][mo]={cost:0,do:0,cbm:0,dp:0};
     const b=bm[j][mo];b.cost+=pn(r['Total Cost']);b.do+=pn(r['DO']);b.cbm+=pn(r['CBM']);b.dp+=pn(r['DP']);
   });
-  const datasets=months.map((mo,i)=>({
+  const barDatasets=months.map((mo,i)=>({
+    type:'bar',
     label:MN[+mo]||mo,
     data:jalurs.map(j=>{const b=bm[j]&&bm[j][mo]?bm[j][mo]:null;if(!b)return 0;
       if(tmet==='cost')return b.cost;if(tmet==='cdo')return b.do>0?b.cost/b.do:0;
       if(tmet==='ccbm')return b.cbm>0?b.cost/b.cbm:0;if(tmet==='cdp')return b.dp>0?b.cost/b.dp:0;return 0;}),
-    backgroundColor:PAL[i%PAL.length]+'cc',borderColor:PAL[i%PAL.length],borderWidth:1,borderRadius:3,
+    backgroundColor:PAL[i%PAL.length]+'cc',borderColor:PAL[i%PAL.length],borderWidth:1,borderRadius:3,yAxisID:'y',
   }));
+  // DO line: total DO per jalur across all months
+  const doLine={
+    type:'line',label:'Total DO',
+    data:jalurs.map(j=>months.reduce((s,mo)=>s+(bm[j]&&bm[j][mo]?bm[j][mo].do:0),0)),
+    borderColor:'#1e293b',backgroundColor:'#1e293b15',
+    borderWidth:2,pointRadius:4,pointBackgroundColor:'#1e293b',
+    tension:.3,fill:false,yAxisID:'y2',order:0,
+  };
   if(cTrend)cTrend.destroy();
-  cTrend=new Chart(document.getElementById('c-trend'),{type:'bar',data:{labels:jalurs,datasets},
+  cTrend=new Chart(document.getElementById('c-trend'),{
+    data:{labels:jalurs,datasets:[...barDatasets,doLine]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},
-      scales:{x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
-              y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtID(v)}}}}});
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
+        y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtID(v)},position:'left'},
+        y2:{grid:{display:false},ticks:{color:'#1e293b',font:{size:10},callback:v=>fmtID(v)},position:'right'},
+      }}});
 }
 
 function renderOlf(rows){
