@@ -114,14 +114,14 @@ body{font-family:var(--fn);background:var(--bg);color:var(--tx);display:flex;min
 .tab-btn{padding:7px 13px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--tx3);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--fn);margin-bottom:-1px;}
 .tab-btn:hover{color:var(--tx2);}
 .tab-btn.active{color:var(--acc);border-bottom-color:var(--acc);font-weight:600;}
-.table-wrap{overflow-x:auto;}
+.table-wrap{overflow-x:auto;position:relative;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead{position:sticky;top:0;z-index:5;}
 th{background:var(--bg);color:var(--tx2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:right;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--bdr);transition:color .15s;}
-th:first-child{text-align:left;position:sticky;left:0;z-index:6;background:var(--bg);}
+th:first-child{text-align:left;position:sticky;left:0;z-index:6;background:var(--bg);box-shadow:3px 0 6px rgba(0,0,0,.06);}
 th:hover{color:var(--acc);}
 td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--bdr-l);color:var(--tx);font-family:var(--mo);font-size:12px;font-variant-numeric:tabular-nums;}
-td:first-child{text-align:left;font-family:var(--fn);font-weight:500;position:sticky;left:0;z-index:2;background:var(--sur);}
+td:first-child{text-align:left;font-family:var(--fn);font-weight:500;position:sticky;left:0;z-index:2;background:var(--sur);box-shadow:3px 0 6px rgba(0,0,0,.06);}
 tr:hover td{background:var(--acc-l);}
 tr:hover td:first-child{background:var(--acc-l);}
 tr:last-child td{border-bottom:none;}
@@ -661,7 +661,7 @@ function getFil(){
   const kat=document.getElementById('f-kat').value;
   const arm=document.getElementById('f-arm').value;
   return getActiveRaw().filter(r=>{
-    if(ship&&r['Shipment Area']!==ship)return false;
+    if(ship&&(r['Shipment Area']||'').toUpperCase()!==ship.toUpperCase())return false;
     if(del&&r['Type Delivery']!==del)return false;
     if(kat&&r['Kategori']!==kat)return false;
     if(arm&&r['Type Armada']!==arm)return false;
@@ -834,7 +834,7 @@ function getTrendFil(){
   const kat=document.getElementById('tf-kat')?.value||'';
   const arm=document.getElementById('tf-arm')?.value||'';
   return getActiveRaw().filter(r=>{
-    if(ship&&r['Shipment Area']!==ship)return false;
+    if(ship&&(r['Shipment Area']||'').toUpperCase()!==ship.toUpperCase())return false;
     if(del&&r['Type Delivery']!==del)return false;
     if(kat&&r['Kategori']!==kat)return false;
     if(arm&&r['Type Armada']!==arm)return false;
@@ -1061,7 +1061,7 @@ function getFilByRange(from,to){
   const arm=document.getElementById('f-arm').value;
   return getActiveRaw().filter(r=>{
     if(!r.LC)return false;
-    if(ship&&r['Shipment Area']!==ship)return false;
+    if(ship&&(r['Shipment Area']||'').toUpperCase()!==ship.toUpperCase())return false;
     if(del&&r['Type Delivery']!==del)return false;
     if(kat&&r['Kategori']!==kat)return false;
     if(arm&&r['Type Armada']!==arm)return false;
