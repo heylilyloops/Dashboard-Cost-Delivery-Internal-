@@ -502,11 +502,27 @@ function parseCSV(t){
   const lines=t.split('\n');
   if(!lines.length)return[];
 
-  // Fast header parse
-  const rawHdr=lines[0].split(',').map(h=>h.replace(/"/g,'').replace(/\s+/g,' ').trim());
-  const hdr=rawHdr.map(h=>/shipment/i.test(h)?'Shipment Area':h);
+  // Parse a line handling quoted fields
+  const parseLine=s=>{
+    const vals=[];let f='',inq=false;
+    for(let i=0;i<s.length;i++){
+      if(s[i]==='"'){inq=!inq;}
+      else if(s[i]===','&&!inq){vals.push(f.trim());f='';}
+      else f+=s[i];
+    }
+    vals.push(f.trim());
+    return vals;
+  };
 
-  // Only keep columns we need - find their indices once
+  // Normalize header
+  const rawHdr=parseLine(lines[0]);
+  const hdr=rawHdr.map(h=>{
+    h=h.replace(/"/g,'').replace(/\s+/g,' ').trim();
+    if(/shipment/i.test(h))return'Shipment Area';
+    return h;
+  });
+
+  // Only keep needed columns
   const KEEP=new Set(['LC','OWNER','Delivery Date','Jalur','Type Delivery','Shipment Area','DO','CBM','Capacity Armada','DP','UJP','Total Cost','Sewa Armada','Prof Fee','Qty Fuel','Jarak','Month','Kategori','Type Armada']);
   const idxMap=[];
   hdr.forEach((h,i)=>{if(KEEP.has(h))idxMap.push([h,i]);});
@@ -515,9 +531,10 @@ function parseCSV(t){
   for(let i=1;i<lines.length;i++){
     const line=lines[i];
     if(!line||!line.trim())continue;
-    const vals=line.split(',');
-    // Skip rows where LC (first col) is empty
-    if(!vals[0]||!vals[0].trim())continue;
+    const vals=parseLine(line);
+    // Skip empty rows (LC empty)
+    const lcIdx=idxMap.find(([h])=>h==='LC');
+    if(lcIdx&&!(vals[lcIdx[1]]||'').replace(/"/g,'').trim())continue;
     const o={};
     for(let j=0;j<idxMap.length;j++){
       const[h,idx]=idxMap[j];
