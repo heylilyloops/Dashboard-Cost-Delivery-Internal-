@@ -401,6 +401,11 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
           </div>
         </div>
         <div class="chart-wrap-trend"><canvas id="ct-combined"></canvas></div>
+
+        <!-- Summary table per bulan - transposed (metrics as rows, months as columns) -->
+        <div style="overflow-x:auto;margin-top:16px;border-top:1px solid var(--bdr);padding-top:12px;">
+          <table id="ct-summary-table" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
+        </div>
       </div>
 
       <!-- AI Insight Card -->
@@ -499,41 +504,40 @@ const oc=v=>v>=.75?'green':v>=.5?'amber':'red';
 
 function parseCSV(t){
   t=t.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  const lines=t.split('\n');
-  if(!lines.length)return[];
 
-  // Parse a line handling quoted fields
-  const parseLine=s=>{
-    const vals=[];let f='',inq=false;
-    for(let i=0;i<s.length;i++){
-      if(s[i]==='"'){inq=!inq;}
-      else if(s[i]===','&&!inq){vals.push(f.trim());f='';}
-      else f+=s[i];
-    }
-    vals.push(f.trim());
-    return vals;
-  };
+  // Parse entire file respecting quoted fields (handles newlines inside quotes)
+  const allRows=[];
+  let cur='',inq=false,rowVals=[];
+  for(let i=0;i<t.length;i++){
+    const c=t[i];
+    if(c==='"'){inq=!inq;}
+    else if(c===','&&!inq){rowVals.push(cur.trim());cur='';}
+    else if(c==='\n'&&!inq){
+      rowVals.push(cur.trim());
+      if(rowVals.length>1||rowVals[0])allRows.push(rowVals);
+      rowVals=[];cur='';
+    }else cur+=c;
+  }
+  if(cur||rowVals.length){rowVals.push(cur.trim());if(rowVals.length>1||rowVals[0])allRows.push(rowVals);}
+
+  if(!allRows.length)return[];
 
   // Normalize header
-  const rawHdr=parseLine(lines[0]);
-  const hdr=rawHdr.map(h=>{
+  const hdr=allRows[0].map(h=>{
     h=h.replace(/"/g,'').replace(/\s+/g,' ').trim();
     if(/shipment/i.test(h))return'Shipment Area';
+    if(/olf.*det/i.test(h)||/det.*olf/i.test(h))return'OLF_DETERMINE';
     return h;
   });
 
-  // Only keep needed columns
   const KEEP=new Set(['LC','OWNER','Delivery Date','Jalur','Type Delivery','Shipment Area','DO','CBM','Capacity Armada','DP','UJP','Total Cost','Sewa Armada','Prof Fee','Qty Fuel','Jarak','Month','Kategori','Type Armada']);
   const idxMap=[];
   hdr.forEach((h,i)=>{if(KEEP.has(h))idxMap.push([h,i]);});
 
+  const lcIdx=idxMap.find(([h])=>h==='LC');
   const result=[];
-  for(let i=1;i<lines.length;i++){
-    const line=lines[i];
-    if(!line||!line.trim())continue;
-    const vals=parseLine(line);
-    // Skip empty rows (LC empty)
-    const lcIdx=idxMap.find(([h])=>h==='LC');
+  for(let i=1;i<allRows.length;i++){
+    const vals=allRows[i];
     if(lcIdx&&!(vals[lcIdx[1]]||'').replace(/"/g,'').trim())continue;
     const o={};
     for(let j=0;j<idxMap.length;j++){
@@ -956,7 +960,69 @@ function renderTrendPage(){
   ctVR=makeTrendChart('ct-vr',ctVR,labels,vr);
   ctMPP=makeTrendChart('ct-mpp',ctMPP,labels,mpp);
 
-  // Debounce insight generation
+  // Populate summary table - transposed (metrics as rows, months as columns)
+  const sumTable=document.getElementById('ct-summary-table');
+  if(sumTable){
+    const costsArr=aggByMonth('cost');
+    const ujpArr=aggByMonth('ujp');
+    const vrArr=aggByMonth('vr');
+    const mppArr=aggByMonth('mpp');
+    const monLabels=months.map(m=>MN[+m]||m);
+
+    const thS='padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bdr);white-space:nowrap;';
+    const tdS='padding:6px 10px;text-align:right;font-family:var(--mo);font-size:11px;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--bdr-l);';
+    const tdLS='padding:6px 10px;font-size:11px;font-weight:500;border-bottom:1px solid var(--bdr-l);white-space:nowrap;';
+
+    const growthCell=(arr,i)=>{
+      if(i===0)return`<td style="${tdS}color:var(--tx3)">—</td>`;
+      const prev=arr[i-1],cur=arr[i];
+      if(!prev)return`<td style="${tdS}color:var(--tx3)">—</td>`;
+      const g=(cur-prev)/prev*100;
+      const col=g>5?'#dc2626':g<-5?'#16a34a':'#64748b';
+      const arrow=g>0?'▲':'▼';
+      return`<td style="${tdS}color:${col};font-weight:600">${arrow}${Math.abs(g).toFixed(1)}%</td>`;
+    };
+
+    const metrics=[
+      {lbl:'Total Cost',arr:costsArr,color:'#2563eb'},
+      {lbl:'UJP',arr:ujpArr,color:'#16a34a'},
+      {lbl:'% UJP/Cost',arr:costsArr.map((c,i)=>c>0?ujpArr[i]/c*100:0),color:'#64748b',isPct:true},
+      {lbl:'Sewa Armada',arr:vrArr,color:'#d97706'},
+      {lbl:'% VR/Cost',arr:costsArr.map((c,i)=>c>0?vrArr[i]/c*100:0),color:'#64748b',isPct:true},
+      {lbl:'MPP',arr:mppArr,color:'#7c3aed'},
+      {lbl:'% MPP/Cost',arr:costsArr.map((c,i)=>c>0?mppArr[i]/c*100:0),color:'#64748b',isPct:true},
+    ];
+
+    // Header row
+    const headerRow=`<thead><tr style="background:var(--bg);">
+      <th style="${thS}text-align:left;color:var(--tx2);">Metrik</th>
+      ${monLabels.map(m=>`<th style="${thS}text-align:right;color:var(--tx2);">${m}</th>`).join('')}
+      <th style="${thS}text-align:right;color:var(--tx2);">Total</th>
+    </tr></thead>`;
+
+    // Data rows
+    const bodyRows=metrics.map(({lbl,arr,color,isPct})=>{
+      const total=isPct?(arr.reduce((a,v)=>a+v,0)/arr.filter(v=>v>0).length)||0:arr.reduce((a,v)=>a+v,0);
+      const isGrowthRow=lbl.startsWith('%');
+      const valueRow=`<tr>
+        <td style="${tdLS}color:${color};">${lbl}</td>
+        ${arr.map(v=>`<td style="${tdS}">${isPct?v.toFixed(1)+'%':fmt(v)}</td>`).join('')}
+        <td style="${tdS}font-weight:700;">${isPct?total.toFixed(1)+'%':fmt(total)}</td>
+      </tr>`;
+      // Add MoM growth row only for cost metrics (not % rows)
+      if(!isPct){
+        const growthRow=`<tr style="background:#fafafa;">
+          <td style="${tdLS}color:var(--tx3);font-size:10px;padding-left:16px;">↳ MoM Growth</td>
+          ${arr.map((_,i)=>growthCell(arr,i)).join('')}
+          <td style="${tdS}color:var(--tx3)">—</td>
+        </tr>`;
+        return valueRow+growthRow;
+      }
+      return valueRow;
+    }).join('');
+
+    sumTable.innerHTML=headerRow+`<tbody>${bodyRows}</tbody>`;
+  }
   if(insightTimer)clearTimeout(insightTimer);
   insightTimer=setTimeout(()=>generateInsight(fil,groups,months,groupNames),800);
 }
