@@ -303,7 +303,7 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
               <th onclick="srt('trip')">Trip</th><th onclick="srt('do')">DO</th>
               <th onclick="srt('dp')">DP</th><th onclick="srt('cbm')">CBM</th>
               <th onclick="srt('olf')">OLF%</th>
-              <th onclick="srt('dodp')">DO/DP</th><th onclick="srt('dotrip')">DO/Trip</th>
+              <th onclick="srt('dodp')">DO/DP</th><th onclick="srt('dotrip')">DO/Trip</th><th onclick="srt('avgdp')">DP/Trip</th>
               <th onclick="srt('cbmdo')">CBM/DO</th><th onclick="srt('cbmdp')">CBM/DP</th>
               <th onclick="srt('ujptrip')">UJP/Trip</th><th onclick="srt('vrtrip')">VR/Trip</th><th onclick="srt('mpptrip')">MPP/Trip</th>
               <th class="dv" onclick="srt('tujp')">Total UJP</th>
@@ -311,8 +311,7 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
               <th onclick="srt('cost')">Total Cost</th>
               <th onclick="srt('ctrip')">Cost/Trip</th><th onclick="srt('cdo')">Cost/DO</th>
               <th onclick="srt('cdp')">Cost/DP</th><th onclick="srt('ccbm')">Cost/CBM</th>
-              <th class="dv" onclick="srt('avgdp')">Avg DP</th>
-              <th onclick="srt('avgkm')">Avg KM</th><th onclick="srt('kmltr')">KM/Liter</th>
+              <th class="dv" onclick="srt('avgkm')">Avg KM</th><th onclick="srt('kmltr')">KM/Liter</th>
               <th onclick="srt('costkm')">Cost/KM</th>
             </tr></thead>
             <tbody id="tbody"></tbody>
@@ -876,11 +875,11 @@ function renderTable(rows){
     <td>${r.jalur}</td><td>${fmt(r.trip)}</td><td>${fmt(r.do)}</td><td>${fmt(r.dp)}</td>
     <td>${Math.round(r.cbm).toLocaleString('id-ID')}</td>
     <td><span class="olf-badge ${oc(r.olf)}">${pct(r.olf)}</span></td>
-    <td>${fmt2(r.dodp)}</td><td>${fmt2(r.dotrip)}</td><td>${fmt2(r.cbmdo)}</td><td>${fmt2(r.cbmdp)}</td>
+    <td>${fmt2(r.dodp)}</td><td>${fmt2(r.dotrip)}</td><td>${fmt2(r.avgdp)}</td><td>${fmt2(r.cbmdo)}</td><td>${fmt2(r.cbmdp)}</td>
     <td>${fmt(r.ujptrip)}</td><td>${fmt(r.vrtrip)}</td><td>${fmt(r.mpptrip)}</td>
     <td class="dv">${fmt(r.tujp)}</td><td>${fmt(r.tvr)}</td><td>${fmt(r.tmpp)}</td><td>${fmt(r.cost)}</td>
     <td>${fmt(r.ctrip)}</td><td>${fmt(r.cdo)}</td><td>${fmt(r.cdp)}</td><td>${fmt(r.ccbm)}</td>
-    <td class="dv">${fmt2(r.avgdp)}</td><td>${fmt2(r.avgkm)}</td><td>${fmt2(r.kmltr)}</td><td>${fmt(r.costkm)}</td>
+    <td class="dv">${fmt2(r.avgkm)}</td><td>${fmt2(r.kmltr)}</td><td>${fmt(r.costkm)}</td>
   </tr>`).join('');
   const t=sorted.reduce((a,r)=>({trip:a.trip+r.trip,do:a.do+r.do,dp:a.dp+r.dp,cbm:a.cbm+r.cbm,
     ce:a.ce+(r.olf>0?r.cbm/r.olf:0),cost:a.cost+r.cost,
@@ -891,14 +890,13 @@ function renderTable(rows){
     <td>TOTAL</td><td>${fmt(t.trip)}</td><td>${fmt(t.do)}</td><td>${fmt(t.dp)}</td>
     <td>${Math.round(t.cbm).toLocaleString('id-ID')}</td>
     <td><span class="olf-badge ${oc(to)}">${pct(to)}</span></td>
-    <td>${fmt2(t.dp>0?t.do/t.dp:0)}</td><td>${fmt2(t.trip>0?t.do/t.trip:0)}</td>
+    <td>${fmt2(t.dp>0?t.do/t.dp:0)}</td><td>${fmt2(t.trip>0?t.do/t.trip:0)}</td><td>${fmt2(t.trip>0?t.dp/t.trip:0)}</td>
     <td>${fmt2(t.do>0?t.cbm/t.do:0)}</td><td>${fmt2(t.dp>0?t.cbm/t.dp:0)}</td>
     <td>${fmt(t.trip>0?t.ujp/t.trip:0)}</td><td>${fmt(t.trip>0?t.vr/t.trip:0)}</td><td>${fmt(t.trip>0?t.mpp/t.trip:0)}</td>
     <td class="dv">${fmt(t.ujp)}</td><td>${fmt(t.vr)}</td><td>${fmt(t.mpp)}</td><td>${fmt(t.cost)}</td>
     <td>${fmt(t.trip>0?t.cost/t.trip:0)}</td><td>${fmt(t.do>0?t.cost/t.do:0)}</td>
     <td>${fmt(t.dp>0?t.cost/t.dp:0)}</td><td>${fmt(t.cbm>0?t.cost/t.cbm:0)}</td>
-    <td class="dv">${fmt2(t.trip>0?t.dp/t.trip:0)}</td>
-    <td>${fmt2(tavgkm)}</td><td>${fmt2(tavgltr>0?tavgkm/tavgltr:0)}</td>
+    <td class="dv">${fmt2(tavgkm)}</td><td>${fmt2(tavgltr>0?tavgkm/tavgltr:0)}</td>
     <td>${fmt(t.jarak>0?t.cost/t.jarak:0)}</td>
   </tr>`;
 }
