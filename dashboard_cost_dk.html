@@ -1039,10 +1039,12 @@ function renderTrendPage(){
       if(i===0)return`<td style="${tdS}color:var(--tx3)">—</td>`;
       const prev=arr[i-1],cur=arr[i];
       if(!prev)return`<td style="${tdS}color:var(--tx3)">—</td>`;
-      const g=(cur-prev)/prev*100;
+      const delta=cur-prev;
+      const g=delta/prev*100;
       const col=g>5?'#dc2626':g<-5?'#16a34a':'#64748b';
       const arrow=g>0?'▲':'▼';
-      return`<td style="${tdS}color:${col};font-weight:600">${arrow}${Math.abs(g).toFixed(1)}%</td>`;
+      const dsign=delta>0?'+':delta<0?'-':'';
+      return`<td style="${tdS}color:${col};font-weight:600;line-height:1.5;">${arrow}${Math.abs(g).toFixed(1)}%<br><span style="font-size:9px;font-weight:500;opacity:.85;">${dsign}${fmtID(Math.abs(delta))}</span></td>`;
     };
 
     const metrics=[
