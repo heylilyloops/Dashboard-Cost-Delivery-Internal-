@@ -1062,16 +1062,20 @@ function renderTrendPage(){
       <th style="${thS}text-align:left;color:var(--tx2);">Metrik</th>
       ${monLabels.map(m=>`<th style="${thS}text-align:right;color:var(--tx2);">${m}</th>`).join('')}
       <th style="${thS}text-align:right;color:var(--tx2);">Total</th>
+      <th class="dv" style="${thS}text-align:right;color:var(--tx2);">Avg/Bulan</th>
     </tr></thead>`;
 
     // Data rows
     const bodyRows=metrics.map(({lbl,arr,color,isPct})=>{
+      const nMon=arr.filter(v=>v>0).length||arr.length;
       const total=isPct?(arr.reduce((a,v)=>a+v,0)/arr.filter(v=>v>0).length)||0:arr.reduce((a,v)=>a+v,0);
+      const avgMon=isPct?total:(nMon>0?total/nMon:0);
       const isGrowthRow=lbl.startsWith('%');
       const valueRow=`<tr>
         <td style="${tdLS}color:${color};">${lbl}</td>
         ${arr.map(v=>`<td style="${tdS}">${isPct?v.toFixed(1)+'%':fmt(v)}</td>`).join('')}
         <td style="${tdS}font-weight:700;">${isPct?total.toFixed(1)+'%':fmt(total)}</td>
+        <td class="dv" style="${tdS}font-weight:700;">${isPct?avgMon.toFixed(1)+'%':fmt(avgMon)}</td>
       </tr>`;
       // Add MoM growth row only for cost metrics (not % rows)
       if(!isPct){
@@ -1079,6 +1083,7 @@ function renderTrendPage(){
           <td style="${tdLS}color:var(--tx3);font-size:10px;padding-left:16px;">↳ MoM Growth</td>
           ${arr.map((_,i)=>growthCell(arr,i)).join('')}
           <td style="${tdS}color:var(--tx3)">—</td>
+          <td class="dv" style="${tdS}color:var(--tx3)">—</td>
         </tr>`;
         return valueRow+growthRow;
       }
