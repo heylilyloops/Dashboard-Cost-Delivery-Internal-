@@ -1047,6 +1047,13 @@ function renderTrendPage(){
       return`<td style="${tdS}color:${col};font-weight:600;line-height:1.5;">${arrow}${Math.abs(g).toFixed(1)}%<br><span style="font-size:9px;font-weight:500;opacity:.85;">${dsign}${fmtID(Math.abs(delta))}</span></td>`;
     };
 
+    const median=arr=>{
+      const v=arr.filter(x=>x>0).slice().sort((a,b)=>a-b);
+      if(!v.length)return 0;
+      const mid=Math.floor(v.length/2);
+      return v.length%2?v[mid]:(v[mid-1]+v[mid])/2;
+    };
+
     const metrics=[
       {lbl:'Total Cost',arr:costsArr,color:'#2563eb'},
       {lbl:'UJP',arr:ujpArr,color:'#16a34a'},
@@ -1063,6 +1070,7 @@ function renderTrendPage(){
       ${monLabels.map(m=>`<th style="${thS}text-align:right;color:var(--tx2);">${m}</th>`).join('')}
       <th style="${thS}text-align:right;color:var(--tx2);">Total</th>
       <th class="dv" style="${thS}text-align:right;color:var(--tx2);">Avg/Bulan</th>
+      <th style="${thS}text-align:right;color:var(--tx2);">Median/Bulan</th>
     </tr></thead>`;
 
     // Data rows
@@ -1070,12 +1078,14 @@ function renderTrendPage(){
       const nMon=arr.filter(v=>v>0).length||arr.length;
       const total=isPct?(arr.reduce((a,v)=>a+v,0)/arr.filter(v=>v>0).length)||0:arr.reduce((a,v)=>a+v,0);
       const avgMon=isPct?total:(nMon>0?total/nMon:0);
+      const medMon=median(arr);
       const isGrowthRow=lbl.startsWith('%');
       const valueRow=`<tr>
         <td style="${tdLS}color:${color};">${lbl}</td>
         ${arr.map(v=>`<td style="${tdS}">${isPct?v.toFixed(1)+'%':fmt(v)}</td>`).join('')}
         <td style="${tdS}font-weight:700;">${isPct?total.toFixed(1)+'%':fmt(total)}</td>
         <td class="dv" style="${tdS}font-weight:700;">${isPct?avgMon.toFixed(1)+'%':fmt(avgMon)}</td>
+        <td style="${tdS}font-weight:700;">${isPct?medMon.toFixed(1)+'%':fmt(medMon)}</td>
       </tr>`;
       // Add MoM growth row only for cost metrics (not % rows)
       if(!isPct){
@@ -1084,6 +1094,7 @@ function renderTrendPage(){
           ${arr.map((_,i)=>growthCell(arr,i)).join('')}
           <td style="${tdS}color:var(--tx3)">—</td>
           <td class="dv" style="${tdS}color:var(--tx3)">—</td>
+          <td style="${tdS}color:var(--tx3)">—</td>
         </tr>`;
         return valueRow+growthRow;
       }
