@@ -440,18 +440,30 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
         <div class="chart-card">
           <div class="chart-hdr"><div class="chart-title">Total Cost per Bulan</div></div>
           <div class="chart-wrap-trend"><canvas id="ct-cost"></canvas></div>
+          <div style="overflow-x:auto;margin-top:16px;border-top:1px solid var(--bdr);padding-top:12px;">
+            <table id="ct-cost-table" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
+          </div>
         </div>
         <div class="chart-card">
           <div class="chart-hdr"><div class="chart-title">UJP per Bulan</div></div>
           <div class="chart-wrap-trend"><canvas id="ct-ujp"></canvas></div>
+          <div style="overflow-x:auto;margin-top:16px;border-top:1px solid var(--bdr);padding-top:12px;">
+            <table id="ct-ujp-table" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
+          </div>
         </div>
         <div class="chart-card">
           <div class="chart-hdr"><div class="chart-title">Sewa Armada (VR) per Bulan</div></div>
           <div class="chart-wrap-trend"><canvas id="ct-vr"></canvas></div>
+          <div style="overflow-x:auto;margin-top:16px;border-top:1px solid var(--bdr);padding-top:12px;">
+            <table id="ct-vr-table" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
+          </div>
         </div>
         <div class="chart-card">
           <div class="chart-hdr"><div class="chart-title">MPP per Bulan</div></div>
           <div class="chart-wrap-trend"><canvas id="ct-mpp"></canvas></div>
+          <div style="overflow-x:auto;margin-top:16px;border-top:1px solid var(--bdr);padding-top:12px;">
+            <table id="ct-mpp-table" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
+          </div>
         </div>
       </div>
     </div>
@@ -512,6 +524,72 @@ const PAL=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#db2777'
 
 const fmtID=n=>{if(!Number.isFinite(n))return'—';const a=Math.abs(n);if(a>=1e12)return(n/1e12).toFixed(1).replace('.',',')+'T';if(a>=1e9)return(n/1e9).toFixed(1).replace('.',',')+'M';if(a>=1e6)return(n/1e6).toFixed(1).replace('.',',')+'JT';if(a>=1e3)return(n/1e3).toFixed(1).replace('.',',')+'RB';return Math.round(n).toLocaleString('id-ID');};
 const fmt=n=>Number.isFinite(n)?Math.round(n).toLocaleString('id-ID'):'—';
+const median=arr=>{
+  const v=arr.filter(x=>x>0).slice().sort((a,b)=>a-b);
+  if(!v.length)return 0;
+  const mid=Math.floor(v.length/2);
+  return v.length%2?v[mid]:(v[mid-1]+v[mid])/2;
+};
+const T_THS='padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bdr);white-space:nowrap;';
+const T_TDS='padding:6px 10px;text-align:right;font-family:var(--mo);font-size:11px;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--bdr-l);';
+const T_TDLS='padding:6px 10px;font-size:11px;font-weight:500;border-bottom:1px solid var(--bdr-l);white-space:nowrap;';
+const growthCellG=(arr,i)=>{
+  if(i===0)return`<td style="${T_TDS}color:var(--tx3)">—</td>`;
+  const prev=arr[i-1],cur=arr[i];
+  if(!prev)return`<td style="${T_TDS}color:var(--tx3)">—</td>`;
+  const delta=cur-prev;
+  const g=delta/prev*100;
+  const col=g>5?'#dc2626':g<-5?'#16a34a':'#64748b';
+  const arrow=g>0?'▲':'▼';
+  const dsign=delta>0?'+':delta<0?'-':'';
+  return`<td style="${T_TDS}color:${col};font-weight:600;line-height:1.5;">${arrow}${Math.abs(g).toFixed(1)}%<br><span style="font-size:9px;font-weight:500;opacity:.85;">${dsign}${fmtID(Math.abs(delta))}</span></td>`;
+};
+
+// Builds a "per group" (site/BU) summary table: rows = groups + grand total, cols = months + Total + Avg/Bulan + Median/Bulan
+function renderGroupSummaryTable(tableId,monLabels,months,groupNames,groups,field,palette){
+  const tableEl=document.getElementById(tableId);
+  if(!tableEl)return;
+  const rowsData=groupNames.map((g,i)=>({
+    lbl:g,color:palette[i%palette.length],
+    arr:months.map(mo=>groups[g][mo]?groups[g][mo][field]:0),
+  }));
+  const grandArr=months.map((mo,mi)=>rowsData.reduce((a,r)=>a+r.arr[mi],0));
+
+  const headerRow=`<thead><tr style="background:var(--bg);">
+    <th style="${T_THS}text-align:left;color:var(--tx2);">${field==='cost'?'Site':'Site'}</th>
+    ${monLabels.map(m=>`<th style="${T_THS}text-align:right;color:var(--tx2);">${m}</th>`).join('')}
+    <th style="${T_THS}text-align:right;color:var(--tx2);">Total</th>
+    <th class="dv" style="${T_THS}text-align:right;color:var(--tx2);">Avg/Bulan</th>
+    <th style="${T_THS}text-align:right;color:var(--tx2);">Median/Bulan</th>
+  </tr></thead>`;
+
+  const mkRow=({lbl,color,arr},bold)=>{
+    const nMon=arr.filter(v=>v>0).length||arr.length;
+    const total=arr.reduce((a,v)=>a+v,0);
+    const avgMon=nMon>0?total/nMon:0;
+    const medMon=median(arr);
+    const fw=bold?'font-weight:700;':'';
+    return`<tr${bold?' style="background:#fafafa;"':''}>
+      <td style="${T_TDLS}color:${color};${fw}">${lbl}</td>
+      ${arr.map(v=>`<td style="${T_TDS}${fw}">${fmt(v)}</td>`).join('')}
+      <td style="${T_TDS}font-weight:700;">${fmt(total)}</td>
+      <td class="dv" style="${T_TDS}font-weight:700;">${fmt(avgMon)}</td>
+      <td style="${T_TDS}font-weight:700;">${fmt(medMon)}</td>
+    </tr>`;
+  };
+  const growthRow=({lbl,arr})=>`<tr style="background:#fafafa;">
+    <td style="${T_TDLS}color:var(--tx3);font-size:10px;padding-left:16px;">↳ MoM Growth</td>
+    ${arr.map((_,i)=>growthCellG(arr,i)).join('')}
+    <td style="${T_TDS}color:var(--tx3)">—</td>
+    <td class="dv" style="${T_TDS}color:var(--tx3)">—</td>
+    <td style="${T_TDS}color:var(--tx3)">—</td>
+  </tr>`;
+
+  const bodyRows=rowsData.map(r=>mkRow(r,false)+growthRow(r)).join('')
+    + mkRow({lbl:'TOTAL',color:'var(--tx1)',arr:grandArr},true);
+
+  tableEl.innerHTML=headerRow+`<tbody>${bodyRows}</tbody>`;
+}
 const fmt2=n=>Number.isFinite(n)?n.toFixed(2):'—';
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
 const pctFmt=n=>Number.isFinite(n)?(n*100).toFixed(1)+'%':'—';
@@ -1022,6 +1100,11 @@ function renderTrendPage(){
   ctVR=makeTrendChart('ct-vr',ctVR,labels,vr);
   ctMPP=makeTrendChart('ct-mpp',ctMPP,labels,mpp);
 
+  renderGroupSummaryTable('ct-cost-table',labels,months,groupNames,groups,'cost',PAL);
+  renderGroupSummaryTable('ct-ujp-table',labels,months,groupNames,groups,'ujp',PAL);
+  renderGroupSummaryTable('ct-vr-table',labels,months,groupNames,groups,'vr',PAL);
+  renderGroupSummaryTable('ct-mpp-table',labels,months,groupNames,groups,'mpp',PAL);
+
   // Populate summary table - transposed (metrics as rows, months as columns)
   const sumTable=document.getElementById('ct-summary-table');
   if(sumTable){
@@ -1045,13 +1128,6 @@ function renderTrendPage(){
       const arrow=g>0?'▲':'▼';
       const dsign=delta>0?'+':delta<0?'-':'';
       return`<td style="${tdS}color:${col};font-weight:600;line-height:1.5;">${arrow}${Math.abs(g).toFixed(1)}%<br><span style="font-size:9px;font-weight:500;opacity:.85;">${dsign}${fmtID(Math.abs(delta))}</span></td>`;
-    };
-
-    const median=arr=>{
-      const v=arr.filter(x=>x>0).slice().sort((a,b)=>a-b);
-      if(!v.length)return 0;
-      const mid=Math.floor(v.length/2);
-      return v.length%2?v[mid]:(v[mid-1]+v[mid])/2;
     };
 
     const metrics=[
