@@ -466,6 +466,27 @@ th.dv,td.dv{border-left:2px solid var(--bdr);}
           </div>
         </div>
       </div>
+
+      <div id="yoy-wrap" style="display:none;">
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <div class="chart-title">Perbandingan YoY: Trip &amp; UJP (2025 vs 2026)</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Trip per Bulan</div>
+              <div class="chart-wrap-trend" style="height:220px;"><canvas id="ct-yoy-trip"></canvas></div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:6px;">UJP per Bulan</div>
+              <div class="chart-wrap-trend" style="height:220px;"><canvas id="ct-yoy-ujp"></canvas></div>
+            </div>
+          </div>
+          <div style="overflow-x:auto;margin-top:16px;border-top:1px solid var(--bdr);padding-top:12px;">
+            <table id="yoy-table" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -515,7 +536,7 @@ function getBULabel(siteId, ownerVal){
   return SITE_DEFAULT_BU[siteId]||'Lainnya';
 }
 
-let allData={},curSite='all',curPage='overview',trendView='site';
+let allData={},allData2025={},curSite='all',curPage='overview',trendView='site';
 let tmet='cost',ttab='',skey='cost',sasc=false;
 let activeQuick='all',activeTrendQuick='all';
 let cTrend=null,cOlf=null,ctCost=null,ctUJP=null,ctVR=null,ctMPP=null,ctCombined=null;
@@ -664,6 +685,26 @@ async function loadSite(id){
   }
 }
 
+// 2025 historis (Master LC 2025) - dipakai untuk YoY. Diam-diam gagal kalau file belum ada,
+// biar gak nge-block loading dashboard utama.
+async function loadSite2025(id){
+  const s=SITES[id];
+  try{
+    const csv2025=s.csv.replace(/\.csv$/i,'_2025.csv');
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),15000);
+    const res=await fetch(BASE+csv2025+'?t='+Date.now(),{signal:controller.signal});
+    clearTimeout(timeout);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    let rows=parseCSV(await res.text());
+    if(s.owner)rows=rows.filter(r=>r['OWNER']===s.owner);
+    rows.forEach(r=>{r._siteId=id;});
+    allData2025[id]=rows;
+  }catch(e){
+    allData2025[id]=[];
+  }
+}
+
 async function loadAll(){
   document.getElementById('ls').style.display='flex';
   document.getElementById('es').style.display='none';
@@ -682,6 +723,11 @@ async function loadAll(){
     await new Promise(r=>setTimeout(r,50));
   }
   
+  // Load 2025 historis di background (paralel), gak perlu nunggu urutan kayak data 2026
+  Promise.all(ids.map(id=>loadSite2025(id))).then(()=>{
+    if(curPage==='trend')renderTrendPage();
+  }).catch(()=>{});
+
   document.getElementById('ts').textContent='Update: '+new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
   document.getElementById('ls').style.display='none';
   document.getElementById('app').style.display='flex';
@@ -694,6 +740,11 @@ async function loadAll(){
 function getActiveRaw(){
   if(curSite==='all')return Object.values(allData).flat();
   return allData[curSite]||[];
+}
+
+function getActiveRaw2025(){
+  if(curSite==='all')return Object.values(allData2025).flat();
+  return allData2025[curSite]||[];
 }
 
 function updateArmadaFilter(){
@@ -1006,6 +1057,21 @@ function getTrendFil(){
   });
 }
 
+// YoY filter - sama kayak getTrendFil tapi TANPA filter tanggal (karena tahunnya beda)
+function getTrendFil2025(){
+  const ship=document.getElementById('tf-ship')?.value||'';
+  const del=document.getElementById('tf-del')?.value||'';
+  const kat=document.getElementById('tf-kat')?.value||'';
+  const arm=document.getElementById('tf-arm')?.value||'';
+  return getActiveRaw2025().filter(r=>{
+    if(ship&&(r['Shipment Area']||'').toUpperCase()!==ship.toUpperCase())return false;
+    if(del&&r['Type Delivery']!==del)return false;
+    if(kat&&r['Kategori']!==kat)return false;
+    if(arm&&r['Type Armada']!==arm)return false;
+    return true;
+  });
+}
+
 function buildTrendQuickBtns(){
   const raw=getActiveRaw();
   const months=[...new Set(raw.map(r=>r['Month']).filter(Boolean))].sort((a,b)=>+a-+b);
@@ -1181,6 +1247,97 @@ function renderTrendPage(){
   }
   if(insightTimer)clearTimeout(insightTimer);
   insightTimer=setTimeout(()=>generateInsight(fil,groups,months,groupNames),800);
+
+  renderYoY();
+}
+
+let ctYoyTrip=null,ctYoyUjp=null;
+function renderYoY(){
+  const wrap=document.getElementById('yoy-wrap');
+  if(!wrap)return;
+  const raw26=getTrendFil();
+  const raw25=getTrendFil2025();
+
+  if(!raw25.length){
+    wrap.style.display='none';
+    return;
+  }
+  wrap.style.display='block';
+
+  const agg=rows=>{
+    const m={};
+    rows.forEach(r=>{
+      const mo=r['Month'];
+      if(!mo)return;
+      if(!m[mo])m[mo]={trip:0,ujp:0};
+      m[mo].trip++;
+      m[mo].ujp+=pn(r['UJP']);
+    });
+    return m;
+  };
+  const m26=agg(raw26),m25=agg(raw25);
+  const months=[...new Set([...Object.keys(m25),...Object.keys(m26)])].sort((a,b)=>+a-+b);
+  const labels=months.map(m=>MN[+m]||m);
+  const trip25=months.map(mo=>m25[mo]?.trip||0);
+  const trip26=months.map(mo=>m26[mo]?.trip||0);
+  const ujp25=months.map(mo=>m25[mo]?.ujp||0);
+  const ujp26=months.map(mo=>m26[mo]?.ujp||0);
+
+  const mkChart=(id,existing,d25,d26,valFmt)=>{
+    if(existing)existing.destroy();
+    return new Chart(document.getElementById(id),{type:'bar',
+      data:{labels,datasets:[
+        {label:'2025',data:d25,backgroundColor:'#94a3b8',borderRadius:4,barPercentage:.6},
+        {label:'2026',data:d26,backgroundColor:'#2563eb',borderRadius:4,barPercentage:.6},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#64748b',font:{size:10},boxWidth:10}}},
+        scales:{x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
+                y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:valFmt}}}}});
+  };
+  ctYoyTrip=mkChart('ct-yoy-trip',ctYoyTrip,trip25,trip26,v=>fmt(v));
+  ctYoyUjp=mkChart('ct-yoy-ujp',ctYoyUjp,ujp25,ujp26,v=>fmtID(v));
+
+  // Table
+  const trip25T=trip25.reduce((a,v)=>a+v,0),trip26T=trip26.reduce((a,v)=>a+v,0);
+  const ujp25T=ujp25.reduce((a,v)=>a+v,0),ujp26T=ujp26.reduce((a,v)=>a+v,0);
+  const growth=(v25,v26)=>v25>0?((v26-v25)/v25*100):(v26>0?100:0);
+  const growthCellYoY=(v25,v26)=>{
+    const g=growth(v25,v26);
+    const col=g>0?'#16a34a':g<0?'#dc2626':'#64748b';
+    const arrow=g>0?'▲':g<0?'▼':'—';
+    return`<td style="${T_TDS}color:${col};font-weight:600;">${arrow}${Math.abs(g).toFixed(1)}%</td>`;
+  };
+
+  const headerRow=`<thead><tr style="background:var(--bg);">
+    <th style="${T_THS}text-align:left;color:var(--tx2);">Bulan</th>
+    <th style="${T_THS}text-align:right;color:var(--tx2);">Trip 2025</th>
+    <th style="${T_THS}text-align:right;color:var(--tx2);">Trip 2026</th>
+    <th style="${T_THS}text-align:right;color:var(--tx2);">Growth</th>
+    <th class="dv" style="${T_THS}text-align:right;color:var(--tx2);">UJP 2025</th>
+    <th style="${T_THS}text-align:right;color:var(--tx2);">UJP 2026</th>
+    <th style="${T_THS}text-align:right;color:var(--tx2);">Growth</th>
+  </tr></thead>`;
+
+  const bodyRows=months.map((mo,i)=>`<tr>
+    <td style="${T_TDLS}">${labels[i]}</td>
+    <td style="${T_TDS}">${fmt(trip25[i])}</td>
+    <td style="${T_TDS}">${fmt(trip26[i])}</td>
+    ${growthCellYoY(trip25[i],trip26[i])}
+    <td class="dv" style="${T_TDS}">${fmt(ujp25[i])}</td>
+    <td style="${T_TDS}">${fmt(ujp26[i])}</td>
+    ${growthCellYoY(ujp25[i],ujp26[i])}
+  </tr>`).join('')+`<tr style="background:#fafafa;">
+    <td style="${T_TDLS}font-weight:700;">TOTAL</td>
+    <td style="${T_TDS}font-weight:700;">${fmt(trip25T)}</td>
+    <td style="${T_TDS}font-weight:700;">${fmt(trip26T)}</td>
+    ${growthCellYoY(trip25T,trip26T)}
+    <td class="dv" style="${T_TDS}font-weight:700;">${fmt(ujp25T)}</td>
+    <td style="${T_TDS}font-weight:700;">${fmt(ujp26T)}</td>
+    ${growthCellYoY(ujp25T,ujp26T)}
+  </tr>`;
+
+  document.getElementById('yoy-table').innerHTML=headerRow+`<tbody>${bodyRows}</tbody>`;
 }
 
 let insightTimer=null;
