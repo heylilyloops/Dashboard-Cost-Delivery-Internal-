@@ -17606,11 +17606,7 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 250731C232,HCI,7/31/2025,CDELC,A8917WX,Karawang Selatan,Jabodetabek,,,Customer,5,3.6,,3,308700,826265,,Karawang,CDE LONG CHASSIS,Internal,JabodetabekKarawangCDE LONG CHASSIS,DALAM KOTA,,7,NON REGULAR,,,1
 250731C237,HCI,7/31/2025,CDELC,A8239VC,Jakarta Selatan,Jabodetabek,,,Customer,2,1.16,,2,396072,1176292,,Jakarta Selatan,CDE LONG CHASSIS,Internal,JabodetabekJakarta SelatanCDE LONG CHASSIS,DALAM KOTA,,7,NON REGULAR,,,1
 250731D018,HCI,7/31/2025,CDDLC,A8654ZF,Bogor,Jabodetabek,,,Store,41,11.44,,3,364000,853740,,Bogor,CDD LONG CHASSIS,Internal,JabodetabekBogorCDD LONG CHASSIS,DALAM KOTA,,7,REGULAR,,,1
-250801C141,HCI,8/1/2025,CDELC,B9015SCF,Depok,Jabodetabek,,,Customer,4,5.3,,5,339000,915153,,Depok,CDE LONG CHASSIS,Internal,JabodetabekDepokCDE LONG CHASSIS,DALAM KOTA,,8,NON REGULAR,,,1
-250801C130,HCI,8/1/2025,CDELC,A8509XY,Bekasi,Jabodetabek,,,Customer,20,8.59,,17,120172,675789,,Bekasi,CDE LONG CHASSIS,Internal,JabodetabekBekasiCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,2
-250801C111,HCI,8/1/2025,CDELC,A8633XZ,Jakarta Selatan,Jabodetabek,,,Customer,10,5.87,,10,175484,734077,,Jakarta Selatan,CDE LONG CHASSIS,Internal,JabodetabekJakarta SelatanCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,2
-250801C112,HCI,8/1/2025,CDELC,A8723VB,Jakarta Selatan,Jabodetabek,,,Customer,18,8.43,,9,296360,923930,,Jakarta Selatan,CDE LONG CHASSIS,Internal,JabodetabekJakarta SelatanCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,2
-250801C127,HCI,8/1/2025,CDELC,A8078ZH,Jakarta Timur,Jabodetabek,,,Customer,10,6.49,,9,167672,858077,,Jakarta Timur,CDE LONG CHASSIS,Internal,JabodetabekJakarta TimurCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,2
+250801C127,HCI,8/1/2025,CDELC,A8078ZH,Jakarta Timur,Jabodetabek,,,Customer,10,6.49,,9,167672,858077,,Jakarta Timur,CDE LONG CHASSIS,Internal,JabodetabekJakarta TimurCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
 250801C145,HCI,8/1/2025,CDELC,A8517VB,Purwakarta,Jawa Barat,,,Customer,14,6.26,,11,572256,1227840,,Purwakarta,CDE LONG CHASSIS,Internal,Jawa BaratPurwakartaCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
 250801X013,HCI,8/1/2025,WINGBOX,B9062BEN,Bekasi,Jabodetabek,,,Other Delivery,18,4.95,,18,44064,1130351,,Bekasi,WINGBOX,Internal,JabodetabekBekasiWINGBOX,DALAM KOTA,,8,REGULAR,,,1
 250731H014,HCI,8/1/2025,FUSO,A8310YX,Semarang,Jawa Tengah,,,HUB,,,,,2541000,5038434,,Semarang,FUSO,Internal,Jawa TengahSemarangFUSO,LUAR KOTA,,8,REGULAR,,,1
@@ -17703,11 +17699,7 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 250801C140,HCI,8/1/2025,CDELC,A8746XA,Karawang Utara,Jabodetabek,,,Customer,6,7.16,,6,131900,761514,,Karawang,CDE LONG CHASSIS,Internal,JabodetabekKarawangCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
 250801C147,HCI,8/1/2025,CDELC,A8917VB,Bekasi Kabupaten,Jabodetabek,,,Customer,12,5.67,,11,144800,915220,,Bekasi,CDE LONG CHASSIS,Internal,JabodetabekBekasiCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
 250801C148,HCI,8/1/2025,CDELC,A8715VB,Bekasi Kabupaten,Jabodetabek,,,Customer,18,4.94,,8,128360,898780,,Bekasi,CDE LONG CHASSIS,Internal,JabodetabekBekasiCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
-250801C130,HCI,8/1/2025,CDELC,A8509XY,Bekasi,Jabodetabek,,,Customer,20,8.59,,17,120172,675789,,Bekasi,CDE LONG CHASSIS,Internal,JabodetabekBekasiCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
-250801C111,HCI,8/1/2025,CDELC,A8633XZ,Jakarta Selatan,Jabodetabek,,,Customer,10,5.87,,10,175484,734077,,Jakarta Selatan,CDE LONG CHASSIS,Internal,JabodetabekJakarta SelatanCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,2
-250801C112,HCI,8/1/2025,CDELC,A8723VB,Jakarta Selatan,Jabodetabek,,,Customer,18,8.43,,9,296360,923930,,Jakarta Selatan,CDE LONG CHASSIS,Internal,JabodetabekJakarta SelatanCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,2
-250801C141,HCI,8/1/2025,CDELC,B9015SCF,Depok,Jabodetabek,,,Customer,4,5.3,,5,339000,915153,,Depok,CDE LONG CHASSIS,Internal,JabodetabekDepokCDE LONG CHASSIS,DALAM KOTA,,8,NON REGULAR,,,2
-250802X027,HCI,8/2/2025,CONT-40,A8063VB,Bekasi,Jabodetabek,,,Other Delivery,4,1.1,,4,176256,951849,,Bekasi,CONT-40,Internal,JabodetabekBekasiCONT-40,DALAM KOTA,,8,REGULAR,,,2
+250802X027,HCI,8/2/2025,CONT-40,A8063VB,Bekasi,Jabodetabek,,,Other Delivery,4,1.1,,4,176256,951849,,Bekasi,CONT-40,Internal,JabodetabekBekasiCONT-40,DALAM KOTA,,8,REGULAR,,,1
 250802X026,HCI,8/2/2025,CONT-40,A8062VB,Bekasi,Jabodetabek,,,Other Delivery,5,1.38,,5,258468,1034061,,Bekasi,CONT-40,Internal,JabodetabekBekasiCONT-40,DALAM KOTA,,8,REGULAR,,,1
 250802C114,HCI,8/2/2025,CDELC,A8633XZ,Depok,Jabodetabek,,,Customer,13,4.5,,10,251500,883966,,Depok,CDE LONG CHASSIS,Internal,JabodetabekDepokCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
 250802C100,HCI,8/2/2025,CDELC,A8076ZH,Jakarta Barat,Jabodetabek,,,Customer,14,7.53,,13,181776,872181,,Jakarta Barat,CDE LONG CHASSIS,Internal,JabodetabekJakarta BaratCDE LONG CHASSIS,DALAM KOTA,,8,REGULAR,,,1
@@ -25874,10 +25866,10 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 251031X023,HCI,10/31/2025,CONT-40,A8062VB,Bekasi,Jabodetabek,,,Other Delivery,1,52.0,,1,426088,775095,,Bekasi,CONT-40,Internal,JabodetabekBekasiCONT-40,DALAM KOTA,,10,REGULAR,,,1
 251031X018,HCI,10/31/2025,FUSO,A8664VA,Bekasi,Jabodetabek,,,Other Delivery,3,34.0,,6,77112,398840,,Bekasi,FUSO,Internal,JabodetabekBekasiFUSO,DALAM KOTA,,10,REGULAR,,,1
 251031X015,HCI,10/31/2025,FUSO,A8147YX,Bekasi,Jabodetabek,,,Other Delivery,6,34.0,,6,159180,517459,,Bekasi,FUSO,Internal,JabodetabekBekasiFUSO,DALAM KOTA,,10,REGULAR,,,1
-251101C097,HCI,11/01/2025,CDELC,A8752XZ,Karawang Selatan,Jabodetabek,,,Customer,14,5.14,,9,224256,976722,,Karawang,CDE LONG CHASSIS,Internal,JabodetabekKarawangCDE LONG CHASSIS,DALAM KOTA,,11,REGULAR,,,1
+251101C097,HCI,11/01/2025,CDELC,A8752XZ,Karawang Selatan,Jabodetabek,,,Customer,14,5.14,,9,224256,856722,,Karawang,CDE LONG CHASSIS,Internal,JabodetabekKarawangCDE LONG CHASSIS,DALAM KOTA,,11,REGULAR,,,1
 251101C108,HCI,11/01/2025,CDDLC,A8737ZE,Bekasi,Jabodetabek,,,Customer,5,8.83,,5,269160,873432,,Bekasi,CDD LONG CHASSIS,Internal,JabodetabekBekasiCDD LONG CHASSIS,DALAM KOTA,,11,NON REGULAR,,,1
-251101C091,HCI,11/01/2025,CDELC,A8522VC,Bekasi,Jabodetabek,,,Customer,22,9.09,,12,134380,1099100,,Bekasi,CDE LONG CHASSIS,Internal,JabodetabekBekasiCDE LONG CHASSIS,DALAM KOTA,,11,REGULAR,,,1
-251101C074,HCI,11/01/2025,CDELC,A8521VB,Jakarta Barat,Jabodetabek,,,Customer,13,6.55,,9,193932,1009516,,Jakarta Barat,CDE LONG CHASSIS,Internal,JabodetabekJakarta BaratCDE LONG CHASSIS,DALAM KOTA,,11,REGULAR,,,1
+251101C091,HCI,11/01/2025,CDELC,A8522VC,Bekasi,Jabodetabek,,,Customer,22,9.09,,12,134380,919100,,Bekasi,CDE LONG CHASSIS,Internal,JabodetabekBekasiCDE LONG CHASSIS,DALAM KOTA,,11,REGULAR,,,1
+251101C074,HCI,11/01/2025,CDELC,A8521VB,Jakarta Barat,Jabodetabek,,,Customer,13,6.55,,9,193932,849516,,Jakarta Barat,CDE LONG CHASSIS,Internal,JabodetabekJakarta BaratCDE LONG CHASSIS,DALAM KOTA,,11,REGULAR,,,1
 251101C101,HCI,11/01/2025,CDDLC,A8127ZH,Depok,Jabodetabek,,,Customer,3,12.02,,3,370272,1102372,,Depok,CDD LONG CHASSIS,Internal,JabodetabekDepokCDD LONG CHASSIS,DALAM KOTA,,11,NON REGULAR,,,1
 251101C120,HCI,11/01/2025,CDELC,A8557VB,Bekasi,Jabodetabek,,,Customer,16,4.82,,15,204184,1099768,,Bekasi,CDE LONG CHASSIS,Internal,JabodetabekBekasiCDE LONG CHASSIS,DALAM KOTA,,11,REGULAR,,,1
 251101C104,HCI,11/01/2025,CDELC,A8690XY,Jakarta Selatan,Jabodetabek,,,Customer,1,11.0,,1,190504,608603,,Jakarta Selatan,CDE LONG CHASSIS,Internal,JabodetabekJakarta SelatanCDE LONG CHASSIS,DALAM KOTA,,11,NON REGULAR,,,1
@@ -32168,3 +32160,11 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 251231X029,HCI,12/31/2025,CONT-40,A8063VB,Bekasi,Jabodetabek,,,Other Delivery,1,52.0,,1,0,420104,,Bekasi,CONT-40,Internal,JabodetabekBekasiCONT-40,DALAM KOTA,,12,REGULAR,,,1
 251231X048,HCI,12/31/2025,WINGBOX,B9064BEN,Bekasi,Jabodetabek,,,Other Delivery,1,42.0,,1,0,327792,,Bekasi,WINGBOX,Internal,JabodetabekBekasiWINGBOX,DALAM KOTA,,12,REGULAR,,,1
 251231X049,HCI,12/31/2025,CONT-40,A8063VB,Bekasi,Jabodetabek,,,Other Delivery,1,42.0,,1,0,420104,,Bekasi,CONT-40,Internal,JabodetabekBekasiCONT-40,DALAM KOTA,,12,REGULAR,,,1
+,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+,,,,,,,,,,,,,,,,,,,,,,,,,,,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,0
