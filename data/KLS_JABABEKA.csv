@@ -6067,7 +6067,7 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 260804C043,KLS,08/04/2026,MVB,A8504ZX,Depok,Jabodetabek,Pertalite,13.8,Customer,13,3.85,5,8,237000,568660,Jawa,DEPOK,MINI VAN BOX,Internal,JabodetabekDEPOKMINI VAN BOX,Dalam Kota,,,,8,,6:50:00,257560,74100,175,E00517,,Tuesday,2,HIT,Kecil
 260804C042,KLS,08/04/2026,CDELC,A8432ZS,Jakarta Barat,Jabodetabek,,,Customer,10,9.36,11,3,29000,543610,Jawa,JAKARTA BARAT,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA BARATCDE LONG CHASSIS,Dalam Kota,,,,8,,7:16:00,257560,257050,131,E03183,,Tuesday,2,HIT,Kecil
 260804C210,KLS,08/04/2026,CDE PICK UP,A8486VC,Tangerang,Jabodetabek,Solar,19.66,Customer,1,5.0,5,1,239688,818515,Jawa,TANGERANG,CDE PICKUP,Internal,JabodetabekTANGERANGCDE PICKUP,Dalam Kota,,,,8,,7:36:00,257560,321267,191,E06719,,Tuesday,2,HIT,Kecil
-260804C039,KLS,08/04/2026,MOTOR,B5709BLU,Bekasi,Jabodetabek,Pertalite,2.3,Customer,5,0.14,0.14,5,23000,280590,Jawa,BEKASI,MOTOR BOX,Internal,JabodetabekBEKASIMOTOR BOX,Dalam Kota,,,,8,,32:02:00,257560,30,107,E06663,,Tuesday,2,HIT,Kecil
+260804C039,KLS,08/04/2026,MOTOR,B5709BLU,Bekasi,Jabodetabek,Pertalite,2.3,Customer,5,0.14,0.14,5,23000,280590,Jawa,BEKASI,MOTOR BOX,Internal,JabodetabekBEKASIMOTOR BOX,Dalam Kota,,,,8,,9:05:30,257560,30,107,E06663,,Tuesday,2,HIT,Kecil
 260804S003,KLS,08/04/2026,CDELC,A8020VC,Jakarta Barat,Jabodetabek,,,Customer,23,11.0,11,6,,800820,Jawa,JAKARTA BARAT,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA BARATCDE LONG CHASSIS,Dalam Kota,,,,8,,7:17:00,515120,285700,56,E00505,622,Tuesday,2,HIT,Kecil
 260804S005,KLS,08/04/2026,MVB,A8437ZH,Tangerang,Jabodetabek,Pertalite,6.87,Customer,6,2.08,5,3,165200,533360,Jawa,TANGERANG,MINI VAN BOX,Internal,JabodetabekTANGERANGMINI VAN BOX,Dalam Kota,,,,8,,7:45:00,257560,110600,71,24655,,Tuesday,2,HIT,Kecil
 260804S002,KLS,08/04/2026,CDELC,A8481ZH,Jakarta Selatan,Jabodetabek,Solar,10.29,Customer,7,3.38,11,4,151500,887787,Jawa,JAKARTA SELATAN,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA SELATANCDE LONG CHASSIS,Dalam Kota,,,,8,,8:10:00,515120,221167,50,19519,E03210,Tuesday,2,HIT,Kecil
@@ -6171,7 +6171,7 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 260807C040,KLS,08/07/2026,MVB,B9320SCE,Jakarta Utara,Jabodetabek,Pertalite,18.78,Customer,7,5.0,5,7,261300,605000,Jawa,JAKARTA UTARA,MINI VAN BOX,Internal,JabodetabekJAKARTA UTARAMINI VAN BOX,Dalam Kota,,,,8,,11:49:00,257560,86140,147,151171,,Friday,5,HIT,Kecil
 260807C039,KLS,08/07/2026,CDELC,A8432ZS,Bekasi,Jabodetabek,Solar,13.9,Customer,11,11.0,11,5,94500,866670,Jawa,BEKASI,CDE LONG CHASSIS,Internal,JabodetabekBEKASICDE LONG CHASSIS,Dalam Kota,,,,8,,7:06:00,515120,257050,81,E03575,134620,Friday,5,HIT,Kecil
 260807C031,KLS,08/07/2026,CDELC,A8503ZX,Bogor,Jabodetabek,Solar,14.19,Customer,11,1.65,8,8,189000,856587,Jawa,BOGOR,CDE,Internal,JabodetabekBOGORCDE,Dalam Kota,,,,8,,8:28:00,515120,152467,110,E05190,E05603,Friday,5,HIT,Kecil
-260807C043,KLS,08/07/2026,CDELC,A8520VC,Bogor,Jabodetabek,Solar,26.2,Customer,12,2.52,11,3,236660,1051780,Jawa,BOGOR,CDE LONG CHASSIS,Internal,JabodetabekBOGORCDE LONG CHASSIS,Dalam Kota,,,,8,,21:37:00,515120,300000,109,E03301,E05397,Friday,5,HIT,Kecil
+260807C043,KLS,08/07/2026,CDELC,A8520VC,Bogor,Jabodetabek,Solar,26.2,Customer,12,2.52,11,3,236660,1051780,Jawa,BOGOR,CDE LONG CHASSIS,Internal,JabodetabekBOGORCDE LONG CHASSIS,Dalam Kota,,,,8,,9:01:00,515120,300000,109,E03301,E05397,Friday,5,HIT,Kecil
 260807C038,KLS,08/07/2026,CDELC,A8098ZH,Jakarta Utara,Jabodetabek,,,Customer,17,3.35,11,10,85000,821287,Jawa,JAKARTA UTARA,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA UTARACDE LONG CHASSIS,Dalam Kota,,,,8,,10:26:00,515120,221167,155,E03609,E06663,Friday,5,HIT,Kecil
 260807C233,KLS,08/07/2026,MVB,A8304VC,Bekasi,Jabodetabek,Pertalite,5.89,Customer,4,1.95,5,4,58900,705420,Jawa,BEKASI,MINI VAN BOX,Internal,JabodetabekBEKASIMINI VAN BOX,Dalam Kota,,,,8,,5:33:00,515120,131400,68,146113,E05726,Friday,5,HIT,Kecil
 260807C029,KLS,08/07/2026,CDELC,A8002XW,Bekasi,Jabodetabek,Solar,14.04,Customer,30,4.69,11,11,152500,820087,Jawa,BEKASI,CDE LONG CHASSIS,Internal,JabodetabekBEKASICDE LONG CHASSIS,Dalam Kota,,,,8,,9:16:00,515120,152467,101,E04175,E06516,Friday,5,HIT,Kecil
@@ -9430,3 +9430,73 @@ LC,OWNER,Delivery Date,Type Armada,Nopol,Jalur,Area,Fuel's Type,Qty Fuel,Type De
 261120S076,KLS,11/20/2026,CDELC,A8910VB,Jakarta Utara,Jabodetabek,Solar,14.26,Customer,27,10.11,11,7,121500,922320,Jawa,JAKARTA UTARA,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA UTARACDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,9:51:00,515120,285700,74,E04800,E03210,Friday,5,HIT,Kecil
 261120S080,KLS,11/20/2026,CDELC,A8912VB,Serang,Banten,Solar,27.21,Customer,21,11.0,11,3,348000,1128413,Jawa,SERANG,CDE LONG CHASSIS,Internal,BantenSERANGCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,9:57:00,515120,265293,206,E03479,622,Friday,5,HIT,Kecil
 261120S207,KLS,11/20/2026,CDELC,A8966ZY,Tangerang,Jabodetabek,Solar,8.38,Customer,4,2.85,11,1,83500,741592,Jawa,TANGERANG,CDE LONG CHASSIS,Internal,JabodetabekTANGERANGCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,6:46:00,515120,142972,70,24655,147135,Friday,5,HIT,Kecil
+261120L094,KLS,11/21/2026,CDDLC,A8230VD,Bandung,Jawa Barat,Solar,30.88,Store,60,16.0,16,1,1280422,1641922,Jawa,BANDUNG,CDD LONG CHASSIS,Internal,Jawa BaratBANDUNGCDD LONG CHASSIS,Luar Kota,,,,11,REGULAR,10:28:00,0,361500,261,E03574,,Saturday,6,HIT,Kecil
+261121C048,KLS,11/21/2026,CDELC,A8432ZS,Bogor,Jabodetabek,Solar,22.26,Customer,11,3.94,11,6,229868,486918,Jawa,BOGOR,CDE LONG CHASSIS,Internal,JabodetabekBOGORCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,8:55:00,0,257050,203,146113,E04176,Saturday,6,HIT,Kecil
+261121C057,KLS,11/21/2026,MVB,B9320SCE,Depok,Jabodetabek,Pertalite,16.29,Customer,12,3.0,3,9,279400,365540,Jawa,DEPOK,MINI VAN BOX,Internal,JabodetabekDEPOKMINI VAN BOX,Dalam Kota,,,,11,REGULAR,7:58:00,0,86140,171,151171,E00162,Saturday,6,HIT,Kecil
+261121C060,KLS,11/21/2026,CDELC,A8505VC,Bogor,Jabodetabek,Solar,17.32,Customer,5,2.24,11,4,177776,477776,Jawa,BOGOR,CDE LONG CHASSIS,Internal,JabodetabekBOGORCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,6:20:00,0,300000,120,E04173,E06516,Saturday,6,HIT,Kecil
+261121C065,KLS,11/21/2026,MVB,A8553VB,Jakarta Timur,Jabodetabek,Pertalite,10.27,Customer,11,3.0,3,6,167200,298600,Jawa,JAKARTA TIMUR,MINI VAN BOX,Internal,JabodetabekJAKARTA TIMURMINI VAN BOX,Dalam Kota,,,,11,REGULAR,7:15:00,0,131400,104,E03480,,Saturday,6,HIT,Kecil
+261121C072,KLS,11/21/2026,CDELC,A8520VC,Jakarta Utara,Jabodetabek,Solar,14.95,Customer,7,4.23,11,6,168660,468660,Jawa,JAKARTA UTARA,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA UTARACDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,7:00:00,0,300000,136,E03610,E05655,Saturday,6,HIT,Kecil
+261121C083,KLS,11/21/2026,MVB,A8983VB,Bekasi,Jabodetabek,Pertalite,7.18,Customer,11,3.0,3,6,98300,229700,Jawa,BEKASI,MINI VAN BOX,Internal,JabodetabekBEKASIMINI VAN BOX,Dalam Kota,,,,11,REGULAR,4:49:00,0,131400,66,135013,,Saturday,6,HIT,Kecil
+261121C084,KLS,11/21/2026,MVB,A8017VC,Purwakarta,Jawa Barat,Pertalite,15.4,Customer,17,3.0,3,6,245000,530700,Jawa,PURWAKARTA,MINI VAN BOX,Internal,Jawa BaratPURWAKARTAMINI VAN BOX,Dalam Kota,,,,11,REGULAR,6:15:00,0,285700,171,134966,E03412,Saturday,6,HIT,Kecil
+261121C085,KLS,11/21/2026,MVB,A8304VC,Bekasi,Jabodetabek,Pertalite,9.12,Customer,10,3.0,3,5,138700,270100,Jawa,BEKASI,MINI VAN BOX,Internal,JabodetabekBEKASIMINI VAN BOX,Dalam Kota,,,,11,REGULAR,6:28:00,0,131400,97,134620,E04879,Saturday,6,HIT,Kecil
+261121C086,KLS,11/21/2026,CDE PICK UP,A8486VC,Serang,Banten,Solar,31.16,Customer,13,6.67,7,1,383388,704655,Jawa,SERANG,CDE PICKUP,Internal,BantenSERANGCDE PICKUP,Dalam Kota,,,,11,REGULAR,7:53:00,0,321267,242,E06719,E06164,Saturday,6,HIT,Kecil
+261121C277,KLS,11/21/2026,CDD PICK UP,A8961VB,Jakarta Utara,Jabodetabek,Solar,10.21,Customer,3,2.67,11,1,207428,520061,Jawa,JAKARTA UTARA,CDD PICKUP,Internal,JabodetabekJAKARTA UTARACDD PICKUP,Dalam Kota,,,,11,REGULAR,5:10:00,0,312633,90,E01784,,Saturday,6,HIT,Kecil
+261121H025,KLS,11/21/2026,CDDLC,A8976XY,Jakarta Barat,Jabodetabek,Solar,14.62,HUB,69,10.26,16,1,181416,370383,Jawa,JAKARTA BARAT,CDD LONG CHASSIS,Internal,JabodetabekJAKARTA BARATCDD LONG CHASSIS,Dalam Kota,,,,11,REGULAR,-0:11:00,0,188967,68,134965,,Saturday,6,HIT,Kecil
+261121X055,KLS,11/21/2026,MVB,A8237VD,Bekasi,Jabodetabek,,0,Other Delivery,1,1.0,3,1,0,138033,Jawa,BEKASI,MINI VAN BOX,Internal,JabodetabekBEKASIMINI VAN BOX,Dalam Kota,,,,11,REGULAR,3:06:00,0,138033,27,E03209,,Saturday,6,HIT,Kecil
+261121X057,KLS,11/21/2026,MVB,A8791VD,Bekasi,Jabodetabek,,0,Other Delivery,1,1.0,3,1,0,#N/A,Jawa,BEKASI,MINI VAN BOX,Internal,JabodetabekBEKASIMINI VAN BOX,Dalam Kota,,,,11,REGULAR,1:48:00,0,#N/A,2,E04175,,Saturday,6,HIT,Kecil
+261121X058,KLS,11/21/2026,MVB,A8373VC,Bekasi,Jabodetabek,Pertalite,10.16,Other Delivery,1,1.0,3,1,159600,297633,Jawa,BEKASI,MINI VAN BOX,Internal,JabodetabekBEKASIMINI VAN BOX,Dalam Kota,,,,11,REGULAR,1:20:00,0,138033,133,E04687,,Saturday,6,HIT,Kecil
+261121S081,KLS,11/21/2026,MVB,A8437ZH,Tangerang,Jabodetabek,Pertalite,10.1,Customer,12,2.26,3,8,162500,530660,Jawa,TANGERANG,MINI VAN BOX,Internal,JabodetabekTANGERANGMINI VAN BOX,Dalam Kota,,,,11,REGULAR,8:43:00,257560,110600,79,147126,,Saturday,6,HIT,Kecil
+261121S082,KLS,11/21/2026,CDELC,A8481ZH,Cilegon,Banten,Solar,29.41,Customer,16,3.19,11,4,348000,826727,Jawa,CILEGON,CDE LONG CHASSIS,Internal,BantenCILEGONCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,7:38:00,257560,221167,261,E06471,,Saturday,6,HIT,Kecil
+261121S077,KLS,11/21/2026,MVB,A8542XB,Jakarta Pusat,Jabodetabek,Pertalite,8.05,Customer,10,3.0,3,6,125000,495727,Jawa,JAKARTA PUSAT,MINI VAN BOX,Internal,JabodetabekJAKARTA PUSATMINI VAN BOX,Dalam Kota,,,,11,REGULAR,6:31:00,257560,113167,70,147475,,Saturday,6,HIT,Kecil
+261121S080,KLS,11/21/2026,CDELC,A8717VB,Tangerang,Jabodetabek,Solar,16.18,Customer,17,5.51,11,8,175000,718260,Jawa,TANGERANG,CDE LONG CHASSIS,Internal,JabodetabekTANGERANGCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,8:03:00,257560,285700,122,E04802,,Saturday,6,HIT,Kecil
+261121S078,KLS,11/21/2026,CDELC,A8721VB,Jakarta Selatan,Jabodetabek,Solar,11.76,Customer,9,1.82,11,7,126000,669260,Jawa,JAKARTA SELATAN,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA SELATANCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,6:31:00,257560,285700,81,10475,,Saturday,6,HIT,Kecil
+261121S079,KLS,11/21/2026,CDELC,A8910VB,Jakarta Barat,Jabodetabek,Solar,12.35,Customer,13,2.13,11,8,177000,720260,Jawa,JAKARTA BARAT,CDE LONG CHASSIS,Internal,JabodetabekJAKARTA BARATCDE LONG CHASSIS,Dalam Kota,,,,11,REGULAR,8:26:00,257560,285700,76,19527,,Saturday,6,HIT,Kecil
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,REGULAR,,,,,,,,,,
